@@ -158,7 +158,7 @@ function renderPeople(){
    const peopleEl = document.getElementById("people");
    if(peopleEl) {
      peopleEl.innerHTML = sortedArr.map(p => {
-       return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><h3>${esc(p.name)}</h3><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div><div style="margin-top:12px">🏆 <b>${p.ownedCount}</b> 項隊史</div></div>`;
+       return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><h3>${esc(p.name)}</h3><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div><div style="margin-top:12px">🏆 <b>${p.ownedCount}</b> 項隊史紀錄</div></div>`;
      }).join("") || `<div class="empty">找不到符合條件的比賽隊員</div>`;
    }
  } catch(e) {
