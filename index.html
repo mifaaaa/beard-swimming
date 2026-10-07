@@ -141,17 +141,24 @@ function renderPeople(){
    
    const pbsList = state.pbs || [];
    const rosterList = state.roster || [];
+   const recordsList = state.records || [];
    
-   // 如果 PBS 有資料則只過濾有比賽成績的隊員；若剛好沒資料則顯示全部隊員備用
+   // 1. 過濾出有比賽成績的隊員
    const activeSwimmers = rosterList.filter(p => pbsList.length === 0 || pbsList.some(x => x.name === p.name || x.swimmer_name === p.name));
+   
+   // 2. 搜尋關鍵字過濾
    const arr = activeSwimmers.filter(x => !q || [x.name, x.school].filter(Boolean).join(" ").toLowerCase().includes(q));
+   
+   // 3. 計算每位學員的隊史數量，並按照隊史數量「由多到少」排序
+   const sortedArr = arr.map(p => {
+     const ownedCount = recordsList.filter(x => x.holder === p.name || x.swimmer_name === p.name).length;
+     return { ...p, ownedCount };
+   }).sort((a, b) => b.ownedCount - a.ownedCount);
    
    const peopleEl = document.getElementById("people");
    if(peopleEl) {
-     peopleEl.innerHTML = arr.map(p => {
-       const n = pbsList.filter(x => x.name === p.name || x.swimmer_name === p.name).length;
-       const owned = (state.records || []).filter(x => x.holder === p.name || x.swimmer_name === p.name).length;
-       return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><h3>${esc(p.name)}</h3><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div><div style="margin-top:12px"><b>${n}</b> 個 PB 🏆 <b>${owned}</b> 項隊史</div></div>`;
+     peopleEl.innerHTML = sortedArr.map(p => {
+       return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><h3>${esc(p.name)}</h3><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div><div style="margin-top:12px">🏆 <b>${p.ownedCount}</b> 項隊史</div></div>`;
      }).join("") || `<div class="empty">找不到符合條件的比賽隊員</div>`;
    }
  } catch(e) {
