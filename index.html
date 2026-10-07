@@ -49,7 +49,6 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 
 <div id="loginModal" class="modal"><div class="modalbox">
 <div class="modalhead"><h2>教練登入</h2><button onclick="closeModal('loginModal')">✕</button></div>
-<div class="notice">正式版使用 Supabase Auth。請先依專案內的 <b>supabase_schema.sql</b> 建立資料庫，再把 config.js 的網址與 anon key 填入。</div>
 <label>Email</label><input id="loginEmail" class="input" type="email" placeholder="coach@example.com">
 <label style="display:block;margin-top:10px">密碼</label><input id="loginPassword" class="input" type="password">
 <div id="loginMsg"></div><button class="btn primary" style="margin-top:14px;width:100%" onclick="login()">登入</button>
