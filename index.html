@@ -39,7 +39,13 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 <div class="searchbar"><input id="search" class="input" placeholder="搜尋姓名、學校…"></div><div id="people" class="people"></div></section>
 
 <section id="adminPanel" class="admin" style="margin-top:40px">
-<div class="hero"><div><h2>🔐 教練後台</h2><p>登入後新增成績，系統會自動更新 PB 與隊史判定。</p></div><button class="btn primary" onclick="openPerformance()">＋ 新增成績</button></div>
+<div class="hero">
+  <div><h2>🔐 教練後台</h2><p>登入後新增成績，系統會自動更新 PB 與隊史判定。</p></div>
+  <div style="display:flex;gap:8px">
+    <button class="btn ghost" onclick="exportCSV()">📥 匯出 CSV (Excel)</button>
+    <button class="btn primary" onclick="openPerformance()">＋ 新增成績</button>
+  </div>
+</div>
 <div class="grid">
 <div class="card"><div class="muted">隊員</div><div class="stat" id="statPeople">—</div></div>
 <div class="card"><div class="muted">目前 PB 筆數</div><div class="stat" id="statPB">—</div></div>
@@ -65,7 +71,11 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 <div><label>項目</label><select id="pEvent"></select></div>
 <div><label>成績（秒）</label><input id="pSeconds" class="input" type="number" step="0.01" placeholder="63.74"></div>
 <div><label>日期</label><input id="pDate" class="input" type="date"></div>
-<div><label>賽事</label><input id="pMeet" class="input" placeholder="例如：2610 泳協北A2"></div>
+<div>
+  <label>賽事標籤</label>
+  <select id="pMeet" onchange="checkNewMeet(this)"></select>
+  <input id="pMeetCustom" class="input" style="display:none; margin-top:6px;" placeholder="請輸入新賽事名稱 (例如: 2610 泳協北A2)">
+</div>
 <div class="full"><label>備註</label><input id="pNote" class="input" placeholder="可選"></div>
 </div><div id="pMsg"></div><button class="btn primary" style="margin-top:15px;width:100%" onclick="submitPerformance()">儲存成績</button>
 </div></div>
@@ -78,6 +88,8 @@ const EVENT_ORDER = ["50自", "50仰", "50蛙", "50蝶", "100自", "100仰", "10
 const EVENTS={長池:["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","200混","200自","200蛙"],短池:["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","100混","200混","200自"]};
 let state={course:"長池", roster:DEMO_DATA.roster, pbs:DEMO_DATA.pbs, records:DEMO_DATA.records, user:null, online:false};
 let sb=null;
+
+let meetTags = ["2606 全國中正", "2604 夢想春季", "2604 全國小學", "2601 全國北A", "2601 新北市中", "2512 Xports", "2511 夢想冬季", "2509 全國北A", "2506 全國青年", "2412 Xports"];
 
 if(window.SUPABASE_CONFIG?.url && window.SUPABASE_CONFIG?.anonKey && !window.SUPABASE_CONFIG.url.includes("YOUR_")){
   sb=supabase.createClient(window.SUPABASE_CONFIG.url,window.SUPABASE_CONFIG.anonKey);
@@ -109,7 +121,6 @@ function render(){
    
    const currentRecords = (state.records || []).filter(r => r && r.course === state.course);
    
-   // 增強性別判斷邏輯，兼顧 男/女 與 男子組/女子組
    const maleRecords = sortRecords(currentRecords.filter(r => r.gender && (r.gender.includes("男") || r.gender === "M")));
    const femaleRecords = sortRecords(currentRecords.filter(r => r.gender && (r.gender.includes("女") || r.gender === "F")));
 
@@ -143,13 +154,9 @@ function renderPeople(){
    const rosterList = state.roster || [];
    const recordsList = state.records || [];
    
-   // 1. 過濾出有比賽成績的隊員
    const activeSwimmers = rosterList.filter(p => pbsList.length === 0 || pbsList.some(x => x.name === p.name || x.swimmer_name === p.name));
-   
-   // 2. 搜尋關鍵字過濾
    const arr = activeSwimmers.filter(x => !q || [x.name, x.school].filter(Boolean).join(" ").toLowerCase().includes(q));
    
-   // 3. 計算每位學員的隊史數量，並按照隊史數量「由多到少」排序
    const sortedArr = arr.map(p => {
      const ownedCount = recordsList.filter(x => x.holder === p.name || x.swimmer_name === p.name).length;
      return { ...p, ownedCount };
@@ -167,12 +174,36 @@ function renderPeople(){
 }
 
 function openPerson(name){
- const p=(state.roster||[]).find(x=>x.name===name)||{name};
- const pb=(state.pbs||[]).filter(x=>x.name===name||x.swimmer_name===name);
- const rec=(state.records||[]).filter(x=>x.holder===name||x.swimmer_name===name);
- document.getElementById("personTitle").textContent=`${name}｜個人紀錄`;
- const groups=["長池","短池"].map(c=>`<div class="card" style="margin:12px 0"><h3>${c} PB</h3>${pb.filter(x=>x.course===c).length?pb.filter(x=>x.course===c).map(x=>`<div class="record-row"><span>${esc(x.event)}</span><strong>${esc(x.display||fmt(x.seconds))}</strong></div>`).join(""):"<div class='muted'>尚無成績</div>"}</div>`).join("");
- document.getElementById("personBody").innerHTML=`<div class="card"><b>${esc(p.name)}</b><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")} · ${esc(p.grade||"")}</div></div>${rec.length?`<div class="notice">🏆 此選手目前保持 <b>${rec.length}</b> 項隊史紀錄</div>${rec.map(r=>`<div class="record-row"><span>${esc(r.course)} · ${esc(r.event)} · ${esc(r.gender)}</span><strong>${esc(r.display||fmt(r.seconds))}</strong></div>`).join("")}`:""}${groups}`;
+ const p = (state.roster||[]).find(x => x.name === name) || {name};
+ const pb = (state.pbs||[]).filter(x => x.name === name || x.swimmer_name === name);
+ const rec = (state.records||[]).filter(x => x.holder === name || x.swimmer_name === name);
+ 
+ document.getElementById("personTitle").textContent = `${name}｜個人紀錄`;
+ 
+ const groups = ["長池", "短池"].map(c => {
+   const cPbs = pb.filter(x => x.course === c);
+   const listHtml = cPbs.length ? cPbs.map(x => `
+     <div class="record-row" style="align-items: center;">
+       <div>
+         <div><b>${esc(x.event)}</b></div>
+         ${x.meet ? `<div class="muted small">${esc(x.meet)}</div>` : ''}
+       </div>
+       <strong>${esc(x.display || fmt(x.seconds))}</strong>
+     </div>
+   `).join("") : "<div class='muted'>尚無成績</div>";
+   
+   return `<div class="card" style="margin:12px 0"><h3>${c} PB</h3>${listHtml}</div>`;
+ }).join("");
+ 
+ document.getElementById("personBody").innerHTML = `
+   <div class="card">
+     <b>${esc(p.name)}</b>
+     <div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")} · ${esc(p.grade||"")}</div>
+   </div>
+   ${rec.length ? `<div class="notice">🏆 此選手目前保持 <b>${rec.length}</b> 項隊史紀錄</div>${rec.map(r => `<div class="record-row"><span>${esc(r.course)} · ${esc(r.event)} · ${esc(r.gender)}</span><strong>${esc(r.display||fmt(r.seconds))}</strong></div>`).join("")}` : ""}
+   ${groups}
+ `;
+ 
  document.getElementById("personModal").classList.add("show");
 }
 
@@ -188,10 +219,37 @@ function openLogin(){document.getElementById("loginModal").classList.add("show")
 function openPerformance(){if(!state.user)return openLogin();fillForms();document.getElementById("performanceModal").classList.add("show")}
 function closeModal(id){document.getElementById(id).classList.remove("show")}
 
+function fillMeetTags() {
+  const meetSelect = document.getElementById("pMeet");
+  if (!meetSelect) return;
+  const existingMeets = new Set(meetTags);
+  (state.pbs || []).forEach(x => { if(x.meet) existingMeets.add(x.meet); });
+  (state.records || []).forEach(x => { if(x.meet) existingMeets.add(x.meet); });
+  meetTags = Array.from(existingMeets);
+  let options = meetTags.map(m => `<option value="${esc(m)}">${esc(m)}</option>`).join("");
+  options += `<option value="__NEW__">＋ 新增賽事標籤...</option>`;
+  meetSelect.innerHTML = options;
+  document.getElementById("pMeetCustom").style.display = "none";
+}
+
+function checkNewMeet(selectEl) {
+  const customInput = document.getElementById("pMeetCustom");
+  if (selectEl.value === "__NEW__") {
+    customInput.style.display = "block";
+    customInput.focus();
+  } else {
+    customInput.style.display = "none";
+  }
+}
+
 function fillForms(){
  const activeSwimmers = (state.roster||[]).filter(p => (state.pbs||[]).some(x => x.name === p.name || x.swimmer_name === p.name));
  document.getElementById("pSwimmer").innerHTML=(activeSwimmers.length ? activeSwimmers : state.roster).map(p=>`<option value="${esc(p.name)}">${esc(p.name)}</option>`).join("");
- document.getElementById("pCourse").onchange=fillEvents; document.getElementById("pCourse").value=state.course; fillEvents();document.getElementById("pDate").value=new Date().toISOString().slice(0,10);
+ document.getElementById("pCourse").onchange=fillEvents; 
+ document.getElementById("pCourse").value=state.course; 
+ fillEvents();
+ fillMeetTags();
+ document.getElementById("pDate").value=new Date().toISOString().slice(0,10);
 }
 
 function fillEvents(){const c=document.getElementById("pCourse").value;document.getElementById("pEvent").innerHTML=EVENTS[c].map(x=>`<option>${x}</option>`).join("")}
@@ -210,19 +268,65 @@ async function loadCloud(){
  try{
   const [{data:sw},{data:perf},{data:rec}]=await Promise.all([sb.from("swimmers").select("*").order("name"),sb.from("performances").select("*"),sb.from("team_records").select("*")]);
   if(sw)state.roster=sw.map(x=>({name:x.name,gender:x.gender,school:x.school,grade:x.grade,birth:x.birth,note:x.note}));
-  if(perf)state.pbs=perf.map(x=>({name:x.swimmer_name,course:x.course,event:x.event,seconds:Number(x.seconds),display:fmt(x.seconds)}));
+  if(perf)state.pbs=perf.map(x=>({name:x.swimmer_name,course:x.course,event:x.event,seconds:Number(x.seconds),display:fmt(x.seconds),meet:x.meet}));
   if(rec)state.records=rec.map(x=>({course:x.course,gender:x.gender,event:x.event,holder:x.swimmer_name,seconds:Number(x.seconds),display:fmt(x.seconds),meet:x.meet}));
   render();
  }catch(e){console.error(e)}
 }
 
 async function submitPerformance(){
- const payload={swimmer_name:document.getElementById("pSwimmer").value,course:document.getElementById("pCourse").value,event:document.getElementById("pEvent").value,seconds:Number(document.getElementById("pSeconds").value),swim_date:document.getElementById("pDate").value,meet:document.getElementById("pMeet").value,note:document.getElementById("pNote").value};
+ let selectedMeet = document.getElementById("pMeet").value;
+ if (selectedMeet === "__NEW__") {
+   selectedMeet = document.getElementById("pMeetCustom").value.trim();
+   if (selectedMeet && !meetTags.includes(selectedMeet)) {
+     meetTags.push(selectedMeet);
+   }
+ }
+
+ const payload={
+   swimmer_name:document.getElementById("pSwimmer").value,
+   course:document.getElementById("pCourse").value,
+   event:document.getElementById("pEvent").value,
+   seconds:Number(document.getElementById("pSeconds").value),
+   swim_date:document.getElementById("pDate").value,
+   meet:selectedMeet,
+   note:document.getElementById("pNote").value
+ };
+
  if(!payload.seconds||payload.seconds<=0){document.getElementById("pMsg").innerHTML="<div class='notice error'>請輸入正確秒數。</div>";return}
  if(!sb){document.getElementById("pMsg").innerHTML="<div class='notice error'>尚未連接雲端資料庫。</div>";return}
  const {data,error}=await sb.rpc("record_performance",payload);
  document.getElementById("pMsg").innerHTML=error?`<div class='notice error'>${esc(error.message)}</div>`:`<div class='notice success'>${data?.message||"成績已儲存，PB／隊史已自動判定。"}</div>`;
  if(!error){await loadCloud();setTimeout(()=>closeModal("performanceModal"),800)}
+}
+
+function exportCSV() {
+  try {
+    let csvContent = "\uFEFF";
+    csvContent += "=== 鬍子泳隊 隊史紀錄 ===\n";
+    csvContent += "水道/池型,組別,項目,選手姓名,成績(秒),顯示成績,賽事名稱\n";
+    (state.records || []).forEach(r => {
+      csvContent += `"${r.course||''}","${r.gender||''}","${r.event||''}","${r.holder||r.swimmer_name||''}","${r.seconds||''}","${r.display||fmt(r.seconds)}","${r.meet||''}"\n`;
+    });
+    
+    csvContent += "\n=== 選手個人最佳紀錄 (PB) ===\n";
+    csvContent += "選手姓名,水道/池型,項目,成績(秒),顯示成績,賽事名稱\n";
+    (state.pbs || []).forEach(p => {
+      csvContent += `"${p.name||p.swimmer_name||''}","${p.course||''}","${p.event||''}","${p.seconds||''}","${p.display||fmt(p.seconds)}","${p.meet||''}"\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const today = new Date().toISOString().slice(0,10);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `鬍子泳隊_隊史與PB紀錄_${today}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (e) {
+    alert("匯出失敗：" + e.message);
+  }
 }
 
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{state.course=b.dataset.course;render()});
