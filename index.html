@@ -155,9 +155,7 @@ function sortRecords(arr){
   });
 }
 
-// 智慧前端動態計算 PB 與隊史紀錄
 function computeDerivedData(perfList, rosterList) {
-  // 1. 計算 PB：每個選手在每個 course + event 取秒數最小的一筆
   const pbMap = {};
   perfList.forEach(p => {
     const key = `${p.swimmer_name}_${p.course}_${p.event}`;
@@ -167,7 +165,6 @@ function computeDerivedData(perfList, rosterList) {
   });
   state.pbs = Object.values(pbMap);
 
-  // 2. 計算隊史紀錄：針對每個 course + gender + event 取秒數最小的一筆
   const recordMap = {};
   state.pbs.forEach(p => {
     const swimmer = rosterList.find(r => r.name === p.swimmer_name);
@@ -307,7 +304,7 @@ function openPerson(name){
  document.getElementById("personBody").innerHTML = `
    <div class="card">
      <b>${esc(p.name)}</b>
-     <div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")} · ${esc(p.grade||"")}</div>
+     <div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div>
    </div>
    ${recHtml}
    ${groups}
