@@ -17,7 +17,7 @@ main{max-width:1180px;margin:0 auto;padding:24px 16px 60px}.hero{display:flex;ju
 
 .record-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px;}
 .record-item-title{font-size:26px;font-weight:900;color:var(--accent2);line-height:1.1;}
-.meet-badge{background:#eef7fa;color:#075985;border:1px solid #bce2ef;border-radius:8px;padding:4px 8px;font-size:12px;font-weight:700;white-space:nowrap;}
+.meet-badge{background:#eef7fa;color:#075985;border:1px solid #bce2ef;border-radius:6px;padding:2px 6px;font-size:11px;font-weight:700;display:inline-block;}
 
 table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:16px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}th{background:#f4f7fa;color:#52657a;font-size:13px}td strong{font-size:18px}
 .searchbar{display:flex;gap:10px;margin:15px 0}.searchbar input{flex:1}.input,select{border:1px solid #d7dee8;background:#fff;border-radius:11px;padding:10px 12px;width:100%}
@@ -227,24 +227,45 @@ function openPerson(name){
      <div class="record-row" style="align-items: center;">
        <div>
          <div><b>${esc(x.event)}</b></div>
-         ${x.meet ? `<div class="meet-badge" style="display:inline-block; margin-top:4px;">${esc(x.meet)}</div>` : ''}
+         ${x.meet ? `<div class="meet-badge" style="margin-top:4px;">${esc(x.meet)}</div>` : ''}
        </div>
        <div style="display:flex;align-items:center;gap:10px;">
          <strong>${esc(x.display || fmt(x.seconds))}</strong>
-         ${state.user ? `<button class="btn ghost small-btn" onclick="event.stopPropagation(); editPerformance('${esc(x.name||x.swimmer_name)}','${esc(x.course)}','${esc(x.event)}','${x.seconds}','${esc(x.meet||'')}')">✏️ 修改</button>` : ''}
+         ${state.user ? `<button class="btn ghost small-btn" onclick="event.stopPropagation(); editPerformance('${esc(name)}','${esc(c)}','${esc(x.event)}','${x.seconds}','${esc(x.meet||'')}')">✏️ 修改</button>` : ''}
        </div>
      </div>
    `).join("") : "<div class='muted'>尚無成績</div>";
    
-   return `<div class="card" style="margin:12px 0"><h3>${c} PB</h3>${listHtml}</div>`;
+   let addBtnHtml = state.user ? `<button class="btn primary small-btn" onclick="event.stopPropagation(); openPerformanceForSwimmer('${esc(name)}','${esc(c)}')">＋ 新增成績</button>` : '';
+
+   return `
+     <div class="card" style="margin:12px 0">
+       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+         <h3 style="margin:0;">${c} PB</h3>
+         ${addBtnHtml}
+       </div>
+       ${listHtml}
+     </div>`;
  }).join("");
+ 
+ const recHtml = rec.length ? `
+   <div class="notice">🏆 此選手目前保持 <b>${rec.length}</b> 項隊史紀錄</div>
+   ${rec.map(r => `
+     <div class="record-row">
+       <div>
+         <div><b>${esc(r.course)} ·${esc(r.event)} · ${esc(r.gender)}</b></div>${r.meet ? `<div class="meet-badge" style="margin-top:4px;">${esc(r.meet)}</div>` : ''}
+       </div>
+       <strong>${esc(r.display||fmt(r.seconds))}</strong>
+     </div>
+   `).join("")}
+ ` : "";
  
  document.getElementById("personBody").innerHTML = `
    <div class="card">
      <b>${esc(p.name)}</b>
      <div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")} · ${esc(p.grade||"")}</div>
    </div>
-   ${rec.length ? `<div class="notice">🏆 此選手目前保持 <b>${rec.length}</b> 項隊史紀錄</div>${rec.map(r => `<div class="record-row"><span>${esc(r.course)} · ${esc(r.event)} · ${esc(r.gender)}</span><strong>${esc(r.display||fmt(r.seconds))}</strong></div>`).join("")}` : ""}
+   ${recHtml}
    ${groups}
  `;
  
@@ -264,6 +285,20 @@ function openPerformance(){
   if(!state.user)return openLogin();
   document.getElementById("perfModalTitle").textContent = "新增比賽成績";
   fillForms();
+  document.getElementById("performanceModal").classList.add("show");
+}
+
+function openPerformanceForSwimmer(swimmerName, course) {
+  if(!state.user) return openLogin();
+  fillForms();
+  document.getElementById("perfModalTitle").textContent = "新增比賽成績";
+  document.getElementById("pSwimmer").value = swimmerName;
+  document.getElementById("pSwimmer").disabled = false;
+  document.getElementById("pCourse").value = course;
+  document.getElementById("pCourse").disabled = false;
+  fillEvents();
+  document.getElementById("pEvent").disabled = false;
+  document.getElementById("pSeconds").value = "";
   document.getElementById("performanceModal").classList.add("show");
 }
 
