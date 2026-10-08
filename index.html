@@ -1624,6 +1624,14 @@ body::before{
  content:"";position:absolute;left:0;bottom:0;width:16px;height:11px;
  background:var(--suit);border-radius:0 0 5px 5px;
 }
+/* 自由式與蝶式泳者：連身泳衣 */
+.swimmer-one::after,.swimmer-three::after{
+  bottom:0;
+  height:27px;
+  background:var(--suit);
+  clip-path:polygon(15% 0,35% 0,35% 17%,65% 17%,65% 0,85% 0,100% 35%,85% 70%,100% 100%,0 100%,15% 70%,0 35%);
+  border-radius:5px 5px 6px 6px;
+}
 .swimmer-arm,.swimmer-leg{
  display:block;position:absolute;background:var(--skin);border-radius:5px;
  width:5px;transform-origin:2.5px 2.5px;
@@ -1640,7 +1648,7 @@ body::before{
 .leg-right{right:2px;}
 .record-hero .swimmer-one{top:11.5px;--stroke:1.4s;animation-duration:6s;animation-delay:-2s;}
 .record-hero .swimmer-two{top:63.5px;--stroke:2.1s;--suit:#d7685c;--skin:#e6af79;animation-duration:10s;animation-delay:-9s;}
-.record-hero .swimmer-three{top:115.5px;--stroke:1.7s;--suit:#efbd48;animation-duration:8s;animation-delay:-10s;}
+.record-hero .swimmer-three{top:115.5px;--stroke:1.7s;--suit:#c8521d;animation-duration:8s;animation-delay:-10s;}
 .record-hero .swimmer-four{top:167.5px;--stroke:2.5s;--suit:#8b79b1;--skin:#e8b58c;animation-duration:12s;animation-delay:-5s;}
 /* 自由式：兩手交替，屈肘回手，雙腿交替小踢 */
 .swimmer-one .arm-left{animation:free-left var(--stroke) ease-in-out infinite;}
