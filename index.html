@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>鬍子泳隊｜隊史紀錄資料庫 v2</title>
+<title>鬍子泳隊｜隊史紀錄資料庫</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#102033;--muted:#66758a;--line:#e4e9f0;--accent:#087ea4;--accent2:#075985;--gold:#c58b16;--danger:#b42318;--ok:#16794c;--shadow:0 10px 30px rgba(18,38,63,.08)}
@@ -21,7 +21,16 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 .modal{position:fixed;inset:0;background:#071624aa;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.show{display:flex}.modalbox{background:#fff;border-radius:20px;max-width:620px;width:100%;padding:22px;max-height:90vh;overflow:auto}.modalhead{display:flex;justify-content:space-between;align-items:center}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.notice{padding:12px;border-radius:12px;background:#eef8fb;color:#075985;margin:10px 0}.error{background:#fff0ef;color:var(--danger)}.success{background:#ecfdf3;color:var(--ok)}
 .admin{display:none}.admin.show{display:block}.small{font-size:12px}.record-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
 @media(max-width:850px){.grid{grid-template-columns:1fr 1fr}.people{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.hero{display:block}.hero h1{font-size:28px}.grid,.people{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.top{align-items:flex-start}.brand{font-size:18px}header{position:relative}}
+.record-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.meet-tag{display:inline-block;background:#e0f2fe;color:#075985;border:1px solid #bae6fd;border-radius:10px;padding:7px 10px;font-size:12px;font-weight:700;line-height:1.5;text-align:right;max-width:70%;overflow-wrap:anywhere}
+.record-card h2{margin:14px 0 8px}
+.person-record-count{display:inline-block;margin-top:12px;padding:6px 10px;border-radius:9px;background:#eef7fa;color:#075985}
+.person-add{margin:16px 0 4px;background:#087ea4!important;color:#fff!important;box-shadow:0 3px 10px #087ea425}
+.person-add:hover{background:#075985!important}
+.pb-meet{display:block;color:#075985;font-size:13px;line-height:1.6;margin-top:5px;overflow-wrap:anywhere}
+.record-row>span{min-width:0}.record-row>strong{flex-shrink:0}
 </style>
+
 </head>
 <body>
 <header><div class="top">
@@ -90,7 +99,7 @@ function render(){
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card"><div class="muted">${esc(ev)}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b><div style="margin-top:12px;font-weight:700">${esc(r.meet||"賽事未提供")}</div>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<span class="meet-tag">${esc(r.meet||"賽事未提供")}</span>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin();
 }
 function renderPeople(){
@@ -99,7 +108,7 @@ function renderPeople(){
  document.getElementById("people").innerHTML=arr.map(p=>{
    const n=state.pbs.filter(x=>x.name===p.name).length;
    const owned=state.records.filter(x=>x.holder===p.name).length;
-   return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><h3>${esc(p.name)}</h3><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div><div style="margin-top:12px"><b>${n}</b> 個 PB　🏆 <b>${owned}</b> 項隊史</div></div>`
+   return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><h3>${esc(p.name)}</h3><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div><div class="person-record-count">🏆 <b>${owned}</b> 項隊史</div></div>`
  }).join("")||`<div class="empty">找不到符合的隊員</div>`;
 }
 function openPerson(name){ currentPerson=name;
@@ -110,10 +119,10 @@ function openPerson(name){ currentPerson=name;
  const groups=["長池","短池"].map(c=>{
    const events=EVENTS[c];
    const rows=events.map(ev=>pb.find(x=>x.course===c&&x.event===ev)).filter(Boolean);
-   return `<div class="card" style="margin:12px 0"><h3>${c} PB</h3>${rows.length?rows.map(x=>`<div class="record-row"><span>${esc(x.event)}<div class="muted small">${esc(x.meet||"賽事未提供")}</div></span><strong>${esc(x.display||fmt(x.seconds))}</strong></div>`).join(""):"<div class='muted'>尚無成績</div>"}</div>`;
+   return `<div class="card" style="margin:12px 0"><h3>${c} PB</h3>${rows.length?rows.map(x=>`<div class="record-row"><span>${esc(x.event)}<span class="pb-meet">創下 PB 賽事：${esc(x.meet||"賽事未提供")}</span></span><strong>${esc(x.display||fmt(x.seconds))}</strong></div>`).join(""):"<div class='muted'>尚無成績</div>"}</div>`;
  }).join("");
  const recHtml=rec.length?`<div class="notice">🏆 此選手目前保持 <b>${rec.length}</b> 項隊史紀錄</div>${rec.map(r=>`<div class="record-row"><span>${esc(r.course)} · ${esc(r.event)} · ${esc(r.gender)}</span><strong>${esc(r.display||fmt(r.seconds))}</strong></div>`).join("")}`:"";
- document.getElementById("personBody").innerHTML=`<div class="card"><b>${esc(p.name)}</b><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div></div>${state.user?`<button class="btn" onclick="openPerformance(currentPerson)">新增選手成績／賽事</button>`:""}${recHtml}${groups}<h3>歷史成績</h3>${state.performances.filter(x=>x.swimmer_name===name).map(x=>`<div class="record-row"><span>${esc(x.course)} ${esc(x.event)}<div class="muted small">${esc(x.meet||"賽事未提供")} · ${esc(x.swim_date||"")}</div></span><strong>${esc(fmt(x.seconds))}</strong></div>`).join("")||"暫無成績"}`;
+ document.getElementById("personBody").innerHTML=`<div class="card"><b>${esc(p.name)}</b><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div></div>${state.user?`<button class="btn primary person-add" onclick="openPerformance(currentPerson)">新增選手成績／賽事</button>`:""}${recHtml}${groups}`;
  document.getElementById("personModal").classList.add("show");
 }
 function renderAdmin(){
@@ -186,6 +195,6 @@ async function deletePerformance(id){
  if(error){alert("刪除失敗："+error.message);return}
  await loadCloud();
 }
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{state.course=b.dataset.course;render()});document.getElementById("search").oninput=renderPeople;render();updateAuth();if(sb)loadCloud();
+document.getElementById("personModal").addEventListener("click",e=>{if(e.target===e.currentTarget)closeModal("personModal")});document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{state.course=b.dataset.course;render()});document.getElementById("search").oninput=renderPeople;render();updateAuth();if(sb)loadCloud();
 </script>
 </body></html>
