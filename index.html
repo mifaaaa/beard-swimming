@@ -1769,7 +1769,44 @@ body {
  .pool-decoration .swimmer-one .arm-right,
  .pool-decoration .swimmer-four .arm-right{transform:rotate(-88deg);}
 }
-
+/* 四條等寬水道：每條 52px，底色稍微加深 */
+.record-hero .pool-decoration{
+  height:208px;
+  background:
+    repeating-linear-gradient(90deg,#e36d61 0 9px,#fff9ed 9px 18px) 0 50px / 100% 4px no-repeat,
+    repeating-linear-gradient(90deg,#e36d61 0 9px,#fff9ed 9px 18px) 0 102px / 100% 4px no-repeat,
+    repeating-linear-gradient(90deg,#e36d61 0 9px,#fff9ed 9px 18px) 0 154px / 100% 4px no-repeat,
+    repeating-linear-gradient(91deg,transparent 0 18px,#68bdd640 18px 20px,transparent 20px 29px),
+    repeating-linear-gradient(1deg,transparent 0 15px,#68bdd640 15px 17px,transparent 17px 27px),
+    linear-gradient(135deg,#9edee980,#c9eef299);
+}
+/* 身體中心分別位於 26、78、130、182px */
+.record-hero .swimmer-one{
+  top:11.5px;
+  animation-duration:11s;
+  animation-delay:-2s;
+}
+.record-hero .swimmer-two{
+  top:63.5px;
+  animation-duration:18s;
+  animation-delay:-9s;
+}
+.record-hero .swimmer-three{
+  top:115.5px;
+  animation-duration:14s;
+  animation-delay:-10s;
+}
+.record-hero .swimmer-four{
+  top:167.5px;
+  animation-duration:22s;
+  animation-delay:-5s;
+}
+@media(max-width:850px) and (min-width:561px){
+  .record-hero .pool-decoration{
+    margin-top:-31.2px;
+    margin-bottom:-31.2px;
+  }
+}
 </style>
 
 </head>
