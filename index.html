@@ -492,8 +492,9 @@ button:focus-visible {
 .record-card {
   overflow: hidden;
   min-height: 250px;
-  display:flex;
-  flex-direction:column;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);
+  column-gap:12px;
   background: linear-gradient(135deg,#fff,#fbfdff);
 }
 
@@ -522,8 +523,8 @@ button:focus-visible {
 .record-card h2 {
   letter-spacing: -.045em;
   line-height: 1.25;
-  margin: 16px 0;
-  flex:1;
+  margin:0;
+  flex:none;
   display:flex;
   align-items:center;
   justify-content:flex-start;
@@ -931,7 +932,7 @@ select {
 
 @media(max-width:560px) {
   .record-card h2 {
-    margin-top: 15px;
+    margin-top:0;
   }
 }
 
@@ -1360,9 +1361,23 @@ header {
   white-space: nowrap;
 }
 
-.record-heading .record-meet {
-  max-width: 70%;
-  text-align: right;
+.record-left{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:flex-start;
+  min-width:0;
+  gap:18px;
+}
+.record-left>b{font-size:18px;font-weight:650;color:#4b6679;}
+.record-item{background:#fff3bf;color:#805b00;padding:6px 12px;border-radius:10px;font-size:18px;font-weight:700;}
+.record-card .record-meet {
+  align-self:end;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  min-width:0;
+  text-align:right;
 }
 
 .record-meet .meet-tag {
@@ -1370,7 +1385,7 @@ header {
 }
 
 .record-meet-date {
-  margin-top:10px;
+  margin:0 0 8px;
   font-size:18px;
   text-align:right;
   padding-right:4px;
@@ -1904,7 +1919,7 @@ function render()
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll("[data-course]").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted" style="background:#fff3bf;color:#805b00;padding:6px 12px;border-radius:10px;font-weight:700">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date${teamDateHasRange(r)?' date-range':''}">${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card"><div class="record-left"><div class="record-item">${esc(ev)}</div><h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b></div><div class="record-meet"><div class="muted small record-meet-date${teamDateHasRange(r)?' date-range':''}">${esc(teamDate(r))}</div><span class="meet-tag">${esc(recordMeetLabel(r))}</span></div></div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin(); syncPageTabs();
 }
 function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
@@ -2228,7 +2243,11 @@ function teamDateBounds(r){
 function teamDateHasRange(r){const {start,end}=teamDateBounds(r);return Boolean(start&&end&&start!==end);}
 function teamDate(r){
  const {start,end}=teamDateBounds(r);
- if(start)return end&&end!==start?`${start} ～ ${end}`:start;
+ if(start){
+  if(!end||end===start)return start;
+  const shortEnd=start.slice(0,7)===end.slice(0,7)?end.slice(8):start.slice(0,4)===end.slice(0,4)?end.slice(5):end;
+  return `${start}~${shortEnd}`;
+ }
  return r.record_year_month||(r.record_edition_year?`${r.record_edition_year} 年（日期待補）`:'日期待補');
 }
 async function deleteEditingPerformance(){
