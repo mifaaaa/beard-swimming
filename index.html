@@ -6,12 +6,11 @@
 <title>鬍子泳隊｜隊史紀錄資料庫</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* 插畫感泳池水面 */
+/* 淡藍色手繪泳池格線 */
 body{
-  background-color:#75cfe7;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='360' viewBox='0 0 480 360'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M-40 70 Q30 20 100 70 T240 70 T380 70 T520 70' stroke='%2338afd3' stroke-width='24'/%3E%3Cpath d='M-60 235 Q15 185 90 235 T240 235 T390 235 T540 235' stroke='%234dbddd' stroke-width='32'/%3E%3Cpath d='M20 115 Q45 92 78 106 M110 125 Q145 148 175 123 M255 112 Q285 90 318 105 M355 130 Q390 150 428 122' stroke='%23eafaff' stroke-width='10'/%3E%3Cpath d='M-15 295 Q25 272 62 293 M125 280 Q155 303 192 282 M260 300 Q294 272 330 290 M395 278 Q425 302 465 280' stroke='%23eafaff' stroke-width='8'/%3E%3Cpath d='M55 175 Q82 152 108 174 M205 190 Q233 166 260 188 M365 180 Q393 155 420 176' stroke='%23b8edf6' stroke-width='6'/%3E%3C/g%3E%3C/svg%3E");
-  background-size:480px 360px;
+  background-color:#e9f8fc;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='144'%3E%3Cdefs%3E%3Cpattern id='tiles' width='12' height='12' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 1 Q6 0 12 1 M1 0 Q0 6 1 12' fill='none' stroke='%2382cfe5' stroke-width='1.4' opacity='.7'/%3E%3C/pattern%3E%3Cfilter id='hand'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.035' numOctaves='2' seed='7' result='noise'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='noise' scale='2.5' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='144' height='144' fill='url(%23tiles)' filter='url(%23hand)'/%3E%3C/svg%3E");
+  background-size:144px 144px;
 }
 
 /* 隊史卡片接近白色，文字仍清楚 */
