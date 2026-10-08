@@ -256,7 +256,7 @@ function render()
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted" style="background:#fff3bf;color:#805b00;padding:6px 12px;border-radius:10px;font-weight:700">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date">｜${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted" style="background:#fff3bf;color:#805b00;padding:6px 12px;border-radius:10px;font-weight:700">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date">${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin();
 }
 function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
@@ -561,7 +561,14 @@ function actualPerformanceDate(p){
  if(!m?.start_date&&editionYear(m||{})&&Number(p.swim_date.slice(0,4))!==editionYear(m))return '';
  return p.swim_date;
 }
-function performanceDate(p){return actualPerformanceDate(p)||'破紀錄日期待補';}
+function performanceDate(p){
+  const meet=(state.allMeets||[]).find(m=>m.name===p.meet);
+  return actualPerformanceDate(p)
+    ||meet?.start_date
+    ||meet?.meet_date
+    ||meet?.year_month
+    ||'日期待補';
+}
 function teamDate(r){return r.record_date||r.record_start_date||r.record_year_month||(r.record_edition_year?`${r.record_edition_year} 年（日期待補）`:'日期待補');}
 async function deleteEditingPerformance(){
  if(!state.coach||!sb)return openLogin();const p=state.performances.find(r=>r.id===editingPbId);if(!p)return;
