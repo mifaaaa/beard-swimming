@@ -491,7 +491,9 @@ button:focus-visible {
 
 .record-card {
   overflow: hidden;
-  min-height: 157px;
+  min-height: 250px;
+  display:flex;
+  flex-direction:column;
   background: linear-gradient(135deg,#fff,#fbfdff);
 }
 
@@ -520,7 +522,12 @@ button:focus-visible {
 .record-card h2 {
   letter-spacing: -.045em;
   line-height: 1.25;
-  margin: 20px 0 7px;
+  margin: 16px 0;
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  text-align:left;
   font-variant-numeric: tabular-nums;
   font-weight: 850;
 }
@@ -917,7 +924,7 @@ select {
 
 @media(max-width:560px) {
   .record-card {
-    min-height: 140px;
+    min-height: 230px;
     padding: 18px 20px;
   }
 }
@@ -1295,7 +1302,7 @@ header {
 }
 
 .record-card h2 {
-  font-size: 26px;
+  font-size: 46px;
 }
 
 .year-grid {
@@ -1363,12 +1370,16 @@ header {
 }
 
 .record-meet-date {
-  margin-top: 7px;
-  font-size: 18px;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-  padding-right: 4px;
+  margin-top:10px;
+  font-size:18px;
+  text-align:right;
+  padding-right:4px;
+  line-height:1.5;
 }
+.record-meet-date.date-range {
+  font-size:14px;
+}
+
 
 #auditList {
   max-height: 380px;
@@ -2051,7 +2062,7 @@ function render()
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll("[data-course]").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted" style="background:#fff3bf;color:#805b00;padding:6px 12px;border-radius:10px;font-weight:700">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date">${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2 style="text-align:center;font-size:40px">${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted" style="background:#fff3bf;color:#805b00;padding:6px 12px;border-radius:10px;font-weight:700">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date${teamDateHasRange(r)?' date-range':''}">${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin(); syncPageTabs();
 }
 function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
@@ -2368,7 +2379,16 @@ function performanceDate(p){
     ||meet?.year_month
     ||'日期待補';
 }
-function teamDate(r){return r.record_date||r.record_start_date||r.record_year_month||(r.record_edition_year?`${r.record_edition_year} 年（日期待補）`:'日期待補');}
+function teamDateBounds(r){
+ const meet=(state.allMeets||[]).find(m=>m.name===r.meet);
+ return {start:meet?.start_date||meet?.meet_date||r.record_start_date,end:meet?.end_date||meet?.meet_date||r.record_end_date};
+}
+function teamDateHasRange(r){const {start,end}=teamDateBounds(r);return Boolean(start&&end&&start!==end);}
+function teamDate(r){
+ const {start,end}=teamDateBounds(r);
+ if(start)return end&&end!==start?`${start} ～ ${end}`:start;
+ return r.record_year_month||(r.record_edition_year?`${r.record_edition_year} 年（日期待補）`:'日期待補');
+}
 async function deleteEditingPerformance(){
  if(!state.coach||!sb)return openLogin();const p=state.performances.find(r=>r.id===editingPbId);if(!p)return;
  if(!confirm(`刪除這筆成績？\n${p.swimmer_name}｜${p.course} ${p.event}｜${fmt(p.seconds)}\nPB與隊史將依其他歷史成績重新判斷。`))return;
