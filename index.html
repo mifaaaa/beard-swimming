@@ -1403,7 +1403,103 @@ body {
   background-image: repeating-linear-gradient( 91deg, transparent 0 7px, #8bd2e580 7px 8.5px, transparent 8.5px 12px, #a4deed70 12px 13px, transparent 13px 23px ), repeating-linear-gradient( 1deg, transparent 0 9px, #8bd2e580 9px 10.5px, transparent 10.5px 17px, #a4deed70 17px 18px, transparent 18px 25px );
 }
 
-  
+ /* 隊史標題右側：純 CSS 俯視泳池插畫 */
+.record-hero{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 280px;
+  align-items:center;
+  column-gap:24px;
+}
+.record-hero>div:first-child{grid-column:1;grid-row:1 / span 2;}
+.record-hero>#dbStatus{grid-column:2;grid-row:2;justify-self:end;}
+.pool-decoration{
+  position:relative;
+  grid-column:2;
+  grid-row:1;
+  width:280px;
+  height:115px;
+  overflow:hidden;
+  pointer-events:none;
+  border-radius:48% 42% 46% 39%;
+  background:
+    radial-gradient(ellipse at 30% 40%,#e6f9fb99,transparent 65%),
+    linear-gradient(150deg,#72cbdc66,#c5eef299);
+}
+.pool-ripple{
+  position:absolute;
+  width:82px;
+  height:31px;
+  border:2px solid #fcffff99;
+  border-radius:45% 55% 43% 57%;
+  transform:rotate(-12deg);
+}
+.ripple-one{left:18px;top:25px;box-shadow:0 8px 0 -6px #3999b766;}
+.ripple-two{right:15px;bottom:17px;transform:rotate(12deg);}
+.pool-ring{
+  position:absolute;
+  width:27px;
+  height:24px;
+  border:7px solid #e890b0;
+  border-radius:48%;
+  box-shadow:1px 3px 0 #4299ad44;
+  transform:rotate(-18deg);
+}
+.ring-pink{left:29px;bottom:15px;}
+.ring-yellow{right:35px;top:16px;border-color:#f1ca59;transform:rotate(15deg);}
+.pool-swimmer{
+  --skin:#ebbd88;
+  --suit:#255d78;
+  position:absolute;
+  width:16px;
+  height:29px;
+  background:var(--skin);
+  border-radius:45% 45% 35% 35%;
+}
+.pool-swimmer::before{
+  content:"";
+  position:absolute;
+  left:3px;
+  top:-11px;
+  width:10px;
+  height:11px;
+  background:linear-gradient(#193847 0 35%,var(--skin) 35%);
+  border-radius:50%;
+}
+.pool-swimmer::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:16px;
+  height:11px;
+  background:var(--suit);
+  border-radius:0 0 5px 5px;
+}
+.swimmer-arm,.swimmer-leg{
+  position:absolute;
+  display:block;
+  background:var(--skin);
+  border-radius:8px;
+}
+.swimmer-arm{top:4px;width:25px;height:5px;}
+.arm-left{left:-20px;transform:rotate(35deg);transform-origin:right;}
+.arm-right{right:-20px;transform:rotate(-35deg);transform-origin:left;}
+.swimmer-leg{top:26px;width:5px;height:24px;}
+.leg-left{left:2px;transform:rotate(8deg);}
+.leg-right{right:2px;transform:rotate(-9deg);}
+.swimmer-one{left:82px;top:37px;transform:rotate(-42deg);}
+.swimmer-two{left:149px;top:39px;transform:rotate(25deg);--suit:#d7685c;--skin:#e6af79;}
+.swimmer-three{left:217px;top:52px;transform:rotate(73deg);--suit:#efbd48;}
+@media(max-width:850px){
+  .record-hero{grid-template-columns:minmax(0,1fr) 210px;column-gap:14px;}
+  .pool-decoration{width:280px;transform:scale(.75);transform-origin:right center;margin-left:-70px;}
+}
+@media(max-width:560px){
+  .record-hero{grid-template-columns:minmax(0,1fr) 100px;column-gap:8px;}
+  .record-hero>div:first-child{grid-row:1;}
+  .pool-decoration{transform:scale(.36);margin-left:-180px;height:115px;}
+  .record-hero>#dbStatus{grid-column:1 / -1;grid-row:2;margin-top:8px;}
+} 
 </style>
 
 </head>
@@ -1413,7 +1509,24 @@ body {
 <div id="authArea"><button class="btn" onclick="openLogin()">教練登入</button></div>
 </div></header>
 <main>
-<section class="hero"><div><div class="eyebrow">Beard Swimming ✨</div><h1>隊史紀錄</h1><p>每一秒都值得被記住。速度會變，紀錄會留下。</p></div><div id="dbStatus" class="muted small"></div></section>
+ <section class="hero record-hero"><div><div class="eyebrow">Beard Swimming ✨</div><h1>隊史紀錄</h1><p>每一秒都值得被記住。速度會變，紀錄會留下。</p></div><div class="pool-decoration" aria-hidden="true">
+  <span class="pool-ripple ripple-one"></span>
+  <span class="pool-ripple ripple-two"></span>
+  <span class="pool-ring ring-pink"></span>
+  <span class="pool-ring ring-yellow"></span>
+  <span class="pool-swimmer swimmer-one">
+    <i class="swimmer-arm arm-left"></i><i class="swimmer-arm arm-right"></i>
+    <i class="swimmer-leg leg-left"></i><i class="swimmer-leg leg-right"></i>
+  </span>
+  <span class="pool-swimmer swimmer-two">
+    <i class="swimmer-arm arm-left"></i><i class="swimmer-arm arm-right"></i>
+    <i class="swimmer-leg leg-left"></i><i class="swimmer-leg leg-right"></i>
+  </span>
+  <span class="pool-swimmer swimmer-three">
+    <i class="swimmer-arm arm-left"></i><i class="swimmer-arm arm-right"></i>
+    <i class="swimmer-leg leg-left"></i><i class="swimmer-leg leg-right"></i>
+  </span>
+</div><div id="dbStatus" class="muted small"></div></section>
 <div class="records-toolbar"><div class="tabs"><button class="tab active" data-course="長池">長池 50m</button><button class="tab" data-course="短池">短池 25m</button></div>
 <div class="exportbar coach-only" hidden><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><div id="recordsView"></div>
 
