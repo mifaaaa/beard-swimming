@@ -206,4 +206,221 @@ function renderPeople(){
    const peopleEl = document.getElementById("people");
    if(peopleEl) {
      peopleEl.innerHTML = sortedArr.map(p => {
-       return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><h3>${esc(p
+       return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><h3>${esc(p.name)}</h3><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div><div style="margin-top:12px">🏆 <b>${p.ownedCount}</b> 項隊史紀錄</div></div>`;
+     }).join("") || `<div class="empty">找不到符合條件的比賽隊員</div>`;
+   }
+ } catch(e) {
+   console.error("People Render Error:", e);
+ }
+}
+
+function openPerson(name){
+ const p = (state.roster||[]).find(x => x.name === name) || {name};
+ const pb = (state.pbs||[]).filter(x => x.name === name || x.swimmer_name === name);
+ const rec = (state.records||[]).filter(x => x.holder === name || x.swimmer_name === name);
+ 
+ document.getElementById("personTitle").textContent = `${name}｜個人紀錄`;
+ 
+ const groups = ["長池", "短池"].map(c => {
+   const cPbs = pb.filter(x => x.course === c);
+   const listHtml = cPbs.length ? cPbs.map(x => `
+     <div class="record-row" style="align-items: center;">
+       <div>
+         <div><b>${esc(x.event)}</b></div>
+         ${x.meet ? `<div class="meet-badge" style="display:inline-block; margin-top:4px;">${esc(x.meet)}</div>` : ''}
+       </div>
+       <div style="display:flex;align-items:center;gap:10px;">
+         <strong>${esc(x.display || fmt(x.seconds))}</strong>
+         ${state.user ? `<button class="btn ghost small-btn" onclick="event.stopPropagation(); editPerformance('${esc(x.name||x.swimmer_name)}','${esc(x.course)}','${esc(x.event)}','${x.seconds}','${esc(x.meet||'')}')">✏️ 修改</button>` : ''}
+       </div>
+     </div>
+   `).join("") : "<div class='muted'>尚無成績</div>";
+   
+   return `<div class="card" style="margin:12px 0"><h3>${c} PB</h3>${listHtml}</div>`;
+ }).join("");
+ 
+ document.getElementById("personBody").innerHTML = `
+   <div class="card">
+     <b>${esc(p.name)}</b>
+     <div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")} · ${esc(p.grade||"")}</div>
+   </div>
+   ${rec.length ? `<div class="notice">🏆 此選手目前保持 <b>${rec.length}</b> 項隊史紀錄</div>${rec.map(r => `<div class="record-row"><span>${esc(r.course)} · ${esc(r.event)} · ${esc(r.gender)}</span><strong>${esc(r.display||fmt(r.seconds))}</strong></div>`).join("")}` : ""}
+   ${groups}
+ `;
+ 
+ document.getElementById("personModal").classList.add("show");
+}
+
+function renderAdmin(){
+ const activeSwimmersCount = (state.roster||[]).filter(p => p.name !== "鄧丞勛" && (state.pbs||[]).some(x => x.name === p.name || x.swimmer_name === p.name)).length;
+ if(document.getElementById("statPeople")) document.getElementById("statPeople").textContent=activeSwimmersCount;
+ if(document.getElementById("statPB")) document.getElementById("statPB").textContent=(state.pbs||[]).length;
+ if(document.getElementById("statRecords")) document.getElementById("statRecords").textContent=(state.records||[]).length;
+ if(document.getElementById("recent")) document.getElementById("recent").innerHTML="<div class='muted'>登入後新增的成績會顯示在這裡。</div>";
+}
+
+function openLogin(){document.getElementById("loginModal").classList.add("show")}
+function openPerformance(){
+  if(!state.user)return openLogin();
+  document.getElementById("perfModalTitle").textContent = "新增比賽成績";
+  fillForms();
+  document.getElementById("performanceModal").classList.add("show");
+}
+
+function editPerformance(swimmer, course, event, seconds, meet) {
+  if(!state.user) return openLogin();
+  fillForms();
+  document.getElementById("perfModalTitle").textContent = "修改比賽成績";
+  document.getElementById("pSwimmer").value = swimmer;
+  document.getElementById("pSwimmer").disabled = true;
+  document.getElementById("pCourse").value = course;
+  document.getElementById("pCourse").disabled = true;
+  fillEvents();
+  document.getElementById("pEvent").value = event;
+  document.getElementById("pEvent").disabled = true;
+  document.getElementById("pSeconds").value = seconds;
+  document.getElementById("pMeet").value = meet || "";
+  document.getElementById("performanceModal").classList.add("show");
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove("show");
+  if(id === 'performanceModal') {
+    document.getElementById("pSwimmer").disabled = false;
+    document.getElementById("pCourse").disabled = false;
+    document.getElementById("pEvent").disabled = false;
+  }
+}
+
+function fillMeetTags() {
+  const meetSelect = document.getElementById("pMeet");
+  if (!meetSelect) return;
+  const existingMeets = new Set(meetTags);
+  (state.pbs || []).forEach(x => { if(x.meet) existingMeets.add(x.meet); });
+  (state.records || []).forEach(x => { if(x.meet) existingMeets.add(x.meet); });
+  meetTags = Array.from(existingMeets);
+  let options = meetTags.map(m => `<option value="${esc(m)}">${esc(m)}</option>`).join("");
+  options += `<option value="__NEW__">＋ 新增賽事標籤...</option>`;
+  meetSelect.innerHTML = options;
+  document.getElementById("pMeetCustom").style.display = "none";
+}
+
+function checkNewMeet(selectEl) {
+  const customInput = document.getElementById("pMeetCustom");
+  if (selectEl.value === "__NEW__") {
+    customInput.style.display = "block";
+    customInput.focus();
+  } else {
+    customInput.style.display = "none";
+  }
+}
+
+function fillForms(){
+ const activeSwimmers = (state.roster||[]).filter(p => p.name !== "鄧丞勛" && (state.pbs||[]).some(x => x.name === p.name || x.swimmer_name === p.name));
+ document.getElementById("pSwimmer").innerHTML=(activeSwimmers.length ? activeSwimmers : state.roster.filter(p=>p.name!=="鄧丞勛")).map(p=>`<option value="${esc(p.name)}">${esc(p.name)}</option>`).join("");
+ document.getElementById("pCourse").onchange=fillEvents; 
+ document.getElementById("pCourse").value=state.course; 
+ fillEvents();
+ fillMeetTags();
+ document.getElementById("pDate").value=new Date().toISOString().slice(0,10);
+ document.getElementById("pSeconds").value = "";
+ document.getElementById("pMsg").innerHTML = "";
+}
+
+function fillEvents(){const c=document.getElementById("pCourse").value;document.getElementById("pEvent").innerHTML=EVENTS[c].map(x=>`<option>${x}</option>`).join("")}
+
+async function login(){
+ if(!sb){document.getElementById("loginMsg").innerHTML="<div class='notice error'>尚未設定 Supabase。</div>";return}
+ const email=document.getElementById("loginEmail").value,password=document.getElementById("loginPassword").value;
+ const {error}=await sb.auth.signInWithPassword({email,password});
+ document.getElementById("loginMsg").innerHTML=error?`<div class='notice error'>${esc(error.message)}</div>`:"<div class='notice success'>登入成功</div>";
+ if(!error)setTimeout(()=>closeModal("loginModal"),500);
+}
+
+async function logout(){if(sb)await sb.auth.signOut();state.user=null;updateAuth();render();}
+
+async function loadCloud(){
+ try{
+  if(sb) {
+    const [{data:sw},{data:perf},{data:rec}]=await Promise.all([sb.from("swimmers").select("*").order("name"),sb.from("performances").select("*"),sb.from("team_records").select("*")]);
+    if(sw)state.roster=sw.map(x=>({name:x.name,gender:x.gender,school:x.school,grade:x.grade,birth:x.birth,note:x.note}));
+    if(perf)state.pbs=perf.map(x=>({name:x.swimmer_name,course:x.course,event:x.event,seconds:Number(x.seconds),display:fmt(x.seconds),meet:x.meet}));
+    if(rec)state.records=rec.map(x=>({course:x.course,gender:x.gender,event:x.event,holder:x.swimmer_name,seconds:Number(x.seconds),display:fmt(x.seconds),meet:x.meet}));
+  } else {
+    state.pbs = DEMO_DATA.pbs.filter(x => x.name !== "鄧丞勛");
+    state.records = DEMO_DATA.records;
+  }
+  render();
+ }catch(e){console.error(e)}
+}
+
+async function submitPerformance(){
+ let selectedMeet = document.getElementById("pMeet").value;
+ if (selectedMeet === "__NEW__") {
+   selectedMeet = document.getElementById("pMeetCustom").value.trim();
+   if (selectedMeet && !meetTags.includes(selectedMeet)) {
+     meetTags.push(selectedMeet);
+   }
+ }
+
+ let rawSeconds = document.getElementById("pSeconds").value;
+ let secondsVal = parseSeconds(rawSeconds);
+
+ const payload={
+   swimmer_name:document.getElementById("pSwimmer").value,
+   course:document.getElementById("pCourse").value,
+   event:document.getElementById("pEvent").value,
+   seconds:secondsVal,
+   swim_date:document.getElementById("pDate").value,
+   meet:selectedMeet,
+   note:document.getElementById("pNote").value
+ };
+
+ if(!payload.seconds||payload.seconds<=0){document.getElementById("pMsg").innerHTML="<div class='notice error'>請輸入正確秒數或格式。</div>";return}
+ if(!sb){document.getElementById("pMsg").innerHTML="<div class='notice error'>尚未連接雲端資料庫。</div>";return}
+
+ const {error}=await sb.from("performances").upsert([payload], { onConflict: 'swimmer_name,course,event' });
+ 
+ document.getElementById("pMsg").innerHTML=error?`<div class='notice error'>${esc(error.message)}</div>`:`<div class='notice success'>成績已儲存成功！</div>`;
+ if(!error){
+   await loadCloud();
+   setTimeout(()=>closeModal("performanceModal"),800);
+ }
+}
+
+function exportCSV() {
+  try {
+    let csvContent = "\uFEFF";
+    csvContent += "=== 鬍子泳隊 隊史紀錄 ===\n";
+    csvContent += "水道/池型,組別,項目,選手姓名,成績(秒),顯示成績,賽事名稱\n";
+    (state.records || []).forEach(r => {
+      csvContent += `"${r.course||''}","${r.gender||''}","${r.event||''}","${r.holder||r.swimmer_name||''}","${r.seconds||''}","${r.display||fmt(r.seconds)}","${r.meet||''}"\n`;
+    });
+    
+    csvContent += "\n=== 選手個人最佳紀錄 (PB) ===\n";
+    csvContent += "選手姓名,水道/池型,項目,成績(秒),顯示成績,賽事名稱\n";
+    (state.pbs || []).forEach(p => {
+      csvContent += `"${p.name||p.swimmer_name||''}","${p.course||''}","${p.event||''}","${p.seconds||''}","${p.display||fmt(p.seconds)}","${p.meet||''}"\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const today = new Date().toISOString().slice(0,10);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `鬍子泳隊_隊史與PB紀錄_${today}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (e) {
+    alert("匯出失敗：" + e.message);
+  }
+}
+
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{state.course=b.dataset.course;render()});
+const searchInput = document.getElementById("search");
+if(searchInput) searchInput.oninput=renderPeople;
+
+render();updateAuth();
+</script>
+</body></html>
