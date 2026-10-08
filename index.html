@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>鬍子泳隊｜隊史紀錄資料庫</title>
+<title>鬍子泳隊資料庫</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -1397,11 +1397,29 @@ header {
   white-space: normal;
 }
 
-/* 泳池格線背景（純 CSS，不使用圖片） */
-body {
+/* 背景固定於螢幕，切換內容長度時格紋不會重新位移 */
+html{background:#edf9fc;scrollbar-gutter:stable;}
+body{background:transparent;isolation:isolate;}
+body::before{
+ content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+
   background-color: #edf9fc;
   background-image: repeating-linear-gradient( 91deg, transparent 0 7px, #8bd2e580 7px 8.5px, transparent 8.5px 12px, #a4deed70 12px 13px, transparent 13px 23px ), repeating-linear-gradient( 1deg, transparent 0 9px, #8bd2e580 9px 10.5px, transparent 10.5px 17px, #a4deed70 17px 18px, transparent 18px 25px );
+
 }
+#recordsPage,#peopleSection,#adminPanel{overflow-anchor:none;}
+#recordsPage[hidden],#peopleSection[hidden],#adminPanel[hidden]{display:none!important;}
+.page-tabs{margin:0 0 24px;flex-wrap:wrap;}
+.records-toolbar{flex-wrap:wrap;}
+.gender-tabs{flex-wrap:wrap;}
+#peopleSection,#adminPanel{margin-top:0!important;padding-top:0;}
+@media(max-width:560px){
+ .page-tabs{display:flex;width:100%;gap:4px;padding:5px;}
+ .page-tabs .tab{flex:1;padding:10px 5px;font-size:13px;white-space:nowrap;}
+ .records-toolbar{display:flex;flex-direction:column;align-items:flex-start;gap:12px;}
+ .gender-tabs .tab{font-size:14px;}
+}
+
 
 /* 隊史標題右側：純 CSS 俯視泳池插畫 */
 .record-hero{
@@ -1826,10 +1844,16 @@ body {
 </head>
 <body>
 <header><div class="top">
-<div><div class="brand">鬍子泳隊｜隊史紀錄資料庫</div></div>
+<div><div class="brand">鬍子泳隊資料庫</div></div>
 <div id="authArea"><button class="btn" onclick="openLogin()">教練登入</button></div>
 </div></header>
 <main>
+<nav class="tabs page-tabs" aria-label="資料庫頁面">
+<button class="tab active" data-page="records" onclick="switchPage('records')">隊史紀錄</button>
+<button class="tab coach-only" hidden data-page="people" onclick="switchPage('people')">🐬 隊員資料庫</button>
+<button class="tab coach-only" hidden data-page="admin" onclick="switchPage('admin')">🧢 教練編輯區</button>
+</nav>
+<section id="recordsPage">
  <section class="hero record-hero"><div><div class="eyebrow">Beard Swimming ✨</div><h1>隊史紀錄</h1></div><div class="pool-decoration" aria-hidden="true">
   <span class="pool-ripple ripple-one"></span>
   <span class="pool-ripple ripple-two"></span>
@@ -1852,9 +1876,13 @@ body {
  <i class="swimmer-leg leg-left"></i><i class="swimmer-leg leg-right"></i>
 </span>
 </div><div id="dbStatus" class="muted small"></div></section>
-<div class="records-toolbar"><div class="tabs"><button class="tab active" data-course="長池">長池 50m</button><button class="tab" data-course="短池">短池 25m</button></div>
+<div class="records-toolbar"><div class="tabs"><button class="tab active" data-course="長池">長池 50m</button><button class="tab" data-course="短池">短池 25m</button></div><div class="tabs gender-tabs" aria-label="隊史性別">
+<button class="tab active" data-gender="男" onclick="switchGender('男')">隊史紀錄（男）</button>
+<button class="tab" data-gender="女" onclick="switchGender('女')">隊史紀錄（女）</button>
+</div>
 <div class="exportbar coach-only" hidden><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><div id="recordsView"></div>
 
+</section>
 <section id="peopleSection" class="people-section coach-only" hidden style="margin-top:34px"><div class="hero"><div><h2>🐬 隊員資料庫</h2><p>點選隊員查看個人最佳紀錄與隊史保持項目。</p></div></div>
 <div id="people" class="people"></div></section>
 
@@ -1898,7 +1926,7 @@ body {
 <script src="config.js"></script>
 <script>
 const EVENTS={"長池":["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","200自","200混","200仰","200蛙","200蝶","400自"],"短池":["50自","50仰","50蛙","50蝶","100自","100混","100仰","100蛙","100蝶","200自","200混"]};
-let state={course:"長池",roster:[],pbs:[],records:[],performances:[],meets:[],allMeets:[],audit:[],auditMore:false,admin:false,user:null,coach:false,online:false};
+let state={page:"records",gender:"男",course:"長池",roster:[],pbs:[],records:[],performances:[],meets:[],allMeets:[],audit:[],auditMore:false,admin:false,user:null,coach:false,online:false};
 let currentPerson=null;
 let sb=null;
 if(window.SUPABASE_CONFIG?.url && window.SUPABASE_CONFIG?.anonKey && !window.SUPABASE_CONFIG.url.includes("YOUR_")){
@@ -1976,18 +2004,39 @@ async function exportExcel(kind){ if(!state.coach)return openLogin();
 
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function fmt(sec){sec=Number(sec);if(!Number.isFinite(sec))return "—";if(sec>=60){let m=Math.floor(sec/60);return String(m).padStart(2,"0")+":"+String((sec-m*60).toFixed(2)).padStart(5,"0")}return sec.toFixed(2)}
+function syncPageTabs(){
+ if(!state.coach&&state.page!=='records')state.page='records';
+ document.getElementById('recordsPage').hidden=state.page!=='records';
+ document.getElementById('peopleSection').hidden=!state.coach||state.page!=='people';
+ document.getElementById('adminPanel').hidden=!state.coach||state.page!=='admin';
+ document.querySelectorAll('[data-page]').forEach(b=>{
+   b.classList.toggle('active',b.dataset.page===state.page);
+   b.setAttribute('aria-pressed',String(b.dataset.page===state.page));
+ });
+ document.querySelectorAll('[data-gender]').forEach(b=>{
+   b.classList.toggle('active',b.dataset.gender===state.gender);
+   b.setAttribute('aria-pressed',String(b.dataset.gender===state.gender));
+ });
+}
+function switchPage(page){
+ if(page!=='records'&&!state.coach)return openLogin();
+ state.page=page;syncPageTabs();
+ if(page==='admin')requestAnimationFrame(fitScrollLists);
+}
+function switchGender(gender){state.gender=gender;render();}
+
 function updateAuth(){
  document.getElementById("authArea").innerHTML=state.user?'<button class="btn" onclick="logout()">登出 👋</button>':'<button class="btn" onclick="openLogin()">教練登入 🔑</button>';
  document.querySelectorAll(".coach-only").forEach(el=>el.hidden=!state.coach);
- document.getElementById("adminPanel").classList.toggle("show",state.coach);document.getElementById("adminAuditPanel").hidden=!state.admin;
+ document.getElementById("adminPanel").classList.toggle("show",state.coach);document.getElementById("adminAuditPanel").hidden=!state.admin;syncPageTabs();
 }
 function render()
 {
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
- document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
+ document.querySelectorAll("[data-course]").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted" style="background:#fff3bf;color:#805b00;padding:6px 12px;border-radius:10px;font-weight:700">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date">${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2 style="text-align:center;font-size:40px">${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
- renderPeople(); renderAdmin();
+document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted" style="background:#fff3bf;color:#805b00;padding:6px 12px;border-radius:10px;font-weight:700">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date">${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2 style="text-align:center;font-size:40px">${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
+ renderPeople(); renderAdmin(); syncPageTabs();
 }
 function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
  const arr=state.roster.filter(x=>x.directory_visible&&x.active!==false).sort((a,b)=>state.records.filter(r=>r.holder===b.name).length-state.records.filter(r=>r.holder===a.name).length||a.name.localeCompare(b.name,"zh-Hant"));
@@ -2163,7 +2212,7 @@ async function deletePerformance(id){
  if(error){alert("刪除失敗："+error.message);return}
  await loadCloud();
 }
-document.getElementById("personModal").addEventListener("click",e=>{if(e.target===e.currentTarget)closeModal("personModal")});document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{state.course=b.dataset.course;render()});render();updateAuth();if(sb)loadCloud();
+document.getElementById("personModal").addEventListener("click",e=>{if(e.target===e.currentTarget)closeModal("personModal")});document.querySelectorAll("[data-course]").forEach(b=>b.onclick=()=>{state.course=b.dataset.course;render()});render();updateAuth();if(sb)loadCloud();
 let editingPbId=null;
 function openPbMeet(id){
  if(!state.coach)return openLogin();
