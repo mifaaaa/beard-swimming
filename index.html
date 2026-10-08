@@ -6,45 +6,23 @@
 <title>鬍子泳隊｜隊史紀錄資料庫</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* 水藍色泳池背景 */
+/* 插畫感泳池水面 */
 body{
-  background-color:#bde7f3;
+  background-color:#75cfe7;
   background-image:
-    radial-gradient(
-      ellipse at 20% 15%,
-      rgba(255,255,255,.65),
-      transparent 55%
-    ),
-    radial-gradient(
-      ellipse at 80% 70%,
-      rgba(74,183,220,.25),
-      transparent 60%
-    ),
-    linear-gradient(
-      rgba(255,255,255,.2) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(255,255,255,.2) 1px,
-      transparent 1px
-    );
-  background-size:
-    600px 450px,
-    700px 550px,
-    32px 32px,
-    32px 32px;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='360' viewBox='0 0 480 360'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M-40 70 Q30 20 100 70 T240 70 T380 70 T520 70' stroke='%2338afd3' stroke-width='24'/%3E%3Cpath d='M-60 235 Q15 185 90 235 T240 235 T390 235 T540 235' stroke='%234dbddd' stroke-width='32'/%3E%3Cpath d='M20 115 Q45 92 78 106 M110 125 Q145 148 175 123 M255 112 Q285 90 318 105 M355 130 Q390 150 428 122' stroke='%23eafaff' stroke-width='10'/%3E%3Cpath d='M-15 295 Q25 272 62 293 M125 280 Q155 303 192 282 M260 300 Q294 272 330 290 M395 278 Q425 302 465 280' stroke='%23eafaff' stroke-width='8'/%3E%3Cpath d='M55 175 Q82 152 108 174 M205 190 Q233 166 260 188 M365 180 Q393 155 420 176' stroke='%23b8edf6' stroke-width='6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:480px 360px;
 }
 
-/* 隊史卡片：淺藍水色 */
+/* 隊史卡片帶淡淡水色，文字仍清楚 */
 #recordsView .record-card{
   background:linear-gradient(
     145deg,
-    #e3f7fd,
-    #c9eaf6
+    rgba(230,249,255,.95),
+    rgba(190,232,247,.92)
   );
-  border:1px solid #8bcde3;
-  box-shadow:0 6px 20px rgba(27,113,151,.12);
+  border:1px solid #8bcfe3;
+  box-shadow:0 6px 20px rgba(15,101,143,.15);
 }
 :root{--bg:#f5f7fb;--card:#fff;--ink:#102033;--muted:#66758a;--line:#e4e9f0;--accent:#087ea4;--accent2:#075985;--gold:#c58b16;--danger:#b42318;--ok:#16794c;--shadow:0 10px 30px rgba(18,38,63,.08)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
