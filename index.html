@@ -1746,7 +1746,30 @@ body::before{
 <body>
 <header><div class="top">
 <div class="header-brand"><img class="header-logo" src="logo.png" alt="鬍子泳隊標誌"><div class="brand">鬍子泳隊資料庫</div></div>
-<div id="authArea"><button class="btn" onclick="openLogin()">教練登入</button></div>
+<div style="display:flex;align-items:center;gap:14px;">
+  <a
+    href="https://www.instagram.com/beard_swimming/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="鬍子泳隊 Instagram"
+    title="追蹤鬍子泳隊 Instagram"
+    style="display:flex;align-items:center;color:#1a5973;flex-shrink:0;"
+  >
+    <svg width="28" height="28" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round" stroke-linejoin="round"
+         aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="1"
+              fill="currentColor" stroke="none"/>
+    </svg>
+  </a>
+
+  <div id="authArea">
+    <button class="btn" onclick="openLogin()">教練登入 🔑</button>
+  </div>
+</div>
 </div></header>
 <main>
 <nav class="tabs page-tabs" aria-label="資料庫頁面">
