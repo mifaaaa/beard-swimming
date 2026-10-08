@@ -6,6 +6,46 @@
 <title>鬍子泳隊｜隊史紀錄資料庫</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+/* 水藍色泳池背景 */
+body{
+  background-color:#bde7f3;
+  background-image:
+    radial-gradient(
+      ellipse at 20% 15%,
+      rgba(255,255,255,.65),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 80% 70%,
+      rgba(74,183,220,.25),
+      transparent 60%
+    ),
+    linear-gradient(
+      rgba(255,255,255,.2) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.2) 1px,
+      transparent 1px
+    );
+  background-size:
+    600px 450px,
+    700px 550px,
+    32px 32px,
+    32px 32px;
+}
+
+/* 隊史卡片：淺藍水色 */
+#recordsView .record-card{
+  background:linear-gradient(
+    145deg,
+    #e3f7fd,
+    #c9eaf6
+  );
+  border:1px solid #8bcde3;
+  box-shadow:0 6px 20px rgba(27,113,151,.12);
+}
 :root{--bg:#f5f7fb;--card:#fff;--ink:#102033;--muted:#66758a;--line:#e4e9f0;--accent:#087ea4;--accent2:#075985;--gold:#c58b16;--danger:#b42318;--ok:#16794c;--shadow:0 10px 30px rgba(18,38,63,.08)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
 header{background:linear-gradient(135deg,#062f45,#087ea4);color:#fff;padding:24px 18px;position:sticky;top:0;z-index:5;box-shadow:0 5px 18px #0002}
