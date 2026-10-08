@@ -127,9 +127,6 @@ header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px soli
 <section id="adminPanel" class="admin coach-only" hidden style="margin-top:40px">
 <div class="hero"><div><h2>🧢 教練編輯區</h2><p>登入後新增成績，系統會自動更新 PB 與隊史判定。</p></div><button class="btn primary" onclick="openPerformance()">＋ 新增成績</button></div>
 <div class="grid">
-<div class="card"><div class="muted">隊員</div><div class="stat" id="statPeople">—</div></div>
-<div class="card"><div class="muted">目前 PB 筆數</div><div class="stat" id="statPB">—</div></div>
-<div class="card"><div class="muted">隊史紀錄</div><div class="stat" id="statRecords">—</div></div>
 </div>
 <div class="card" style="margin-top:18px"><h3>🏊 隊員管理</h3><p class="muted small">點編輯可調整學校、年級及備註；刪除隊員也在編輯內操作，歷史成績與隊史保留。</p><div class="meet-create"><input id="swimmerSearch" class="input" placeholder="🔎 搜尋隊員姓名或學校" oninput="renderSwimmerManagement()"><button class="btn primary" onclick="openAddSwimmer()">＋ 新增隊員</button></div><div id="swimmerMsg" aria-live="polite"></div><div id="swimmerList"></div></div><div class="card meet-management" style="margin-top:18px"><h3>🏟️ 賽事管理</h3><p class="muted small">可新增賽事、編輯名稱或移除賽事。改名會同步相關成績；刪除會移除選單，已有成績、PB與隊史仍保留。</p><div class="meet-create"><input id="meetSearch" class="input" placeholder="🔎 搜尋賽事名稱" oninput="renderMeets();fitScrollLists()"><button class="btn primary" onclick="openAddMeet()">＋ 新增賽事</button></div><div id="meetMsg" class="muted small" aria-live="polite"></div><div id="meetList" class="meet-list"></div></div><div class="card" style="margin-top:14px"><h3>📝 最近新增</h3><p class="muted small">最近新增的10筆資料，依新增時間由新到舊</p><div id="performanceList"></div></div><div class="card" style="margin-top:14px"><h3>🕒 教練更新紀錄</h3><p class="muted small">顯示最近三個月的賽事與成績操作。向下捲動查看更早紀錄，點開每筆查看詳情。</p><div id="auditMsg" aria-live="polite"></div><div id="auditList"></div><button id="auditMore" hidden></button></div>
 </section>
@@ -297,9 +294,6 @@ function openPerson(name){ if(!state.coach)return openLogin();currentPerson=name
  document.querySelectorAll("button[data-edit-pb]").forEach(b=>b.onclick=()=>openPbMeet(b.dataset.editPb));document.getElementById("personModal").classList.add("show");
 }
 function renderAdmin(){ if(!state.coach){document.getElementById("performanceList").innerHTML="";return;}renderMeets();renderAudit();renderSwimmerManagement();
- document.getElementById("statPeople").textContent=state.roster.filter(x=>x.directory_visible&&x.active!==false).length;
- document.getElementById("statPB").textContent=state.pbs.length;
- document.getElementById("statRecords").textContent=state.records.length;
  const list=document.getElementById("performanceList");
  if(!list)return;
  const rows=[...(state.performances||[])].sort((a,b)=>String(b.created_at||"").localeCompare(String(a.created_at||""))||String(b.id||"").localeCompare(String(a.id||""))).slice(0,10);
