@@ -1641,9 +1641,7 @@ body::before{
 }
 /* 自由式與蝶式泳者：身體採用泳衣輪廓，頭與手腳維持膚色 */
 .swimmer-one,.swimmer-three{
-  background:
-    linear-gradient(var(--skin),var(--skin))
-    center top / 5px 7px no-repeat;
+  background:linear-gradient(var(--skin),var(--skin)) center top / 5px 7px no-repeat;
 }
 /* 自由式與蝶式泳者：連身泳衣 */
 .swimmer-one::after,.swimmer-three::after{
@@ -1727,6 +1725,20 @@ body::before{
  .swimmer-one .arm-right,.swimmer-two .arm-right{transform:rotate(-10deg);}
  .swimmer-three .arm-left{transform:rotate(88deg);}.swimmer-three .arm-right{transform:rotate(-88deg);}
  .swimmer-four .arm-left{transform:rotate(170deg);}.swimmer-four .arm-right{transform:rotate(-170deg);}
+}
+/* 隊史卡片：依性別和泳式顯示動畫，置於右上角 */
+.record-swimmer-gif{
+ position:absolute;
+ top:4px;
+ right:4px;
+ width:150px;
+ height:100px;
+ object-fit:contain;
+ pointer-events:none;
+}
+.record-card .record-meet{position:relative;}
+@media(max-width:560px){
+ .record-swimmer-gif{width:135px;height:90px;}
 }
 </style>
 
@@ -1920,25 +1932,20 @@ function updateAuth(){
  document.querySelectorAll(".coach-only").forEach(el=>el.hidden=!state.coach);
  document.getElementById("adminPanel").classList.toggle("show",state.coach);document.getElementById("adminAuditPanel").hidden=!state.admin;syncPageTabs();
 }
-  function recordAnimation(event){
-  const files={
-    '自':'freestyle.gif',
-    '仰':'backstroke.gif',
-    '蛙':'breaststroke.gif',
-    '蝶':'butterfly.gif'
-  };
-  const file=files[event.slice(-1)];
-  return file
-    ? `<img src="${file}" alt=""
-        style="position:absolute;top:8px;right:8px;width:90px;pointer-events:none">`
-    : '';
+function recordAnimation(event,gender){
+ const strokes={'自':'freestyle','仰':'backstroke','蝶':'butterfly','蛙':'breaststroke'};
+ const stroke=strokes[String(event).slice(-1)];
+ const sex=gender==='女'?'female':gender==='男'?'male':null;
+ if(!stroke||!sex)return '';
+ return `<img class="record-swimmer-gif" src="${stroke}-${sex}.gif" alt="" aria-hidden="true" width="540" height="360">`;
 }
+
 function render()
 {
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll("[data-course]").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card">${recordAnimation(ev)}<div class="record-left"><div class="record-item">${esc(ev)}</div><h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b></div><div class="record-meet"><div class="muted small record-meet-date${teamDateHasRange(r)?' date-range':''}">${esc(teamDate(r))}</div><span class="meet-tag">${esc(recordMeetLabel(r))}</span></div></div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card">${recordAnimation(ev,g)}<div class="record-left"><div class="record-item">${esc(ev)}</div><h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b></div><div class="record-meet"><div class="muted small record-meet-date${teamDateHasRange(r)?' date-range':''}">${esc(teamDate(r))}</div><span class="meet-tag">${esc(recordMeetLabel(r))}</span></div></div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin(); syncPageTabs();
 }
 function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
