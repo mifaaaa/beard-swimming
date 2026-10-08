@@ -1920,12 +1920,25 @@ function updateAuth(){
  document.querySelectorAll(".coach-only").forEach(el=>el.hidden=!state.coach);
  document.getElementById("adminPanel").classList.toggle("show",state.coach);document.getElementById("adminAuditPanel").hidden=!state.admin;syncPageTabs();
 }
+  function recordAnimation(event){
+  const files={
+    '自':'freestyle.gif',
+    '仰':'backstroke.gif',
+    '蛙':'breaststroke.gif',
+    '蝶':'butterfly.gif'
+  };
+  const file=files[event.slice(-1)];
+  return file
+    ? `<img src="${file}" alt=""
+        style="position:absolute;top:8px;right:8px;width:90px;pointer-events:none">`
+    : '';
+}
 function render()
 {
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll("[data-course]").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card"><div class="record-left"><div class="record-item">${esc(ev)}</div><h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b></div><div class="record-meet"><div class="muted small record-meet-date${teamDateHasRange(r)?' date-range':''}">${esc(teamDate(r))}</div><span class="meet-tag">${esc(recordMeetLabel(r))}</span></div></div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card">${recordAnimation(ev)}<div class="record-left"><div class="record-item">${esc(ev)}</div><h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b></div><div class="record-meet"><div class="muted small record-meet-date${teamDateHasRange(r)?' date-range':''}">${esc(teamDate(r))}</div><span class="meet-tag">${esc(recordMeetLabel(r))}</span></div></div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin(); syncPageTabs();
 }
 function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
