@@ -1844,6 +1844,17 @@ body::before{
 .person-profile:focus-visible{outline:3px solid #168fb6;outline-offset:3px;}
 .performance-note{white-space:pre-wrap;overflow-wrap:anywhere;}
 .person-course-tabs{margin-top:18px;}
+/* 泳隊標誌與表頭標語 */
+.hero-brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.hero-brand .eyebrow{margin:0;}
+.hero-logo{width:90px;height:auto;display:block;flex-shrink:0;}
+.record-hero .hero-motto{font-size:clamp(22px,2.5vw,34px);line-height:1.5;letter-spacing:0;margin-top:16px;}
+@media(max-width:560px){
+ .hero-brand{gap:8px;}
+ .hero-logo{width:68px;}
+ .hero-brand .eyebrow{font-size:16px;letter-spacing:2px;}
+ .record-hero .hero-motto{font-size:22px;}
+}
 </style>
 
 </head>
@@ -1859,7 +1870,7 @@ body::before{
 <button class="tab coach-only" hidden data-page="admin" onclick="switchPage('admin')">🧢 教練編輯區</button>
 </nav>
 <section id="recordsPage">
- <section class="hero record-hero"><div><div class="eyebrow">Beard Swimming ✨</div><h1>隊史紀錄</h1></div><div class="pool-decoration" aria-hidden="true">
+ <section class="hero record-hero"><div><div class="hero-brand"><img class="hero-logo" src="logo.png" alt="鬍子泳隊標誌"><div class="eyebrow">Beard Swimming ✨</div></div><h1 class="hero-motto">成為紀錄保持者，每分每秒都值得</h1></div><div class="pool-decoration" aria-hidden="true">
   <span class="pool-ripple ripple-one"></span>
   <span class="pool-ripple ripple-two"></span>
   <span class="pool-ring ring-pink"></span>
