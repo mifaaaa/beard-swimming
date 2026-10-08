@@ -110,6 +110,7 @@ header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px soli
 
 .year-grid{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}.year-grid .btn{min-width:125px;padding:16px}.meet-browser-body{max-height:55vh;overflow:auto}.modal.show{z-index:1000}#meetFamilyModal.show{z-index:1001}#meetYearModal.show{z-index:1002}#renameMeetModal.show,#addMeetModal.show{z-index:1003}
 .person-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px}.person-heading h3{margin:0}.person-heading .person-record-count{margin:0 0 0 auto;white-space:nowrap}
+.record-heading .record-meet{max-width:70%;text-align:right}.record-meet .meet-tag{max-width:100%}.record-meet-date{margin-top:7px;line-height:1.6;overflow-wrap:anywhere}
 </style>
 
 </head>
@@ -254,7 +255,7 @@ function render()
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<span class="meet-tag">${esc(recordMeetLabel(r))}</span>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b><div class="muted small" style="margin-top:8px">📅 ${esc(teamDate(r))}</div>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date">📅 ${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin();
 }
 function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
@@ -568,19 +569,15 @@ async function deleteEditingPerformance(){
 }
 
 function scoreMeetElements(prefix){return {family:document.getElementById(prefix+'Family'),edition:document.getElementById(prefix+'Edition'),value:document.getElementById(prefix==='pMeet'?'pMeet':'editPbName'),hint:document.getElementById(prefix+'Hint')};}
-function scoreMeetChoices(prefix){
- const rows=[...state.meets],current=prefix==='editPbMeet'?state.performances.find(p=>p.id===editingPbId)?.meet:null;
- if(current&&!rows.some(m=>m.name===current)){const archived=state.allMeets.find(m=>m.name===current);rows.push(archived||{id:'legacy-current',name:current,series_name:current,active:false});}
- return rows;
-}
+function scoreMeetChoices(prefix){return state.coach?state.meets.filter(m=>m.active!==false):[];}
 function setupScoreMeets(prefix,current=''){
  const el=scoreMeetElements(prefix),rows=scoreMeetChoices(prefix),names=[...new Set(rows.map(familyName))].sort((a,b)=>a.localeCompare(b,'zh-Hant'));
  el.family.innerHTML='<option value="">請先選賽事</option>'+names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
- const m=rows.find(m=>m.name===current);el.family.value=m?familyName(m):'';fillScoreEditions(prefix,m?.name||'');
+ const m=rows.find(m=>m.name===current);el.family.value=m?familyName(m):'';fillScoreEditions(prefix,m?.name||'');if(current&&!m)el.hint.textContent='原紀錄賽事：'+displayMeetName(current)+'（已不在賽事管理清單，請改選現有場次；尚未儲存前原紀錄不變）';
 }
 function fillScoreEditions(prefix,current=''){
  const el=scoreMeetElements(prefix),family=el.family.value,rows=scoreMeetChoices(prefix).filter(m=>familyName(m)===family).sort((a,b)=>(editionYear(b)||0)-(editionYear(a)||0)||String(b.start_date||b.year_month||'').localeCompare(String(a.start_date||a.year_month||''))||a.name.localeCompare(b.name,'zh-Hant'));
- el.edition.innerHTML='<option value="">'+(family?'請選場次':'請先選賽事')+'</option>'+rows.map(m=>`<option value="${esc(m.name)}">${esc((editionYear(m)?editionYear(m)+'年 · ':'')+m.name+' · '+meetDateRange(m)+(m.active===false?'（原紀錄已移除場次）':''))}</option>`).join('');
+ el.edition.innerHTML='<option value="">'+(family?'請選場次':'請先選賽事')+'</option>'+rows.map(m=>`<option value="${esc(m.name)}">${esc((editionYear(m)?editionYear(m)+'年 · ':'')+meetDateRange(m)+(displayMeetName(m.name)!==familyName(m)?' · '+displayMeetName(m.name):''))}</option>`).join('');
  el.edition.disabled=!family;el.edition.value=rows.some(m=>m.name===current)?current:'';chooseScoreEdition(prefix);
 }
 function chooseScoreEdition(prefix){
