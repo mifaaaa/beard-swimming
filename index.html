@@ -1,348 +1,50 @@
-<!doctype html>
-<html lang="zh-Hant">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>鬍子泳隊｜隊史紀錄資料庫</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root{--bg:#f5f7fb;--card:#fff;--ink:#102033;--muted:#66758a;--line:#e4e9f0;--accent:#087ea4;--accent2:#075985;--gold:#c58b16;--danger:#b42318;--ok:#16794c;--shadow:0 10px 30px rgba(18,38,63,.08)}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
-header{background:linear-gradient(135deg,#062f45,#087ea4);color:#fff;padding:24px 18px;position:sticky;top:0;z-index:5;box-shadow:0 5px 18px #0002}
-.top{max-width:1180px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:14px}.brand{font-weight:900;font-size:22px}.sub{opacity:.78;font-size:12px;margin-top:3px}
-button,input,select{font:inherit}button{border:0;border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:700}.btn{background:#fff;color:#075985}.btn.primary{background:var(--accent);color:#fff}.btn.ghost{background:#eef7fa;color:#075985}.btn.danger{background:#fff0ef;color:var(--danger)}
-main{max-width:1180px;margin:0 auto;padding:24px 16px 60px}.hero{display:flex;justify-content:space-between;gap:18px;align-items:end;margin:8px 0 22px}.hero h1{font-size:34px;margin:0}.hero p{color:var(--muted);margin:8px 0 0}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.tab{background:#e9eef4;color:#43556b}.tab.active{background:#102f43;color:#fff}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}.record-card{position:relative}.record-card .badge{position:absolute;right:14px;top:14px}.badge{background:#fff5d6;color:#916400;border:1px solid #f2d98c;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}
-table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:16px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}th{background:#f4f7fa;color:#52657a;font-size:13px}td strong{font-size:18px}
-.searchbar{display:flex;gap:10px;margin:15px 0}.searchbar input{flex:1}.input,select{border:1px solid #d7dee8;background:#fff;border-radius:11px;padding:10px 12px;width:100%}
-.people{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.person{cursor:pointer}.person:hover{transform:translateY(-2px)}.person h3{margin:0 0 6px}.muted{color:var(--muted)}.stat{font-size:26px;font-weight:900}
-.view{display:none}.view.active{display:block}.empty{padding:35px;text-align:center;color:var(--muted)}
-.modal{position:fixed;inset:0;background:#071624aa;display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.show{display:flex}.modalbox{background:#fff;border-radius:20px;max-width:620px;width:100%;padding:22px;max-height:90vh;overflow:auto}.modalhead{display:flex;justify-content:space-between;align-items:center}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.notice{padding:12px;border-radius:12px;background:#eef8fb;color:#075985;margin:10px 0}.error{background:#fff0ef;color:var(--danger)}.success{background:#ecfdf3;color:var(--ok)}
-.admin{display:none}.admin.show{display:block}.small{font-size:12px}.record-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
-@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}.people{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.hero{display:block}.hero h1{font-size:28px}.grid,.people{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.top{align-items:flex-start}.brand{font-size:18px}header{position:relative}}
-.record-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.meet-tag{display:inline-block;background:#e0f2fe;color:#075985;border:1px solid #bae6fd;border-radius:10px;padding:7px 10px;font-size:12px;font-weight:700;line-height:1.5;text-align:right;max-width:70%;overflow-wrap:anywhere}
-.record-card h2{margin:14px 0 8px}
-.person-record-count{display:inline-block;margin-top:12px;padding:6px 10px;border-radius:9px;background:#eef7fa;color:#075985}
-.person-add{margin:16px 0 4px;background:#087ea4!important;color:#fff!important;box-shadow:0 3px 10px #087ea425}
-.person-add:hover{background:#075985!important}
-.pb-meet{display:block;color:#075985;font-size:13px;line-height:1.6;margin-top:5px;overflow-wrap:anywhere}
-.record-row>span{min-width:0}.record-row>strong{flex-shrink:0}
-.exportbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0}.export-btn:disabled{opacity:.5;cursor:wait}
-:root{--bg:#f1f5f8;--ink:#142c40;--muted:#6a7e90;--line:#e0e9ef;--accent:#087ea4;--shadow:0 5px 20px rgba(20,52,76,.045)}
-body{background:radial-gradient(ellipse at 95% 0%,#dceef5 0,transparent 35%),var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
-header{background:#102e42;padding:21px 24px;box-shadow:none;border-bottom:3px solid #29a8c6}
-.top{max-width:1200px}.brand{font-size:21px;letter-spacing:.035em}.sub{font-size:11px;letter-spacing:.07em;margin-top:5px;opacity:.65}
-header .btn{background:#ffffff12;border:1px solid #ffffff35;color:#fff;font-size:13px;padding:9px 16px}
-main{max-width:1200px;padding:38px 24px 70px}
-.hero{margin:0 0 23px;align-items:center}.hero h1{font-size:38px;letter-spacing:-.035em;line-height:1.2}.hero h2{font-size:25px;margin:0;letter-spacing:-.02em}.hero p{font-size:14px;margin-top:9px;line-height:1.7}
-.eyebrow{font-size:10px;letter-spacing:.18em;font-weight:800;color:#087ea4;margin-bottom:10px}
-#dbStatus{background:#e7eff4;color:#536d80;border-radius:999px;padding:7px 12px;font-size:11px;white-space:nowrap}
-.records-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:14px 0 22px;border-bottom:1px solid #d9e4eb;margin-bottom:27px}
-.tabs{display:inline-flex;margin:0;background:#e2eaf0;border-radius:12px;padding:4px;gap:4px}
-.tab{font-size:13px;background:transparent;color:#557083;padding:9px 18px;border-radius:9px;min-height:40px}.tab.active{background:#fff;color:#103e57;box-shadow:0 2px 5px #17384b12}
-.exportbar{margin:0;gap:8px}.exportbar>span{display:none}.export-btn{background:#ffffff90!important;border:1px solid #cddde7;color:#25586f!important;font-size:12px;padding:10px 13px}
-button{transition:background .16s,box-shadow .16s,transform .16s}button:hover{filter:brightness(.97)}button:focus-visible,.person:focus-visible{outline:3px solid #39b4d5;outline-offset:3px}
-#recordsView>h2{display:flex;align-items:center;gap:12px;font-size:17px;font-weight:800;margin:28px 0 14px;letter-spacing:.025em}
-#recordsView>h2:before{content:"";width:4px;height:19px;background:#1594b4;border-radius:4px}#recordsView>h2:after{content:"";height:1px;flex:1;background:#dde7ed}
-.grid{gap:14px}.card{border:1px solid #e0e9ef;border-radius:16px;padding:21px;box-shadow:var(--shadow)}
-.record-card{overflow:hidden;min-height:157px;background:linear-gradient(135deg,#fff,#fbfdff)}
-.record-heading{gap:10px;align-items:flex-start}.record-heading>.muted{color:#466479;font-size:13px;font-weight:800;flex-shrink:0;padding-top:3px}
-.meet-tag{background:#e7f3f8;border:0;color:#21677f;padding:6px 9px;border-radius:7px;font-size:11px;max-width:75%;text-align:right}
-.record-card h2{font-size:34px;letter-spacing:-.045em;line-height:1.25;margin:20px 0 7px;font-variant-numeric:tabular-nums;font-weight:850;color:#153f58}
-.record-card>b{font-size:14px;font-weight:650;color:#4b6679}
-.record-card.is-empty{background:#edf2f6;border-style:dashed;box-shadow:none}.record-card.is-empty h2{font-size:18px;letter-spacing:0;color:#8295a4;font-weight:500;margin-top:24px}
-.people-section{margin-top:48px!important;padding-top:30px;border-top:1px solid #d9e4eb}.people-section .hero{margin-bottom:18px}
-.searchbar{margin:0 0 18px;max-width:430px}.searchbar .input{background:#fff;border:1px solid #dbe6ed;padding:12px 16px;border-radius:12px;font-size:14px}
-.input:focus,select:focus{outline:none;border-color:#41a7c5;box-shadow:0 0 0 3px #41a7c51c}
-.people{gap:13px}.person{position:relative;min-height:145px;transition:transform .18s,box-shadow .18s,border-color .18s}
-.person:hover{border-color:#a8ccdc;box-shadow:0 9px 24px #24485e12;transform:translateY(-3px)}.person h3{font-size:18px;color:#1a435b;margin-bottom:5px}.person>.muted{font-size:12px;line-height:1.7;min-height:22px}
-.person-record-count{margin-top:17px;background:#eef5f8;color:#4b6c81;font-size:12px;padding:5px 9px}.person-record-count b{font-size:14px;color:#175570}
-.person:after{content:"↗";position:absolute;right:19px;bottom:21px;color:#93abba;font-size:17px}
-.admin{padding-top:28px;border-top:1px solid #d9e4eb}.admin .stat{font-size:33px;font-variant-numeric:tabular-nums;color:#17516c}.admin .grid .card{background:#f9fcfd}.admin h3{font-size:17px}
-.btn.primary{background:#087ea4;color:#fff;padding:12px 18px;box-shadow:0 4px 10px #087ea418}.btn.danger{font-size:12px;padding:8px 11px}
-.modal{background:#0b253b96;backdrop-filter:blur(5px);padding:24px}
-.modalbox{max-width:650px;border:1px solid #ffffff90;box-shadow:0 25px 90px #07233545;border-radius:22px;padding:27px;scrollbar-width:thin;scrollbar-color:#c8dbe5 transparent}
-.modalhead{position:sticky;top:-27px;background:#fff;z-index:1;padding:10px 0 17px;margin:-8px 0 8px;border-bottom:1px solid #e6edf2;gap:14px}
-.modalhead h2{font-size:23px;letter-spacing:-.025em;margin:0}.modalhead button{width:38px;height:38px;padding:0;background:#eff4f7;color:#587185;flex-shrink:0;border-radius:11px;font-size:20px}
-#personBody>.card:first-child{background:#f1f7fa;border:0;box-shadow:none;margin-top:16px}#personBody>.card:first-child>b{font-size:19px}#personBody>.card:first-child>.muted{font-size:13px;margin-top:4px}
-.person-add{display:block;width:100%;font-size:14px;margin:15px 0 20px;min-height:46px;border-radius:11px}
-#personBody .card h3{font-size:15px;color:#285a71;margin:0 0 8px;padding-bottom:10px;border-bottom:1px solid #e4edf2}
-.record-row{padding:13px 0;align-items:center;gap:16px}.record-row:last-child{border-bottom:0}.record-row>span{font-size:14px;font-weight:600}.record-row>strong{font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:-.025em;color:#173f57}
-.pb-meet{font-size:11px;line-height:1.65;font-weight:400;margin-top:5px;color:#6b8393}
-.notice{background:#eff7fa;font-size:13px;line-height:1.7;padding:13px 15px;border-radius:11px}.error{background:#fff0ef;color:#b42318}.success{background:#ecfdf3;color:#16794c}
-.formgrid{gap:17px 16px;margin-top:20px}.formgrid label,#loginModal label{display:block;font-size:12px;font-weight:700;color:#4c6b7f;margin-bottom:7px}.input,select{font-size:15px;padding:12px 13px;border-radius:10px;border-color:#d5e3eb;min-height:46px}.formgrid .small{font-size:11px;margin-top:6px}
-@media(max-width:850px){main{padding:28px 20px 50px}.people{grid-template-columns:repeat(2,minmax(0,1fr))}.hero h1{font-size:32px}.record-card h2{font-size:30px}}
-@media(max-width:560px){header{padding:18px 16px}.brand{font-size:15px;letter-spacing:0}.sub{font-size:9px;letter-spacing:0}.top{gap:10px;align-items:center}header .btn{font-size:11px;padding:8px 10px;white-space:nowrap}main{padding:25px 16px 45px}.hero{display:flex;align-items:flex-start;gap:10px}.hero h1{font-size:29px}.hero h2{font-size:23px}.hero p{font-size:12px}.eyebrow{font-size:9px;margin-bottom:8px}#dbStatus{font-size:9px;padding:5px 7px;margin-top:5px}.records-toolbar{gap:13px;padding-bottom:18px}.tabs{width:100%}.tab{flex:1;padding:8px 12px}.exportbar{width:100%;gap:8px}.export-btn{flex:1;font-size:11px;padding:10px 6px}.grid{grid-template-columns:1fr;gap:11px}.record-card{min-height:140px;padding:18px 20px}.record-card h2{font-size:33px;margin-top:15px}.meet-tag{font-size:11px}.people{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.person{padding:15px 12px;min-height:140px}.person h3{font-size:17px}.person>.muted{font-size:11px}.person:after{right:11px;bottom:18px;font-size:14px}.person-record-count{font-size:11px;padding:4px 7px}.person-record-count b{font-size:13px}.people-section{margin-top:36px!important;padding-top:24px}.modal{padding:14px}.modalbox{padding:20px;border-radius:18px;max-height:92vh}.modalhead{top:-20px}.modalhead h2{font-size:20px}.record-row>strong{font-size:20px}.pb-meet{font-size:11px}.formgrid{grid-template-columns:1fr}.admin .hero{flex-wrap:wrap}.admin .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.admin .grid .card{padding:12px 9px;border-radius:11px}.admin .grid .muted{font-size:10px}.admin .stat{font-size:25px}.record-row .danger{font-size:11px;white-space:nowrap}}
-@media(prefers-reduced-motion:reduce){button,.person{transition:none}.person:hover{transform:none}}
+begin;
+-- 用登入信箱的 @ 前帳號辨識；不更動密碼或登入信箱。
+update public.profiles p set display_name=case lower(split_part(u.email,'@',1))
+ when 'kevindd100' then '鬍子教練' when 'weiihuang49' then '威力教練' end
+from auth.users u where p.id=u.id and lower(split_part(u.email,'@',1)) in ('kevindd100','weiihuang49');
 
-:root{--bg:#f7fbff;--accent:#1588b0;--line:#dcebf2}
-body{background:radial-gradient(circle at 94% 8%,#e0f5ff 0,transparent 28%),radial-gradient(circle at 4% 70%,#fff0e5 0,transparent 25%),#f7fbff}
-header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px solid #a6e1ec;border-radius:0 0 23px 23px}
-.eyebrow{color:#5b8fa7}.hero h1{font-size:36px}.meet-tag{background:#dff2fa;border-radius:10px}.record-card{border-radius:22px;border-color:#e0eef4;box-shadow:0 5px 16px #327da40a}.record-card h2{color:#1a5973}
-.card{border-radius:20px}.person{background:linear-gradient(140deg,#fff,#f1faff)}.person-record-count{background:#fff3d9;color:#916934;border-radius:999px}.person-record-count b{color:#886428}
-.btn,.tab{border-radius:12px}.btn.primary{background:#1588b0}.tabs{background:#e7f1f7;border-radius:16px}.tab.active{color:#177697}.export-btn{background:#fff!important;border-color:#d3e8f2}
-.modalbox{border-radius:25px}.person-add{background:#1588b0!important;border-radius:14px}.meet-create{display:flex;gap:10px;margin:15px 0}.meet-create input{flex:1;min-width:0}.meet-create button{flex-shrink:0}.meet-list{max-height:330px;overflow:auto;padding-right:5px}.btn:disabled{opacity:.5;cursor:not-allowed}.coach-only[hidden]{display:none!important}
-@media(max-width:560px){.hero h1{font-size:27px}.hero h2{font-size:22px}.brand{font-size:14px}.meet-create{flex-wrap:wrap}.meet-create button{width:100%}.record-row>span{overflow-wrap:anywhere}.meet-list .record-row{gap:9px}}
+create table if not exists public.coach_update_logs (
+ id bigint generated always as identity primary key,
+ created_at timestamptz not null default clock_timestamp(),
+ actor_id uuid,
+ actor_name text not null,
+ entity text not null check(entity in ('meets','performances')),
+ entity_id uuid not null,
+ action text not null check(action in ('INSERT','UPDATE','DELETE','ARCHIVE','RESTORE')),
+ before_data jsonb,
+ after_data jsonb
+);
+create index if not exists coach_update_logs_recent on public.coach_update_logs(id desc);
+alter table public.coach_update_logs enable row level security;
+revoke all on public.coach_update_logs from anon,authenticated;
+grant select on public.coach_update_logs to authenticated;
+drop policy if exists coach_logs_read on public.coach_update_logs;
+create policy coach_logs_read on public.coach_update_logs for select to authenticated using(public.is_coach());
 
-</style>
-
-</head>
-<body>
-<header><div class="top">
-<div><div class="brand"> 🏊 鬍子泳隊｜隊史紀錄資料庫</div><div class="sub"> Beard Swimming ✨</div></div>
-<div id="authArea"><button class="btn" onclick="openLogin()">教練登入</button></div>
-</div></header>
-<main>
-<section class="hero"><div><div class="eyebrow">BEARD SWIM TEAM · RECORDS</div><h1>🏆 隊史紀錄</h1><p>每一秒都值得被記住。速度會變，紀錄會留下。</p></div><div id="dbStatus" class="muted small"></div></section>
-<div class="records-toolbar"><div class="tabs"><button class="tab active" data-course="長池">長池 50m</button><button class="tab" data-course="短池">短池 25m</button></div>
-<div class="exportbar coach-only" hidden><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><div id="recordsView"></div>
-
-<section id="peopleSection" class="people-section coach-only" hidden style="margin-top:34px"><div class="hero"><div><h2>🐬 隊員資料庫</h2><p>點選隊員查看個人最佳紀錄與隊史保持項目。</p></div></div>
-<div class="searchbar"><input id="search" class="input" placeholder="搜尋姓名、學校…"></div><div id="people" class="people"></div></section>
-
-<section id="adminPanel" class="admin coach-only" hidden style="margin-top:40px">
-<div class="hero"><div><h2>🧢 教練編輯區</h2><p>登入後新增成績，系統會自動更新 PB 與隊史判定。</p></div><button class="btn primary" onclick="openPerformance()">＋ 新增成績</button></div>
-<div class="grid">
-<div class="card"><div class="muted">隊員</div><div class="stat" id="statPeople">—</div></div>
-<div class="card"><div class="muted">目前 PB 筆數</div><div class="stat" id="statPB">—</div></div>
-<div class="card"><div class="muted">隊史紀錄</div><div class="stat" id="statRecords">—</div></div>
-</div>
-<div class="card meet-management" style="margin-top:18px"><h3>🏟️ 賽事管理</h3><p class="muted small">先建立新賽事，就能在新增成績時選擇。刪除賽事會從選單移除，已有成績、PB與隊史仍會保留。</p><div class="meet-create"><input id="newMeetName" class="input" maxlength="120" placeholder="例如：2611 秋季盃"><button id="createMeetButton" class="btn primary" onclick="createMeet()">＋ 新增賽事</button></div><div id="meetMsg" class="muted small" aria-live="polite"></div><div id="meetList" class="meet-list"></div></div><div class="card" style="margin-top:14px"><h3>📝 最近新增的 10 筆</h3><p class="muted small">依新增時間由新到舊，方便確認剛輸入的成績。刪除只會刪除所選的那一筆。</p><div id="performanceList"></div></div>
-</section>
-</main>
-
-<div id="loginModal" class="modal"><div class="modalbox">
-<div class="modalhead"><h2>教練登入</h2><button onclick="closeModal('loginModal')">✕</button></div>
-<div class="notice">登入教練帳號，新增成績並管理最近的紀錄。</div>
-<label>Email</label><input id="loginEmail" class="input" type="email" placeholder="coach@example.com">
-<label style="display:block;margin-top:10px">密碼</label><input id="loginPassword" class="input" type="password">
-<div id="loginMsg"></div><button class="btn primary" style="margin-top:14px;width:100%" onclick="login()">登入</button>
-</div></div>
-
-<div id="personModal" class="modal"><div class="modalbox"><div class="modalhead"><h2 id="personTitle">隊員</h2><button onclick="closeModal('personModal')">✕</button></div><div id="personBody"></div></div></div>
-
-<div id="performanceModal" class="modal"><div class="modalbox"><div class="modalhead"><h2>新增比賽成績</h2><button onclick="closeModal('performanceModal')">✕</button></div>
-<div class="formgrid">
-<div><label>隊員</label><select id="pSwimmer"></select></div>
-<div><label>泳池</label><select id="pCourse"><option>長池</option><option>短池</option></select></div>
-<div><label>項目</label><select id="pEvent"></select></div>
-<div><label>成績（分:秒 或 秒數）</label><input id="pSeconds" class="input" type="text" placeholder="例如 1:23.45 或 83.45"><div class="muted small">超過一分鐘可直接輸入 1:23.45</div></div>
-<div><label>日期</label><input id="pDate" class="input" type="date"></div>
-<div><label>賽事</label><input id="pMeet" class="input" placeholder="例如：2610 泳協北A2"></div>
-<div class="full"><label>備註</label><input id="pNote" class="input" placeholder="可選"></div>
-</div><div id="pMsg"></div><button class="btn primary" style="margin-top:15px;width:100%" onclick="submitPerformance()">儲存成績</button>
-</div></div>
-
-<datalist id="meetOptions"></datalist><script src="config.js"></script>
-<script>
-const EVENTS={"長池":["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","200自","200混","200仰","200蛙","200蝶","400自"],"短池":["50自","50仰","50蛙","50蝶","100自","100混","100仰","100蛙","100蝶","200自","200混"]};
-let state={course:"長池",roster:[],pbs:[],records:[],performances:[],meets:[],user:null,coach:false,online:false};
-let currentPerson=null;
-let sb=null;
-if(window.SUPABASE_CONFIG?.url && window.SUPABASE_CONFIG?.anonKey && !window.SUPABASE_CONFIG.url.includes("YOUR_")){
-  sb=supabase.createClient(window.SUPABASE_CONFIG.url,window.SUPABASE_CONFIG.anonKey);
-  state.online=true;
-  sb.auth.getSession().then(({data})=>{state.user=data.session?.user||null;updateAuth();loadCloud();});
-  sb.auth.onAuthStateChange((_e,s)=>{const changed=state.user?.id!==s?.user?.id;state.user=s?.user||null;if(changed||_e==="SIGNED_OUT"){cloudGeneration++;clearCoachData();}setTimeout(()=>loadCloud(),0);});
-}
-// Standalone XLSX export: text cells are literal strings, never formulas.
-function parseSwimTime(value){
- const raw=String(value).trim().replace(/：/g,":");
- let seconds;
- if(/^\d+(?:\.\d{1,3})?$/.test(raw)) seconds=Number(raw);
- else {const m=raw.match(/^(\d+):([0-5]?\d)(?:\.(\d{1,3}))?$/);if(!m)return NaN;seconds=Number(m[1])*60+Number(m[2])+Number("0."+(m[3]||"0"));}
- return Number.isFinite(seconds)&&seconds>0&&seconds<100000 ? Math.round(seconds*1000)/1000 : NaN;
-}
-function xmlText(value){return String(value??"").replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));}
-function zipStored(files){
- const encode=new TextEncoder(),parts=[],directory=[];let offset=0;
- const table=Array.from({length:256},(_,n)=>{for(let k=0;k<8;k++)n=n&1?0xedb88320^(n>>>1):n>>>1;return n>>>0;});
- const crc=bytes=>{let n=0xffffffff;for(const b of bytes)n=table[(n^b)&255]^(n>>>8);return (n^0xffffffff)>>>0;};
- for(const [path,content] of files){
-  const name=encode.encode(path),data=encode.encode(content),checksum=crc(data);
-  const local=new Uint8Array(30),l=new DataView(local.buffer);
-  l.setUint32(0,0x04034b50,true);l.setUint16(4,20,true);l.setUint16(12,33,true);l.setUint32(14,checksum,true);l.setUint32(18,data.length,true);l.setUint32(22,data.length,true);l.setUint16(26,name.length,true);
-  parts.push(local,name,data);
-  const central=new Uint8Array(46),c=new DataView(central.buffer);
-  c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(14,33,true);c.setUint32(16,checksum,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,name.length,true);c.setUint32(42,offset,true);
-  directory.push(central,name);offset+=30+name.length+data.length;
- }
- const size=directory.reduce((n,b)=>n+b.length,0),end=new Uint8Array(22),e=new DataView(end.buffer);
- e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,size,true);e.setUint32(16,offset,true);
- return new Blob([...parts,...directory,end],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
-}
-function createXlsx(sheets){
- const declaration='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
- const files=[
-  ["[Content_Types].xml",declaration+`<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${sheets.map((s,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join("")}</Types>`],
-  ["_rels/.rels",declaration+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
-  ["xl/workbook.xml",declaration+`<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((s,i)=>`<sheet name="${xmlText(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join("")}</sheets></workbook>`],
-  ["xl/_rels/workbook.xml.rels",declaration+`<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((s,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join("")}</Relationships>`]
- ];
- sheets.forEach((s,i)=>{
-  const rows=s.rows.map((row,r)=>`<row r="${r+1}">${row.map((v,c)=>{const ref=String.fromCharCode(65+c)+(r+1);return typeof v==="number"&&Number.isFinite(v)?`<c r="${ref}"><v>${v}</v></c>`:`<c r="${ref}" t="inlineStr"><is><t xml:space="preserve">${xmlText(v)}</t></is></c>`;}).join("")}</row>`).join("");
-  files.push([`xl/worksheets/sheet${i+1}.xml`,declaration+`<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="5" width="16" customWidth="1"/><col min="6" max="6" width="30" customWidth="1"/><col min="7" max="7" width="18" customWidth="1"/></cols><sheetData>${rows}</sheetData><autoFilter ref="A1:${String.fromCharCode(64+s.rows[0].length)}${s.rows.length}"/></worksheet>`]);
- });
- return zipStored(files);
-}
-function exportSheets(kind){
- const swimmers=state.roster.filter(s=>s.directory_visible).sort((a,b)=>state.records.filter(r=>r.holder===b.name).length-state.records.filter(r=>r.holder===a.name).length||a.name.localeCompare(b.name,"zh-Hant"));
- return ["長池","短池"].map(course=>{
-  const rows=[[kind==="pb"?"選手":"隊史保持人","性別","項目","成績（分:秒）","總秒數","賽事","比賽日期"]];
-  if(kind==="pb")for(const s of swimmers)for(const event of EVENTS[course]){
-   const p=state.pbs.find(p=>p.name===s.name&&p.course===course&&p.event===event);
-   rows.push([s.name,s.gender||"",event,p?fmt(p.seconds):"暫無成績",p?Number(p.seconds):"",p?(p.meet||"賽事未提供"):"",p?.swim_date||""]);
-  }
-  else for(const gender of ["男","女"])for(const event of EVENTS[course]){
-   const r=state.records.find(r=>r.course===course&&r.gender===gender&&r.event===event);
-   const p=r&&state.performances.find(p=>p.swimmer_name===r.holder&&p.course===course&&p.event===event&&Number(p.seconds)===Number(r.seconds)&&p.meet===r.meet&&p.swim_date);
-   rows.push([r?.holder||"",gender,event,r?fmt(r.seconds):"暫無成績",r?Number(r.seconds):"",r?(r.meet||"賽事未提供"):"",p?.swim_date||""]);
-  }
-  return {name:course,rows};
- });
-}
-async function exportExcel(kind){ if(!state.coach)return openLogin();
- const buttons=[...document.querySelectorAll(".export-btn")];buttons.forEach(b=>b.disabled=true);
- try{
-  if(!sb||!await loadCloud()||!state.coach)throw new Error("無法取得教練資料，請重新登入後再試。");
-  const date=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei"}).format(new Date());
-  const blob=createXlsx(exportSheets(kind)),url=URL.createObjectURL(blob),a=document.createElement("a");
-  a.href=url;a.download=`鬍子泳隊_${kind==="pb"?"選手最新PB":"隊史紀錄"}_${date}${sb?"":"_預覽"}.xlsx`;
-  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
- }catch(e){alert("匯出失敗："+e.message)}finally{buttons.forEach(b=>b.disabled=false);}
-}
-
-function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function fmt(sec){sec=Number(sec);if(!Number.isFinite(sec))return "—";if(sec>=60){let m=Math.floor(sec/60);return String(m).padStart(2,"0")+":"+String((sec-m*60).toFixed(2)).padStart(5,"0")}return sec.toFixed(2)}
-function updateAuth(){
- document.getElementById("authArea").innerHTML=state.user?'<button class="btn" onclick="logout()">登出 👋</button>':'<button class="btn" onclick="openLogin()">教練登入 🔑</button>';
- document.querySelectorAll(".coach-only").forEach(el=>el.hidden=!state.coach);
- document.getElementById("adminPanel").classList.toggle("show",state.coach);
-}
-function render()
-{
- document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
- document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
- const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<span class="meet-tag">${esc(r.meet||"賽事未提供")}</span>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
- renderPeople(); renderAdmin();
-}
-function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
- const q=document.getElementById("search").value.trim().toLowerCase();
- const arr=state.roster.filter(x=>x.directory_visible&&(!q||[x.name,x.school].filter(Boolean).join(" ").toLowerCase().includes(q))).sort((a,b)=>state.records.filter(r=>r.holder===b.name).length-state.records.filter(r=>r.holder===a.name).length||a.name.localeCompare(b.name,"zh-Hant"));
- document.getElementById("people").innerHTML=arr.map(p=>{
-   const n=state.pbs.filter(x=>x.name===p.name).length;
-   const owned=state.records.filter(x=>x.holder===p.name).length;
-   return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><h3>${esc(p.name)}</h3><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div><div class="person-record-count">🏆 <b>${owned}</b> 項隊史</div></div>`
- }).join("")||`<div class="empty">找不到符合的隊員</div>`;
-}
-function openPerson(name){ if(!state.coach)return openLogin();currentPerson=name;
- const p=state.roster.find(x=>x.name===name)||{name};
- const pb=state.pbs.filter(x=>x.name===name);
- const rec=state.records.filter(x=>x.holder===name);
- document.getElementById("personTitle").textContent=`${name}｜個人紀錄`;
- const groups=["長池","短池"].map(c=>{
-   const events=EVENTS[c];
-   const rows=events.map(ev=>pb.find(x=>x.course===c&&x.event===ev)).filter(Boolean);
-   return `<div class="card" style="margin:12px 0"><h3>${c} PB</h3>${rows.length?rows.map(x=>`<div class="record-row"><span>${esc(x.event)}<span class="pb-meet">創下 PB 賽事：${esc(x.meet||"賽事未提供")}</span></span><strong>${esc(x.display||fmt(x.seconds))}</strong></div>`).join(""):"<div class='muted'>尚無成績</div>"}</div>`;
- }).join("");
- const recHtml=rec.length?`<div class="notice">🏆 此選手目前保持 <b>${rec.length}</b> 項隊史紀錄</div>${rec.map(r=>`<div class="record-row"><span>${esc(r.course)} · ${esc(r.event)} · ${esc(r.gender)}</span><strong>${esc(r.display||fmt(r.seconds))}</strong></div>`).join("")}`:"";
- document.getElementById("personBody").innerHTML=`<div class="card"><b>${esc(p.name)}</b><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div></div>${state.coach?`<button class="btn primary person-add" onclick="openPerformance(currentPerson)">🏊 新增選手成績／賽事</button>`:""}${recHtml}${groups}`;
- document.getElementById("personModal").classList.add("show");
-}
-function renderAdmin(){ if(!state.coach){document.getElementById("performanceList").innerHTML="";return;}renderMeets();
- document.getElementById("statPeople").textContent=state.roster.filter(x=>x.directory_visible).length;
- document.getElementById("statPB").textContent=state.pbs.length;
- document.getElementById("statRecords").textContent=state.records.length;
- const list=document.getElementById("performanceList");
- if(!list)return;
- const rows=[...(state.performances||[])].sort((a,b)=>String(b.created_at||"").localeCompare(String(a.created_at||""))||String(b.id||"").localeCompare(String(a.id||""))).slice(0,10);
- list.innerHTML=rows.length?rows.map(p=>`<div class="record-row" style="gap:10px;align-items:center"><div style="flex:1"><b>${esc(p.swimmer_name)}</b> · ${esc(p.course)} ${esc(p.event)}<div class="muted small">${esc(p.display||fmt(p.seconds))} · ${esc(p.meet||"未填賽事")} · ${esc(p.swim_date||"")}<div>新增時間：${p.created_at?esc(new Date(p.created_at).toLocaleString("zh-TW",{timeZone:"Asia/Taipei"})):"未提供"}</div></div></div><button class="btn danger" onclick="event.stopPropagation();deletePerformance('${esc(p.id)}')">🗑 刪除</button></div>`).join(""):`<div class="muted">目前沒有成績資料。</div>`;
-}
-function openLogin(){document.getElementById("loginModal").classList.add("show")}
-function openPerformance(name){if(!state.coach)return openLogin();fillForms();if(name)document.getElementById("pSwimmer").value=name;document.getElementById("pMeet").setAttribute("list","meetOptions");document.getElementById("meetOptions").innerHTML=state.meets.map(x=>x.name).map(m=>`<option value="${esc(m)}">`).join("");document.getElementById("performanceModal").classList.add("show")}
-function closeModal(id){document.getElementById(id).classList.remove("show")}
-function fillForms(){
- document.getElementById("pSwimmer").innerHTML=state.roster.map(p=>`<option value="${esc(p.name)}">${esc(p.name)}</option>`).join("");
- document.getElementById("pCourse").onchange=fillEvents; document.getElementById("pCourse").value=state.course; fillEvents();document.getElementById("pDate").value=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei"}).format(new Date());
-}
-function fillEvents(){const c=document.getElementById("pCourse").value;document.getElementById("pEvent").innerHTML=EVENTS[c].map(x=>`<option>${x}</option>`).join("")}
-async function login(){
- if(!sb){document.getElementById("loginMsg").innerHTML="<div class='notice error'>尚未設定 Supabase。請打開 config.js 填入專案 URL 與 anon key。</div>";return}
- const email=document.getElementById("loginEmail").value,password=document.getElementById("loginPassword").value;
- const {error}=await sb.auth.signInWithPassword({email,password});
- document.getElementById("loginMsg").innerHTML=error?`<div class='notice error'>${esc(error.message)}</div>`:"<div class='notice success'>登入成功</div>";
- if(!error)setTimeout(()=>closeModal("loginModal"),500);
-}
-async function logout(){cloudGeneration++;clearCoachData();state.user=null;render();updateAuth();if(sb)await sb.auth.signOut();}
-function computeDerivedData(perfList){
- const pbMap=new Map();
- for(const p of perfList||[]){
-   const key=`${p.swimmer_name}__${p.course}__${p.event}`;
-   const current=pbMap.get(key);
-   if(!current || Number(p.seconds)<Number(current.seconds) || (Number(p.seconds)===Number(current.seconds)&&!current.meet&&p.meet)) pbMap.set(key,p);
- }
- state.pbs=[...pbMap.values()].map(p=>({...p,name:p.swimmer_name,seconds:Number(p.seconds),display:fmt(Number(p.seconds))}));
-}
-async function allPerformances(){let rows=[];for(let start=0;;start+=1000){const {data,error}=await sb.from("performances").select("*").order("id").range(start,start+999);if(error)throw error;rows.push(...data);if(data.length<1000)return {data:rows,error:null};}}
-let cloudGeneration=0;
-function clearCoachData(){state.coach=false;state.roster=[];state.pbs=[];state.performances=[];state.meets=[];currentPerson=null;document.getElementById("personTitle").textContent="個人紀錄";document.getElementById("personBody").innerHTML="";document.getElementById("people").innerHTML="";document.getElementById("performanceList").innerHTML="";document.getElementById("meetList").innerHTML="";document.getElementById("pSwimmer").innerHTML="";document.getElementById("meetOptions").innerHTML="";for(const id of ["pMeet","pNote","pSeconds","newMeetName","loginPassword"])document.getElementById(id).value="";for(const id of ["personModal","performanceModal"])closeModal(id);updateAuth();}
-async function loadCloud(){
- const generation=++cloudGeneration;
- try{
-  if(!sb){render();updateAuth();return false;}
-  const {data:rec,error:recError}=await sb.from("team_records").select("*");if(recError)throw recError;
-  let coach=false;
-  if(state.user){const {data,error}=await sb.rpc("is_coach");if(error)throw error;coach=data===true;}
-  if(generation!==cloudGeneration)return false;
-  state.records=(rec||[]).map(r=>({...r,holder:r.swimmer_name,seconds:Number(r.seconds),display:fmt(r.seconds)}));
-  if(!coach){clearCoachData();render();return true;}
-  const results=await Promise.all([sb.from("swimmers").select("name,gender,school,directory_visible").order("name"),allPerformances(),sb.from("meets").select("*").order("name")]);
-  for(const result of results)if(result.error)throw result.error;
-  if(generation!==cloudGeneration)return false;
-  state.roster=results[0].data||[];state.performances=(results[1].data||[]).map(p=>({...p,seconds:Number(p.seconds),display:fmt(p.seconds)}));state.meets=(results[2].data||[]).filter(m=>m.active!==false);
-  computeDerivedData(state.performances);state.coach=true;render();updateAuth();return true;
- }catch(e){if(generation!==cloudGeneration)return false;clearCoachData();render();document.getElementById("dbStatus").textContent="⚠️ 資料讀取失敗，請重新整理";console.error(e);return false;}
-}
-function renderMeets(){
- const list=document.getElementById("meetList");if(!state.coach){list.innerHTML="";return;}
- list.innerHTML=state.meets.map(m=>{const count=state.performances.filter(p=>String(p.meet||"").trim()===m.name).length;return `<div class="record-row"><span>🏟️ ${esc(m.name)}<span class="pb-meet">${count} 筆成績</span></span><button class="btn danger" data-meet-id="${esc(m.id)}">刪除賽事</button></div>`;}).join("")||'<div class="muted small">還沒有賽事，先建立第一場吧 🌱</div>';
- list.querySelectorAll("button[data-meet-id]").forEach(b=>b.onclick=()=>deleteMeet(b.dataset.meetId));
-}
-async function createMeet(){
- if(!state.coach||!sb)return openLogin();
- const input=document.getElementById("newMeetName"),name=input.value.trim(),message=document.getElementById("meetMsg"),button=document.getElementById("createMeetButton");
- if(!name){message.textContent="請輸入新賽事的名稱";return;}button.disabled=true;
- try{const {data,error}=await sb.rpc("create_meet",{p_name:name});if(error)throw error;input.value="";await loadCloud();message.textContent=data.message;}
- catch(e){message.textContent=e.message;}finally{button.disabled=false;}
-}
-async function deleteMeet(id){
- if(!state.coach||!sb)return openLogin();const meet=state.meets.find(m=>m.id===id);if(!meet)return;
- if(!confirm(`從賽事選單移除「${meet.name}」？\n已有成績、PB和隊史仍會保留。`))return;
- const {error}=await sb.rpc("delete_meet",{p_id:id});if(error){document.getElementById("meetMsg").textContent=error.message;return;}
- await loadCloud();document.getElementById("meetMsg").textContent="賽事已移除，原有成績與PB保留";
-}
-
-async function submitPerformance(){ if(!state.coach)return openLogin();
- const payload={swimmer_name:document.getElementById("pSwimmer").value,course:document.getElementById("pCourse").value,event:document.getElementById("pEvent").value,seconds:parseSwimTime(document.getElementById("pSeconds").value),swim_date:document.getElementById("pDate").value,meet:document.getElementById("pMeet").value,note:document.getElementById("pNote").value};
- if(!EVENTS[payload.course].includes(payload.event)){document.getElementById("pMsg").innerHTML="<div class='notice error'>此項目不屬於所選泳池。</div>";return}
- if(!payload.meet.trim()){document.getElementById("pMsg").innerHTML="請輸入或選擇賽事名稱（新名稱會隨成績保存）。";return} if(!Number.isFinite(payload.seconds)||payload.seconds<=0){document.getElementById("pMsg").innerHTML="<div class='notice error'>請輸入成績，例如 1:23.45 或 83.45；冒號後秒數須小於 60。</div>";return}
- if(!sb){document.getElementById("pMsg").innerHTML="<div class='notice error'>尚未連接雲端資料庫。</div>";return}
- const {data,error}=await sb.rpc("record_performance",payload);
- document.getElementById("pMsg").innerHTML=error?`<div class='notice error'>${esc(error.message)}</div>`:`<div class='notice success'>${data?.message||"成績已儲存，PB／隊史已自動判定。"}</div>`;
- if(!error){await loadCloud();if(currentPerson&&state.coach)openPerson(currentPerson);setTimeout(()=>closeModal("performanceModal"),500)}
-}
-async function deletePerformance(id){
- if(!state.coach||!sb)return openLogin();
- const p=(state.performances||[]).find(x=>x.id===id);
- if(!p)return;
- if(!confirm(`確定刪除這筆成績？\n${p.swimmer_name}｜${p.course} ${p.event}｜${p.display||fmt(p.seconds)}\n${p.meet||"未填賽事"}`))return;
- const {data,error}=await sb.rpc("delete_performance",{performance_id:id});
- if(error){alert("刪除失敗："+error.message);return}
- await loadCloud();
-}
-document.getElementById("personModal").addEventListener("click",e=>{if(e.target===e.currentTarget)closeModal("personModal")});document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{state.course=b.dataset.course;render()});document.getElementById("search").oninput=renderPeople;render();updateAuth();if(sb)loadCloud();
-</script>
-</body></html>
+create or replace function public.log_coach_update()
+returns trigger language plpgsql security definer set search_path=public as $$
+declare b jsonb; a jsonb; actor uuid:=auth.uid(); label text; verb text:=TG_OP;
+begin
+ if TG_OP <> 'INSERT' then b:=to_jsonb(OLD); end if;
+ if TG_OP <> 'DELETE' then a:=to_jsonb(NEW); end if;
+ if TG_OP='UPDATE' and a=b then return NEW; end if;
+ select nullif(trim(p.display_name),'') into label from public.profiles p where p.id=actor;
+ label:=coalesce(label,case when actor is null then '系統／SQL 更新' else '未命名教練' end);
+ if TG_TABLE_NAME='meets' and TG_OP='UPDATE' then
+  if b->>'active'='true' and a->>'active'='false' then verb:='ARCHIVE';
+  elsif b->>'active'='false' and a->>'active'='true' then verb:='RESTORE'; end if;
+ end if;
+ insert into public.coach_update_logs(actor_id,actor_name,entity,entity_id,action,before_data,after_data)
+ values(actor,label,TG_TABLE_NAME,coalesce((a->>'id')::uuid,(b->>'id')::uuid),verb,b,a);
+ if TG_OP='DELETE' then return OLD; end if;
+ return NEW;
+end $$;
+revoke all on function public.log_coach_update() from public,anon,authenticated;
+drop trigger if exists coach_audit_meets on public.meets;
+create trigger coach_audit_meets after insert or update or delete on public.meets for each row execute function public.log_coach_update();
+drop trigger if exists coach_audit_performances on public.performances;
+create trigger coach_audit_performances after insert or update or delete on public.performances for each row execute function public.log_coach_update();
+commit;
+-- 以下應看到兩位教練的新名稱。
+select p.display_name,split_part(u.email,'@',1) as account from public.profiles p join auth.users u on u.id=p.id where lower(split_part(u.email,'@',1)) in ('kevindd100','weiihuang49');
