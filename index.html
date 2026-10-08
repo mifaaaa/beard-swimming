@@ -95,9 +95,13 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 <script>
 const DEMO_DATA = {"roster":[{"name":"李亮樂","gender":"女","school":"中正國中","grade":"9","birth":"2011/01/14","note":"99尾~100頭"},{"name":"曾子僑","gender":"女","school":"重慶國中","grade":"8","birth":"2011/11/12","note":"100尾~101頭"},{"name":"潘沅駿","gender":"男","school":"土城國中","grade":"8","birth":"2012/04/25","note":null},{"name":"彭奕凱","gender":"男","school":"中山國小","grade":"7","birth":"2012/09/29","note":"101尾~102頭"},{"name":"劉昱成","gender":"男","school":"板橋國小","grade":"7","birth":"2012/11/05","note":null},{"name":"胡庭瑞","gender":"男","school":"中山國小","grade":"6","birth":"2014/05/12","note":"102尾~103頭"},{"name":"陳言安","gender":"男","school":"埔墘國小","grade":"6","birth":"2014/05/14","note":null},{"name":"鍾昊恩","gender":"男","school":"大觀國小","grade":"6","birth":"2014/05/17","note":null},{"name":"張境晏","gender":"女","school":"中山國小","grade":"6","birth":"2014/06/23","note":null},{"name":"曾子瑞","gender":"男","school":"中山國小","grade":"6","birth":"2014/07/16","note":null},{"name":"王柔伊","gender":"女","school":"中山國小","grade":"5","birth":"2015/02/04","note":"103尾~104頭"},{"name":"陳衍均","gender":"男","school":"大觀國小","grade":"5","birth":"2015/02/27","note":null},{"name":"姚家興","gender":"男","school":"中山國小","grade":"5","birth":"2015/03/13","note":null},{"name":"尹亮允","gender":"女","school":"中山國小","grade":"4","birth":"2015/09/29","note":"104尾~105頭"},{"name":"黃惟淵","gender":"男","school":"莒光國小","grade":"4","birth":"2016/01/09","note":null},{"name":"潘昱晴","gender":"女","school":"廣福國小","grade":"4","birth":"2016/01/17","note":null},{"name":"廖書汎","gender":"男","school":"中山國小","grade":"4","birth":"2016/07/11","note":null},{"name":"唐紫芯","gender":"女","school":"裕德國際學校","grade":"4","birth":"2016/08/08","note":null},{"name":"翁晨軒","gender":"男","school":"大觀國小","grade":"3","birth":"2017/01/22","note":"105尾~106頭"},{"name":"楊鎧銓","gender":"男","school":"康橋國際學校","grade":"3","birth":"2017/03/08","note":null},{"name":"高珩晉","gender":"男","school":"康橋國際學校","grade":"3","birth":"2017/08/21","note":null},{"name":"王暐蘅","gender":"男","school":"中山國小","grade":"2","birth":"2017/09/25","note":"106尾~107頭"},{"name":"張可勻","gender":"男","school":"土城國小","grade":"2","birth":"2018/06/21","note":null},{"name":"高赫言","gender":"男","school":"康橋國際學校","grade":"1","birth":"2018/11/13","note":"107尾~108頭"},{"name":"陳廷峰","gender":"男","school":"大觀國中","grade":"9","birth":"2010/12/26","note":null},{"name":"簡歆宸","gender":"女","school":"大觀國小","grade":"5","birth":"2015/05/18","note":null},{"name":"簡歆芸","gender":"女","school":"大觀國小","grade":"2","birth":"2018/05/06","note":null},{"name":"梁義謹","gender":"男","school":"大觀國中","grade":"9","birth":"2011/01/15","note":null},{"name":"吳秉曄","gender":"男","school":"實踐國小","grade":"6","birth":"2013/12/23","note":null},{"name":"王欣蔓","gender":"女","school":"中山國小","grade":"6","birth":null,"note":null},{"name":"邱苡甯","gender":"女","school":null,"grade":"4","birth":null,"note":null},{"name":"邱莛玹","gender":"女","school":null,"grade":"4","birth":null,"note":null},{"name":"林祉妡","gender":null,"school":null,"grade":"4","birth":null,"note":null},{"name":"張可言","gender":"男","school":"土城國中","grade":"7","birth":"2013/01/31","note":null},{"name":"翁唯軒","gender":"男","school":"恆毅中學","grade":"9","birth":"2010/11/04","note":null},{"name":"池永璋","gender":"男","school":"大觀國中","grade":"8","birth":"2012/06/01","note":null},{"name":"洪瑀彤","gender":"女","school":"中山國小","grade":"7","birth":"2012/10/10","note":null},{"name":"王霈晴","gender":"女","school":"中山國小","grade":"7","birth":"2012/10/12","note":null},{"name":"高語均","gender":"女","school":"中山國小","grade":"7","birth":"2013/02/11","note":null},{"name":"鄧宇勝","gender":"男","school":"大觀國小","grade":"7","birth":"2013/05/08","note":null},{"name":"李瑨宸","gender":"男","school":"福瑞斯特高級中學","grade":"4","birth":"2015/11/24","note":null},{"name":"古羽立","gender":"男","school":"康橋國際學校","grade":"3","birth":"2016/11/29","note":null}],"pbs":[],"records":[]};
 
-const EVENT_ORDER = ["50自", "50仰", "50蛙", "50蝶", "100自", "100仰", "100蛙", "100蝶", "200混", "200自", "200蛙"];
-const EVENTS={長池:["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","200混","200自","200蛙"],短池:["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","100混","200混","200自"]};
-let state={course:"長池", roster:DEMO_DATA.roster, pbs:[], records:[], user:null, online:false};
+const EVENT_ORDER = ["50自", "50仰", "50蛙", "50蝶", "100自", "100仰", "100蛙", "100蝶", "200混", "200自", "200蛙", "400自"];
+const EVENTS = {
+  長池: ["50自", "50仰", "50蛙", "50蝶", "100自", "100仰", "100蛙", "100蝶", "200混", "200自", "200蛙", "400自"],
+  短池: ["50自", "50仰", "50蛙", "50蝶", "100自", "100仰", "100蛙", "100蝶", "200混", "200自", "200蛙", "400自"]
+};
+
+let state={course:"長池", roster:DEMO_DATA.roster, pbs:[], records:[], rawPerformances:[], user:null, online:false};
 let sb=null;
 
 let meetTags = ["2606中正", "2604夢想春季", "2604全國小學", "2601全國北A", "2601新北市中", "2512Xports", "2511夢想冬季", "2509全國北A", "2506全國青年", "2412Xports"];
@@ -149,6 +153,40 @@ function sortRecords(arr){
     if(ib === -1) ib = 99;
     return ia - ib;
   });
+}
+
+// 智慧前端動態計算 PB 與隊史紀錄
+function computeDerivedData(perfList, rosterList) {
+  // 1. 計算 PB：每個選手在每個 course + event 取秒數最小的一筆
+  const pbMap = {};
+  perfList.forEach(p => {
+    const key = `${p.swimmer_name}_${p.course}_${p.event}`;
+    if (!pbMap[key] || p.seconds < pbMap[key].seconds) {
+      pbMap[key] = { ...p, name: p.swimmer_name };
+    }
+  });
+  state.pbs = Object.values(pbMap);
+
+  // 2. 計算隊史紀錄：針對每個 course + gender + event 取秒數最小的一筆
+  const recordMap = {};
+  state.pbs.forEach(p => {
+    const swimmer = rosterList.find(r => r.name === p.swimmer_name);
+    if (!swimmer || !swimmer.gender) return;
+    const g = swimmer.gender.includes("女") ? "女" : "男";
+    const key = `${p.course}_${g}_${p.event}`;
+    if (!recordMap[key] || p.seconds < recordMap[key].seconds) {
+      recordMap[key] = {
+        course: p.course,
+        gender: g,
+        event: p.event,
+        holder: p.swimmer_name,
+        seconds: p.seconds,
+        display: fmt(p.seconds),
+        meet: p.meet
+      };
+    }
+  });
+  state.records = Object.values(recordMap);
 }
 
 function render(){
@@ -283,7 +321,20 @@ function renderAdmin(){
  if(document.getElementById("statPeople")) document.getElementById("statPeople").textContent=activeSwimmersCount;
  if(document.getElementById("statPB")) document.getElementById("statPB").textContent=(state.pbs||[]).length;
  if(document.getElementById("statRecords")) document.getElementById("statRecords").textContent=(state.records||[]).length;
- if(document.getElementById("recent")) document.getElementById("recent").innerHTML="<div class='muted'>登入後新增的成績會顯示在這裡。</div>";
+ 
+ const recentEl = document.getElementById("recent");
+ if(recentEl) {
+   const sortedPerf = (state.rawPerformances || []).slice().sort((a,b) => new Date(b.created_at || b.swim_date || 0) - new Date(a.created_at || a.swim_date || 0)).slice(0, 5);
+   recentEl.innerHTML = sortedPerf.length ? sortedPerf.map(r => `
+     <div class="record-row">
+       <div>
+         <b>${esc(r.swimmer_name)}</b> - ${esc(r.course)} ${esc(r.event)}
+         <div class="muted small">${esc(r.meet || '')} ${r.swim_date ? '('+esc(r.swim_date)+')' : ''}</div>
+       </div>
+       <strong>${esc(fmt(r.seconds))}</strong>
+     </div>
+   `).join("") : "<div class='muted'>尚無最近更新紀錄。</div>";
+ }
 }
 
 function openLogin(){document.getElementById("loginModal").classList.add("show")}
@@ -304,9 +355,9 @@ function openPerformanceModal(swimmerName, course, event, seconds, meet) {
   }
   if (seconds) {
     document.getElementById("pSeconds").value = seconds;
-    document.getElementById("deletePerfBtn").style.display = "block"; // 點擊修改時顯示刪除按鈕
+    document.getElementById("deletePerfBtn").style.display = "block";
   } else {
-    document.getElementById("deletePerfBtn").style.display = "none"; // 點擊新增時隱藏刪除按鈕
+    document.getElementById("deletePerfBtn").style.display = "none";
   }
   if (meet) {
     document.getElementById("pMeet").value = meet;
@@ -343,7 +394,7 @@ function checkNewMeet(selectEl) {
 }
 
 function fillForms(){
- const activeSwimmers = (state.roster||[]).filter(p => p.name !== "鄧丞勛" && (state.pbs||[]).some(x => x.name === p.name || x.swimmer_name === p.name));
+ const activeSwimmers = (state.roster||[]).filter(p => p.name !== "鄧丞勛" && (state.rawPerformances||[]).some(x => x.swimmer_name === p.name));
  document.getElementById("pSwimmer").innerHTML=(activeSwimmers.length ? activeSwimmers : state.roster.filter(p=>p.name!=="鄧丞勛")).map(p=>`<option value="${esc(p.name)}">${esc(p.name)}</option>`).join("");
  document.getElementById("pCourse").onchange=fillEvents; 
  document.getElementById("pCourse").value=state.course; 
@@ -370,10 +421,22 @@ async function logout(){if(sb)await sb.auth.signOut();state.user=null;updateAuth
 async function loadCloud(){
  try{
   if(sb) {
-    const [{data:sw},{data:perf},{data:rec}]=await Promise.all([sb.from("swimmers").select("*").order("name"),sb.from("performances").select("*"),sb.from("team_records").select("*")]);
-    if(sw)state.roster=sw.map(x=>({name:x.name,gender:x.gender,school:x.school,grade:x.grade,birth:x.birth,note:x.note}));
-    if(perf)state.pbs=perf.map(x=>({name:x.swimmer_name,course:x.course,event:x.event,seconds:Number(x.seconds),display:fmt(x.seconds),meet:x.meet}));
-    if(rec)state.records=rec.map(x=>({course:x.course,gender:x.gender,event:x.event,holder:x.swimmer_name,seconds:Number(x.seconds),display:fmt(x.seconds),meet:x.meet}));
+    const [{data:sw},{data:perf}]=await Promise.all([
+      sb.from("swimmers").select("*").order("name"),
+      sb.from("performances").select("*")
+    ]);
+    if(sw) state.roster = sw.map(x=>({name:x.name,gender:x.gender,school:x.school,grade:x.grade,birth:x.birth,note:x.note}));
+    if(perf) {
+      state.rawPerformances = perf;
+      computeDerivedData(perf.map(x=>({
+        swimmer_name: x.swimmer_name,
+        course: x.course,
+        event: x.event,
+        seconds: Number(x.seconds),
+        meet: x.meet,
+        swim_date: x.swim_date
+      })), state.roster);
+    }
   } else {
     state.pbs = DEMO_DATA.pbs.filter(x => x.name !== "鄧丞勛");
     state.records = DEMO_DATA.records;
