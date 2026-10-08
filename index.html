@@ -110,13 +110,8 @@ header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px soli
 
 .year-grid{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}.year-grid .btn{min-width:125px;padding:16px}.meet-browser-body{max-height:55vh;overflow:auto}.modal.show{z-index:1000}#meetFamilyModal.show{z-index:1001}#meetYearModal.show{z-index:1002}#renameMeetModal.show,#addMeetModal.show{z-index:1003}
 .person-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px}.person-heading h3{margin:0}.person-heading .person-record-count{margin:0 0 0 auto;white-space:nowrap}
-.record-heading .record-meet{max-width:70%;text-align:right}.record-meet .meet-tag{max-width:100%}.record-meet-date{
-  margin-top:7px;
-  font-size:18px;
-  line-height:1.6;
-  overflow-wrap:anywhere;
-  padding-right:5px;
-}
+.record-heading .record-meet{max-width:70%;text-align:right}.record-meet .meet-tag{max-width:100%}.record-meet-date{margin-top:7px;font-size:18px;line-height:1.6;overflow-wrap:anywhere;padding-right:12px}
+#auditList{max-height:380px;overflow:auto;position:relative;overscroll-behavior:contain}#auditList details{padding:12px 0;border-bottom:1px solid var(--line)}.audit-changes{margin-top:12px;overflow-wrap:anywhere}.audit-changes td{white-space:normal;vertical-align:top;font-size:13px}.audit-changes th{white-space:normal}
 </style>
 
 </head>
@@ -136,7 +131,7 @@ header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px soli
 <section id="adminPanel" class="admin coach-only" hidden style="margin-top:40px">
 <div class="hero"><div><h2>🧢 教練編輯區</h2><p>登入後新增成績，系統會自動更新 PB 與隊史判定。</p></div><button class="btn primary" onclick="openPerformance()">＋ 新增成績</button></div>
 <div class="card" style="margin-top:18px"><h3>🏊 隊員管理</h3><p class="muted small">點編輯可調整學校、年級及備註；刪除隊員也在編輯內操作，歷史成績與隊史保留。</p><div class="meet-create"><input id="swimmerSearch" class="input" placeholder="🔎 搜尋隊員姓名或學校" oninput="renderSwimmerManagement()"><button class="btn primary" onclick="openAddSwimmer()">＋ 新增隊員</button></div><div id="swimmerMsg" aria-live="polite"></div><div id="swimmerList"></div></div><div class="card meet-management" style="margin-top:18px"><h3>🏟️ 賽事管理</h3><p class="muted small">點開賽事查看參加年度，再選場次補上開始日、結束日。每年可參加多場，也能新增未來年度。</p><div class="meet-create"><input id="meetSearch" class="input" placeholder="🔎 搜尋賽事名稱" oninput="renderMeets();fitScrollLists()"><button class="btn primary" onclick="openAddMeet()">＋ 新增賽事</button></div><div id="meetMsg" class="muted small" aria-live="polite"></div><div id="meetList" class="meet-list"></div></div>
-</section>
+<div id="adminAuditPanel" class="card" hidden style="margin-top:18px"><h3>🕒 教練更新紀錄</h3><p class="muted small">管理員專用。顯示登入帳號的賽事、成績及隊員資料操作，點開查看修改前後。</p><div id="auditMsg" aria-live="polite"></div><div id="auditList"></div><button id="auditMoreButton" class="btn ghost" hidden onclick="loadAdminAudit(true)">載入更早紀錄</button></div></section>
 </main>
 
 <div id="loginModal" class="modal"><div class="modalbox">
@@ -173,7 +168,7 @@ header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px soli
 <script src="config.js"></script>
 <script>
 const EVENTS={"長池":["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","200自","200混","200仰","200蛙","200蝶","400自"],"短池":["50自","50仰","50蛙","50蝶","100自","100混","100仰","100蛙","100蝶","200自","200混"]};
-let state={course:"長池",roster:[],pbs:[],records:[],performances:[],meets:[],allMeets:[],audit:[],auditMore:false,user:null,coach:false,online:false};
+let state={course:"長池",roster:[],pbs:[],records:[],performances:[],meets:[],allMeets:[],audit:[],auditMore:false,admin:false,user:null,coach:false,online:false};
 let currentPerson=null;
 let sb=null;
 if(window.SUPABASE_CONFIG?.url && window.SUPABASE_CONFIG?.anonKey && !window.SUPABASE_CONFIG.url.includes("YOUR_")){
@@ -254,14 +249,14 @@ function fmt(sec){sec=Number(sec);if(!Number.isFinite(sec))return "—";if(sec>=
 function updateAuth(){
  document.getElementById("authArea").innerHTML=state.user?'<button class="btn" onclick="logout()">登出 👋</button>':'<button class="btn" onclick="openLogin()">教練登入 🔑</button>';
  document.querySelectorAll(".coach-only").forEach(el=>el.hidden=!state.coach);
- document.getElementById("adminPanel").classList.toggle("show",state.coach);
+ document.getElementById("adminPanel").classList.toggle("show",state.coach);document.getElementById("adminAuditPanel").hidden=!state.admin;
 }
 function render()
 {
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date">🏆${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date">🏆 ${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin();
 }
 function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
@@ -313,7 +308,7 @@ function computeDerivedData(perfList){
 }
 async function allPerformances(){let rows=[];for(let start=0;;start+=1000){const {data,error}=await sb.from("performances").select("*").order("id").range(start,start+999);if(error)throw error;rows.push(...data);if(data.length<1000)return {data:rows,error:null};}}
 let cloudGeneration=0;
-function clearCoachData(){for(const prefix of ['pMeet','editPbMeet']){const el=scoreMeetElements(prefix);el.family.innerHTML='<option value="">請先選賽事</option>';el.edition.innerHTML='<option value="">請先選賽事</option>';el.edition.disabled=true;el.value.value='';el.hint.textContent='';}closeModal('meetFamilyModal');closeModal('meetYearModal');closeModal('addMeetModal');currentMeetFamily=null;currentMeetYear=null;editingMeetVersion=null;for(const id of ['meetFamilyBody','meetYearBody'])document.getElementById(id).innerHTML='';for(const prefix of ['newMeet','renameMeet'])for(const suffix of ['Name','Series','Year','Month','Start','End','Course'])document.getElementById(prefix+suffix).value='';
+function clearCoachData(){state.admin=false;state.audit=[];state.auditMore=false;document.getElementById("auditList").innerHTML="";document.getElementById("auditMsg").textContent="";document.getElementById("auditMoreButton").hidden=true;for(const prefix of ['pMeet','editPbMeet']){const el=scoreMeetElements(prefix);el.family.innerHTML='<option value="">請先選賽事</option>';el.edition.innerHTML='<option value="">請先選賽事</option>';el.edition.disabled=true;el.value.value='';el.hint.textContent='';}closeModal('meetFamilyModal');closeModal('meetYearModal');closeModal('addMeetModal');currentMeetFamily=null;currentMeetYear=null;editingMeetVersion=null;for(const id of ['meetFamilyBody','meetYearBody'])document.getElementById(id).innerHTML='';for(const prefix of ['newMeet','renameMeet'])for(const suffix of ['Name','Series','Year','Month','Start','End','Course'])document.getElementById(prefix+suffix).value='';
 document.getElementById('meetSearch').value='';
 document.getElementById('addMeetMsg').textContent='';state.coach=false;state.roster=[];state.pbs=[];state.performances=[];state.meets=[];state.allMeets=[];state.audit=[];state.auditMore=false;editingPbId=null;editingSwimmerId=null;document.getElementById("addSwimmerMsg").textContent="";document.getElementById("editSwimmerMsg").textContent="";currentPerson=null;document.getElementById("personTitle").textContent="個人紀錄";document.getElementById("personBody").innerHTML="";document.getElementById("people").innerHTML="";document.getElementById("meetList").innerHTML="";document.getElementById("swimmerList").innerHTML="";document.getElementById("swimmerMsg").textContent="";document.getElementById("pSwimmer").innerHTML="";document.getElementById("meetOptions").innerHTML="";for(const id of ["pMeet","pNote","pSeconds","newMeetName","newSwimmerName","newSwimmerSchool","editPbName","editPbSeconds","swimmerSearch","newSwimmerGrade","newSwimmerNote","editSwimmerSchool","editSwimmerGrade","editSwimmerNote","loginPassword"])document.getElementById(id).value="";for(const id of ["personModal","performanceModal","renameMeetModal","editPbModal","editSwimmerModal","addSwimmerModal"])closeModal(id);updateAuth();}
 async function loadCloud(){
@@ -326,11 +321,12 @@ async function loadCloud(){
   if(generation!==cloudGeneration)return false;
   state.records=(rec||[]).map(r=>({...r,holder:r.swimmer_name,seconds:Number(r.seconds),display:fmt(r.seconds)}));
   if(!coach){clearCoachData();render();return true;}
+  const {data:admin,error:adminError}=await sb.rpc("is_admin");if(adminError)throw adminError;if(generation!==cloudGeneration)return false;state.admin=admin===true;
   const results=await Promise.all([sb.from("swimmers").select("id,name,gender,school,grade,birth,note,updated_at,directory_visible,active").order("name"),allPerformances(),sb.from("meets").select("*").order("name",{ascending:false})]);
   for(const result of results)if(result.error)throw result.error;
   if(generation!==cloudGeneration)return false;
   state.roster=results[0].data||[];state.performances=(results[1].data||[]).map(p=>({...p,seconds:Number(p.seconds),display:fmt(p.seconds)}));state.allMeets=results[2].data||[];state.meets=state.allMeets.filter(m=>m.active!==false);
-  computeDerivedData(state.performances);state.coach=true;render();updateAuth();refreshOpenScoreMeets();return true;
+  computeDerivedData(state.performances);state.coach=true;render();updateAuth();refreshOpenScoreMeets();await loadAdminAudit(false);return true;
  }catch(e){if(generation!==cloudGeneration)return false;clearCoachData();render();document.getElementById("dbStatus").textContent="⚠️ 資料讀取失敗，請重新整理";console.error(e);return false;}
 }
 let currentMeetFamily=null,currentMeetYear=null,editingMeetVersion=null;
@@ -594,6 +590,27 @@ function chooseScoreEdition(prefix){
 }
 function selectedScoreMeet(prefix){const el=scoreMeetElements(prefix),name=el.edition.value;if(!el.family.value||!name||!scoreMeetChoices(prefix).some(m=>m.name===name&&familyName(m)===el.family.value))throw new Error('請先選賽事，再選場次');return name;}
 function refreshOpenScoreMeets(){for(const [prefix,modal] of [['pMeet','performanceModal'],['editPbMeet','editPbModal']])if(document.getElementById(modal).classList.contains('show'))setupScoreMeets(prefix,scoreMeetElements(prefix).value.value);}
+
+function auditValue(key,value){if(value==null||value==='')return '未填';if(key==='seconds')return fmt(Number(value));if(key==='active'||key==='directory_visible')return value?'是':'否';return String(value);}
+function renderAdminAudit(){
+ const list=document.getElementById('auditList');document.getElementById('adminAuditPanel').hidden=!state.admin;if(!state.admin){list.innerHTML='';return;}
+ const labels={INSERT:'新增',UPDATE:'修改',DELETE:'刪除',ARCHIVE:'移除',RESTORE:'恢復'},entities={meets:'賽事',performances:'成績',swimmers:'隊員'},fields={name:'名稱',series_name:'賽事名稱',edition_year:'年度',year_month:'年月',start_date:'開始日',end_date:'結束日',course:'泳池',active:'啟用',directory_visible:'顯示於隊員名單',swimmer_name:'選手',event:'項目',seconds:'成績',swim_date:'成績日期',meet:'場次',gender:'性別',school:'學校',grade:'年級',birth:'生日',note:'備註'};
+ list.innerHTML=state.audit.map(row=>{const before=row.before_data||{},after=row.after_data||{},data=row.after_data||row.before_data||{};
+ const changes=Object.keys(fields).filter(k=>(k in before||k in after)&&JSON.stringify(before[k])!==JSON.stringify(after[k]));
+ const time=new Date(row.created_at).toLocaleString('zh-TW',{timeZone:'Asia/Taipei',hour12:false});
+ const title=row.entity==='performances'?`${data.swimmer_name||''}｜${data.course||''} ${data.event||''}`:(data.name||'');
+ return `<details><summary><b>${esc(row.actor_name)} · ${esc(labels[row.action]||row.action)}${esc(entities[row.entity]||row.entity)}</b><span class="pb-meet">${esc(title)} · ${esc(time)}</span></summary>${changes.length?`<table class="audit-changes"><thead><tr><th>欄位</th><th>修改前</th><th>修改後</th></tr></thead><tbody>${changes.map(k=>`<tr><td>${esc(fields[k])}</td><td>${esc(auditValue(k,before[k]))}</td><td>${esc(auditValue(k,after[k]))}</td></tr>`).join('')}</tbody></table>`:'<p class="muted small">這次沒有顯示欄位的變更。</p>'}</details>`;
+ }).join('')||'<p class="muted">尚無登入帳號的操作紀錄。</p>';
+ document.getElementById('auditMoreButton').hidden=!state.auditMore;fitScrollLists();
+}
+async function loadAdminAudit(append=false){
+ if(!state.admin||!sb){state.audit=[];state.auditMore=false;renderAdminAudit();return;}
+ const generation=cloudGeneration,button=document.getElementById('auditMoreButton');button.disabled=true;
+ try{let query=sb.from('coach_update_logs').select('*').not('actor_id','is',null).order('id',{ascending:false});if(append&&state.audit.length)query=query.lt('id',state.audit[state.audit.length-1].id);
+ const {data,error}=await query.limit(51);if(error)throw error;if(generation!==cloudGeneration||!state.admin)return;
+ const rows=data||[];state.audit=append?[...state.audit,...rows.slice(0,50)]:rows.slice(0,50);state.auditMore=rows.length>50;document.getElementById('auditMsg').textContent='';renderAdminAudit();
+ }catch(e){if(generation===cloudGeneration&&state.admin)document.getElementById('auditMsg').textContent='紀錄讀取失敗：'+e.message;}finally{button.disabled=false;}
+}
 
 </script>
 </body></html>
