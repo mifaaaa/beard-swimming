@@ -29,6 +29,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 .person-add:hover{background:#075985!important}
 .pb-meet{display:block;color:#075985;font-size:13px;line-height:1.6;margin-top:5px;overflow-wrap:anywhere}
 .record-row>span{min-width:0}.record-row>strong{flex-shrink:0}
+.exportbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0}.export-btn:disabled{opacity:.5;cursor:wait}
 </style>
 
 </head>
@@ -40,7 +41,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 <main>
 <section class="hero"><div><h1>🏆 隊史紀錄</h1><p>每一秒都值得被記住。速度會變，紀錄會留下。</p></div><div id="dbStatus" class="muted small"></div></section>
 <div class="tabs"><button class="tab active" data-course="長池">長池 50m</button><button class="tab" data-course="短池">短池 25m</button></div>
-<div id="recordsView"></div>
+<div class="exportbar"><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div><div id="recordsView"></div>
 
 <section style="margin-top:34px"><div class="hero"><div><h2>👥 隊員資料庫</h2><p>點選隊員查看個人最佳紀錄與隊史保持項目。</p></div></div>
 <div class="searchbar"><input id="search" class="input" placeholder="搜尋姓名、學校…"></div><div id="people" class="people"></div></section>
@@ -52,7 +53,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 <div class="card"><div class="muted">目前 PB 筆數</div><div class="stat" id="statPB">—</div></div>
 <div class="card"><div class="muted">隊史紀錄</div><div class="stat" id="statRecords">—</div></div>
 </div>
-<div class="card" style="margin-top:14px"><h3>📋 成績紀錄</h3><p class="muted small">這裡列出所有歷史成績。PB 是系統自動從歷史成績中挑出的最佳成績；刪除只會刪除你選的那一筆。</p><div id="performanceList"></div></div>
+<div class="card" style="margin-top:14px"><h3>最近新增的 10 筆</h3><p class="muted small">依新增時間由新到舊，方便確認剛輸入的成績。刪除只會刪除所選的那一筆。</p><div id="performanceList"></div></div>
 </section>
 </main>
 
@@ -71,7 +72,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 <div><label>隊員</label><select id="pSwimmer"></select></div>
 <div><label>泳池</label><select id="pCourse"><option>長池</option><option>短池</option></select></div>
 <div><label>項目</label><select id="pEvent"></select></div>
-<div><label>成績（秒）</label><input id="pSeconds" class="input" type="number" step="0.01" placeholder="63.74"></div>
+<div><label>成績（分:秒 或 秒數）</label><input id="pSeconds" class="input" type="text" placeholder="例如 1:23.45 或 83.45"><div class="muted small">超過一分鐘可直接輸入 1:23.45</div></div>
 <div><label>日期</label><input id="pDate" class="input" type="date"></div>
 <div><label>賽事</label><input id="pMeet" class="input" placeholder="例如：2610 泳協北A2"></div>
 <div class="full"><label>備註</label><input id="pNote" class="input" placeholder="可選"></div>
@@ -92,6 +93,73 @@ if(window.SUPABASE_CONFIG?.url && window.SUPABASE_CONFIG?.anonKey && !window.SUP
   sb.auth.getSession().then(({data})=>{state.user=data.session?.user||null; updateAuth(); if(state.user) loadCloud();});
   sb.auth.onAuthStateChange((_e,s)=>{state.user=s?.user||null;updateAuth();if(state.user)loadCloud();});
 }
+// Standalone XLSX export: text cells are literal strings, never formulas.
+function parseSwimTime(value){
+ const raw=String(value).trim().replace(/：/g,":");
+ let seconds;
+ if(/^\d+(?:\.\d{1,3})?$/.test(raw)) seconds=Number(raw);
+ else {const m=raw.match(/^(\d+):([0-5]?\d)(?:\.(\d{1,3}))?$/);if(!m)return NaN;seconds=Number(m[1])*60+Number(m[2])+Number("0."+(m[3]||"0"));}
+ return Number.isFinite(seconds)&&seconds>0&&seconds<100000 ? Math.round(seconds*1000)/1000 : NaN;
+}
+function xmlText(value){return String(value??"").replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]));}
+function zipStored(files){
+ const encode=new TextEncoder(),parts=[],directory=[];let offset=0;
+ const table=Array.from({length:256},(_,n)=>{for(let k=0;k<8;k++)n=n&1?0xedb88320^(n>>>1):n>>>1;return n>>>0;});
+ const crc=bytes=>{let n=0xffffffff;for(const b of bytes)n=table[(n^b)&255]^(n>>>8);return (n^0xffffffff)>>>0;};
+ for(const [path,content] of files){
+  const name=encode.encode(path),data=encode.encode(content),checksum=crc(data);
+  const local=new Uint8Array(30),l=new DataView(local.buffer);
+  l.setUint32(0,0x04034b50,true);l.setUint16(4,20,true);l.setUint16(12,33,true);l.setUint32(14,checksum,true);l.setUint32(18,data.length,true);l.setUint32(22,data.length,true);l.setUint16(26,name.length,true);
+  parts.push(local,name,data);
+  const central=new Uint8Array(46),c=new DataView(central.buffer);
+  c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(14,33,true);c.setUint32(16,checksum,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,name.length,true);c.setUint32(42,offset,true);
+  directory.push(central,name);offset+=30+name.length+data.length;
+ }
+ const size=directory.reduce((n,b)=>n+b.length,0),end=new Uint8Array(22),e=new DataView(end.buffer);
+ e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,size,true);e.setUint32(16,offset,true);
+ return new Blob([...parts,...directory,end],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+}
+function createXlsx(sheets){
+ const declaration='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+ const files=[
+  ["[Content_Types].xml",declaration+`<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${sheets.map((s,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join("")}</Types>`],
+  ["_rels/.rels",declaration+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
+  ["xl/workbook.xml",declaration+`<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((s,i)=>`<sheet name="${xmlText(s.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join("")}</sheets></workbook>`],
+  ["xl/_rels/workbook.xml.rels",declaration+`<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((s,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join("")}</Relationships>`]
+ ];
+ sheets.forEach((s,i)=>{
+  const rows=s.rows.map((row,r)=>`<row r="${r+1}">${row.map((v,c)=>{const ref=String.fromCharCode(65+c)+(r+1);return typeof v==="number"&&Number.isFinite(v)?`<c r="${ref}"><v>${v}</v></c>`:`<c r="${ref}" t="inlineStr"><is><t xml:space="preserve">${xmlText(v)}</t></is></c>`;}).join("")}</row>`).join("");
+  files.push([`xl/worksheets/sheet${i+1}.xml`,declaration+`<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="5" width="16" customWidth="1"/><col min="6" max="6" width="30" customWidth="1"/><col min="7" max="7" width="18" customWidth="1"/></cols><sheetData>${rows}</sheetData><autoFilter ref="A1:${String.fromCharCode(64+s.rows[0].length)}${s.rows.length}"/></worksheet>`]);
+ });
+ return zipStored(files);
+}
+function exportSheets(kind){
+ const swimmers=state.roster.filter(s=>PB_NAMES.has(s.name)).sort((a,b)=>state.records.filter(r=>r.holder===b.name).length-state.records.filter(r=>r.holder===a.name).length||a.name.localeCompare(b.name,"zh-Hant"));
+ return ["長池","短池"].map(course=>{
+  const rows=[[kind==="pb"?"選手":"隊史保持人","性別","項目","成績（分:秒）","總秒數","賽事","比賽日期"]];
+  if(kind==="pb")for(const s of swimmers)for(const event of EVENTS[course]){
+   const p=state.pbs.find(p=>p.name===s.name&&p.course===course&&p.event===event);
+   rows.push([s.name,s.gender||"",event,p?fmt(p.seconds):"暫無成績",p?Number(p.seconds):"",p?(p.meet||"賽事未提供"):"",p?.swim_date||""]);
+  }
+  else for(const gender of ["男","女"])for(const event of EVENTS[course]){
+   const r=state.records.find(r=>r.course===course&&r.gender===gender&&r.event===event);
+   const p=r&&state.performances.find(p=>p.swimmer_name===r.holder&&p.course===course&&p.event===event&&Number(p.seconds)===Number(r.seconds)&&p.meet===r.meet&&p.swim_date);
+   rows.push([r?.holder||"",gender,event,r?fmt(r.seconds):"暫無成績",r?Number(r.seconds):"",r?(r.meet||"賽事未提供"):"",p?.swim_date||""]);
+  }
+  return {name:course,rows};
+ });
+}
+async function exportExcel(kind){
+ const buttons=[...document.querySelectorAll(".export-btn")];buttons.forEach(b=>b.disabled=true);
+ try{
+  if(sb && !await loadCloud())throw new Error("無法取得最新資料，請確認網路後再試。");
+  const date=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei"}).format(new Date());
+  const blob=createXlsx(exportSheets(kind)),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=`鬍子泳隊_${kind==="pb"?"選手最新PB":"隊史紀錄"}_${date}${sb?"":"_預覽"}.xlsx`;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+ }catch(e){alert("匯出失敗："+e.message)}finally{buttons.forEach(b=>b.disabled=false);}
+}
+
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function fmt(sec){sec=Number(sec);if(!Number.isFinite(sec))return "—";if(sec>=60){let m=Math.floor(sec/60);return String(m).padStart(2,"0")+":"+String((sec-m*60).toFixed(2)).padStart(5,"0")}return sec.toFixed(2)}
 function updateAuth(){document.getElementById("authArea").innerHTML=state.user?`<button class="btn" onclick="logout()">登出教練帳號</button>`:`<button class="btn" onclick="openLogin()">教練登入</button>`;document.getElementById("adminPanel").classList.toggle("show",!!state.user)}
@@ -131,8 +199,8 @@ function renderAdmin(){
  document.getElementById("statRecords").textContent=state.records.length;
  const list=document.getElementById("performanceList");
  if(!list)return;
- const rows=[...(state.performances||[])].sort((a,b)=>String(b.swim_date||"").localeCompare(String(a.swim_date||""))||String(b.created_at||"").localeCompare(String(a.created_at||"")));
- list.innerHTML=rows.length?rows.map(p=>`<div class="record-row" style="gap:10px;align-items:center"><div style="flex:1"><b>${esc(p.swimmer_name)}</b> · ${esc(p.course)} ${esc(p.event)}<div class="muted small">${esc(p.display||fmt(p.seconds))} · ${esc(p.meet||"未填賽事")} · ${esc(p.swim_date||"")}</div></div><button class="btn danger" onclick="event.stopPropagation();deletePerformance('${esc(p.id)}')">🗑 刪除</button></div>`).join(""):`<div class="muted">目前沒有成績資料。</div>`;
+ const rows=[...(state.performances||[])].sort((a,b)=>String(b.created_at||"").localeCompare(String(a.created_at||""))||String(b.id||"").localeCompare(String(a.id||""))).slice(0,10);
+ list.innerHTML=rows.length?rows.map(p=>`<div class="record-row" style="gap:10px;align-items:center"><div style="flex:1"><b>${esc(p.swimmer_name)}</b> · ${esc(p.course)} ${esc(p.event)}<div class="muted small">${esc(p.display||fmt(p.seconds))} · ${esc(p.meet||"未填賽事")} · ${esc(p.swim_date||"")}<div>新增時間：${p.created_at?esc(new Date(p.created_at).toLocaleString("zh-TW",{timeZone:"Asia/Taipei"})):"未提供"}</div></div></div><button class="btn danger" onclick="event.stopPropagation();deletePerformance('${esc(p.id)}')">🗑 刪除</button></div>`).join(""):`<div class="muted">目前沒有成績資料。</div>`;
 }
 function openLogin(){document.getElementById("loginModal").classList.add("show")}
 function openPerformance(name){if(!state.user)return openLogin();fillForms();if(name)document.getElementById("pSwimmer").value=name;document.getElementById("pMeet").setAttribute("list","meetOptions");document.getElementById("meetOptions").innerHTML=[...new Set([...state.records,...state.performances].map(x=>x.meet).filter(Boolean))].map(m=>`<option value="${esc(m)}">`).join("");document.getElementById("performanceModal").classList.add("show")}
@@ -163,7 +231,7 @@ async function allPerformances(){let rows=[];for(let start=0;;start+=1000){const
 async function loadCloud(){
 
  try{
-  if(!sb){render();return}
+  if(!sb){render();return true}
   const [{data:sw,error:swErr},{data:perf,error:perfErr},{data:rec,error:recErr}]=await Promise.all([
     sb.from("swimmers").select("*").order("name"),
     allPerformances(),
@@ -174,13 +242,13 @@ async function loadCloud(){
   state.performances=(perf||[]).map(x=>({...x,seconds:Number(x.seconds),display:fmt(Number(x.seconds))}));
   computeDerivedData(state.performances);
   if(rec)state.records=rec.map(x=>({course:x.course,gender:x.gender,event:x.event,holder:x.swimmer_name,seconds:Number(x.seconds),display:fmt(Number(x.seconds)),meet:x.meet}));
-  render();
- }catch(e){console.error(e);document.getElementById("dbStatus").textContent="⚠️ 資料庫讀取失敗"}
+  render();return true;
+ }catch(e){console.error(e);document.getElementById("dbStatus").textContent="⚠️ 資料庫讀取失敗";return false}
 }
 async function submitPerformance(){
- const payload={swimmer_name:document.getElementById("pSwimmer").value,course:document.getElementById("pCourse").value,event:document.getElementById("pEvent").value,seconds:Number(document.getElementById("pSeconds").value),swim_date:document.getElementById("pDate").value,meet:document.getElementById("pMeet").value,note:document.getElementById("pNote").value};
+ const payload={swimmer_name:document.getElementById("pSwimmer").value,course:document.getElementById("pCourse").value,event:document.getElementById("pEvent").value,seconds:parseSwimTime(document.getElementById("pSeconds").value),swim_date:document.getElementById("pDate").value,meet:document.getElementById("pMeet").value,note:document.getElementById("pNote").value};
  if(!EVENTS[payload.course].includes(payload.event)){document.getElementById("pMsg").innerHTML="<div class='notice error'>此項目不屬於所選泳池。</div>";return}
- if(!payload.meet.trim()){document.getElementById("pMsg").innerHTML="請輸入或選擇賽事名稱（新名稱會隨成績保存）。";return} if(!payload.seconds||payload.seconds<=0){document.getElementById("pMsg").innerHTML="<div class='notice error'>請輸入正確秒數。</div>";return}
+ if(!payload.meet.trim()){document.getElementById("pMsg").innerHTML="請輸入或選擇賽事名稱（新名稱會隨成績保存）。";return} if(!Number.isFinite(payload.seconds)||payload.seconds<=0){document.getElementById("pMsg").innerHTML="<div class='notice error'>請輸入成績，例如 1:23.45 或 83.45；冒號後秒數須小於 60。</div>";return}
  if(!sb){document.getElementById("pMsg").innerHTML="<div class='notice error'>尚未連接雲端資料庫。</div>";return}
  const {data,error}=await sb.rpc("record_performance",payload);
  document.getElementById("pMsg").innerHTML=error?`<div class='notice error'>${esc(error.message)}</div>`:`<div class='notice success'>${data?.message||"成績已儲存，PB／隊史已自動判定。"}</div>`;
