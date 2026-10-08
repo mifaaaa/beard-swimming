@@ -30,24 +30,71 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 .pb-meet{display:block;color:#075985;font-size:13px;line-height:1.6;margin-top:5px;overflow-wrap:anywhere}
 .record-row>span{min-width:0}.record-row>strong{flex-shrink:0}
 .exportbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0}.export-btn:disabled{opacity:.5;cursor:wait}
+:root{--bg:#f1f5f8;--ink:#142c40;--muted:#6a7e90;--line:#e0e9ef;--accent:#087ea4;--shadow:0 5px 20px rgba(20,52,76,.045)}
+body{background:radial-gradient(ellipse at 95% 0%,#dceef5 0,transparent 35%),var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+header{background:#102e42;padding:21px 24px;box-shadow:none;border-bottom:3px solid #29a8c6}
+.top{max-width:1200px}.brand{font-size:21px;letter-spacing:.035em}.sub{font-size:11px;letter-spacing:.07em;margin-top:5px;opacity:.65}
+header .btn{background:#ffffff12;border:1px solid #ffffff35;color:#fff;font-size:13px;padding:9px 16px}
+main{max-width:1200px;padding:38px 24px 70px}
+.hero{margin:0 0 23px;align-items:center}.hero h1{font-size:38px;letter-spacing:-.035em;line-height:1.2}.hero h2{font-size:25px;margin:0;letter-spacing:-.02em}.hero p{font-size:14px;margin-top:9px;line-height:1.7}
+.eyebrow{font-size:10px;letter-spacing:.18em;font-weight:800;color:#087ea4;margin-bottom:10px}
+#dbStatus{background:#e7eff4;color:#536d80;border-radius:999px;padding:7px 12px;font-size:11px;white-space:nowrap}
+.records-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:14px 0 22px;border-bottom:1px solid #d9e4eb;margin-bottom:27px}
+.tabs{display:inline-flex;margin:0;background:#e2eaf0;border-radius:12px;padding:4px;gap:4px}
+.tab{font-size:13px;background:transparent;color:#557083;padding:9px 18px;border-radius:9px;min-height:40px}.tab.active{background:#fff;color:#103e57;box-shadow:0 2px 5px #17384b12}
+.exportbar{margin:0;gap:8px}.exportbar>span{display:none}.export-btn{background:#ffffff90!important;border:1px solid #cddde7;color:#25586f!important;font-size:12px;padding:10px 13px}
+button{transition:background .16s,box-shadow .16s,transform .16s}button:hover{filter:brightness(.97)}button:focus-visible,.person:focus-visible{outline:3px solid #39b4d5;outline-offset:3px}
+#recordsView>h2{display:flex;align-items:center;gap:12px;font-size:17px;font-weight:800;margin:28px 0 14px;letter-spacing:.025em}
+#recordsView>h2:before{content:"";width:4px;height:19px;background:#1594b4;border-radius:4px}#recordsView>h2:after{content:"";height:1px;flex:1;background:#dde7ed}
+.grid{gap:14px}.card{border:1px solid #e0e9ef;border-radius:16px;padding:21px;box-shadow:var(--shadow)}
+.record-card{overflow:hidden;min-height:157px;background:linear-gradient(135deg,#fff,#fbfdff)}
+.record-heading{gap:10px;align-items:flex-start}.record-heading>.muted{color:#466479;font-size:13px;font-weight:800;flex-shrink:0;padding-top:3px}
+.meet-tag{background:#e7f3f8;border:0;color:#21677f;padding:6px 9px;border-radius:7px;font-size:11px;max-width:75%;text-align:right}
+.record-card h2{font-size:34px;letter-spacing:-.045em;line-height:1.25;margin:20px 0 7px;font-variant-numeric:tabular-nums;font-weight:850;color:#153f58}
+.record-card>b{font-size:14px;font-weight:650;color:#4b6679}
+.record-card.is-empty{background:#edf2f6;border-style:dashed;box-shadow:none}.record-card.is-empty h2{font-size:18px;letter-spacing:0;color:#8295a4;font-weight:500;margin-top:24px}
+.people-section{margin-top:48px!important;padding-top:30px;border-top:1px solid #d9e4eb}.people-section .hero{margin-bottom:18px}
+.searchbar{margin:0 0 18px;max-width:430px}.searchbar .input{background:#fff;border:1px solid #dbe6ed;padding:12px 16px;border-radius:12px;font-size:14px}
+.input:focus,select:focus{outline:none;border-color:#41a7c5;box-shadow:0 0 0 3px #41a7c51c}
+.people{gap:13px}.person{position:relative;min-height:145px;transition:transform .18s,box-shadow .18s,border-color .18s}
+.person:hover{border-color:#a8ccdc;box-shadow:0 9px 24px #24485e12;transform:translateY(-3px)}.person h3{font-size:18px;color:#1a435b;margin-bottom:5px}.person>.muted{font-size:12px;line-height:1.7;min-height:22px}
+.person-record-count{margin-top:17px;background:#eef5f8;color:#4b6c81;font-size:12px;padding:5px 9px}.person-record-count b{font-size:14px;color:#175570}
+.person:after{content:"↗";position:absolute;right:19px;bottom:21px;color:#93abba;font-size:17px}
+.admin{padding-top:28px;border-top:1px solid #d9e4eb}.admin .stat{font-size:33px;font-variant-numeric:tabular-nums;color:#17516c}.admin .grid .card{background:#f9fcfd}.admin h3{font-size:17px}
+.btn.primary{background:#087ea4;color:#fff;padding:12px 18px;box-shadow:0 4px 10px #087ea418}.btn.danger{font-size:12px;padding:8px 11px}
+.modal{background:#0b253b96;backdrop-filter:blur(5px);padding:24px}
+.modalbox{max-width:650px;border:1px solid #ffffff90;box-shadow:0 25px 90px #07233545;border-radius:22px;padding:27px;scrollbar-width:thin;scrollbar-color:#c8dbe5 transparent}
+.modalhead{position:sticky;top:-27px;background:#fff;z-index:1;padding:10px 0 17px;margin:-8px 0 8px;border-bottom:1px solid #e6edf2;gap:14px}
+.modalhead h2{font-size:23px;letter-spacing:-.025em;margin:0}.modalhead button{width:38px;height:38px;padding:0;background:#eff4f7;color:#587185;flex-shrink:0;border-radius:11px;font-size:20px}
+#personBody>.card:first-child{background:#f1f7fa;border:0;box-shadow:none;margin-top:16px}#personBody>.card:first-child>b{font-size:19px}#personBody>.card:first-child>.muted{font-size:13px;margin-top:4px}
+.person-add{display:block;width:100%;font-size:14px;margin:15px 0 20px;min-height:46px;border-radius:11px}
+#personBody .card h3{font-size:15px;color:#285a71;margin:0 0 8px;padding-bottom:10px;border-bottom:1px solid #e4edf2}
+.record-row{padding:13px 0;align-items:center;gap:16px}.record-row:last-child{border-bottom:0}.record-row>span{font-size:14px;font-weight:600}.record-row>strong{font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:-.025em;color:#173f57}
+.pb-meet{font-size:11px;line-height:1.65;font-weight:400;margin-top:5px;color:#6b8393}
+.notice{background:#eff7fa;font-size:13px;line-height:1.7;padding:13px 15px;border-radius:11px}.error{background:#fff0ef;color:#b42318}.success{background:#ecfdf3;color:#16794c}
+.formgrid{gap:17px 16px;margin-top:20px}.formgrid label,#loginModal label{display:block;font-size:12px;font-weight:700;color:#4c6b7f;margin-bottom:7px}.input,select{font-size:15px;padding:12px 13px;border-radius:10px;border-color:#d5e3eb;min-height:46px}.formgrid .small{font-size:11px;margin-top:6px}
+@media(max-width:850px){main{padding:28px 20px 50px}.people{grid-template-columns:repeat(2,minmax(0,1fr))}.hero h1{font-size:32px}.record-card h2{font-size:30px}}
+@media(max-width:560px){header{padding:18px 16px}.brand{font-size:15px;letter-spacing:0}.sub{font-size:9px;letter-spacing:0}.top{gap:10px;align-items:center}header .btn{font-size:11px;padding:8px 10px;white-space:nowrap}main{padding:25px 16px 45px}.hero{display:flex;align-items:flex-start;gap:10px}.hero h1{font-size:29px}.hero h2{font-size:23px}.hero p{font-size:12px}.eyebrow{font-size:9px;margin-bottom:8px}#dbStatus{font-size:9px;padding:5px 7px;margin-top:5px}.records-toolbar{gap:13px;padding-bottom:18px}.tabs{width:100%}.tab{flex:1;padding:8px 12px}.exportbar{width:100%;gap:8px}.export-btn{flex:1;font-size:11px;padding:10px 6px}.grid{grid-template-columns:1fr;gap:11px}.record-card{min-height:140px;padding:18px 20px}.record-card h2{font-size:33px;margin-top:15px}.meet-tag{font-size:11px}.people{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.person{padding:15px 12px;min-height:140px}.person h3{font-size:17px}.person>.muted{font-size:11px}.person:after{right:11px;bottom:18px;font-size:14px}.person-record-count{font-size:11px;padding:4px 7px}.person-record-count b{font-size:13px}.people-section{margin-top:36px!important;padding-top:24px}.modal{padding:14px}.modalbox{padding:20px;border-radius:18px;max-height:92vh}.modalhead{top:-20px}.modalhead h2{font-size:20px}.record-row>strong{font-size:20px}.pb-meet{font-size:11px}.formgrid{grid-template-columns:1fr}.admin .hero{flex-wrap:wrap}.admin .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.admin .grid .card{padding:12px 9px;border-radius:11px}.admin .grid .muted{font-size:10px}.admin .stat{font-size:25px}.record-row .danger{font-size:11px;white-space:nowrap}}
+@media(prefers-reduced-motion:reduce){button,.person{transition:none}.person:hover{transform:none}}
+
 </style>
 
 </head>
 <body>
 <header><div class="top">
-<div><div class="brand">🏊 鬍子泳隊｜隊史紀錄資料庫</div><div class="sub">教練管理 · PB / 隊史自動判定</div></div>
+<div><div class="brand">鬍子泳隊｜紀錄資料庫</div><div class="sub">公開查詢 · 教練管理 · PB / 隊史自動判定</div></div>
 <div id="authArea"><button class="btn" onclick="openLogin()">教練登入</button></div>
 </div></header>
 <main>
-<section class="hero"><div><h1>🏆 隊史紀錄</h1><p>每一秒都值得被記住。速度會變，紀錄會留下。</p></div><div id="dbStatus" class="muted small"></div></section>
-<div class="tabs"><button class="tab active" data-course="長池">長池 50m</button><button class="tab" data-course="短池">短池 25m</button></div>
-<div class="exportbar"><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div><div id="recordsView"></div>
+<section class="hero"><div><div class="eyebrow">BEARD SWIM TEAM · RECORDS</div><h1>隊史紀錄</h1><p>每一秒都值得被記住。速度會變，紀錄會留下。</p></div><div id="dbStatus" class="muted small"></div></section>
+<div class="records-toolbar"><div class="tabs"><button class="tab active" data-course="長池">長池 50m</button><button class="tab" data-course="短池">短池 25m</button></div>
+<div class="exportbar"><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><div id="recordsView"></div>
 
-<section style="margin-top:34px"><div class="hero"><div><h2>👥 隊員資料庫</h2><p>點選隊員查看個人最佳紀錄與隊史保持項目。</p></div></div>
+<section class="people-section" style="margin-top:34px"><div class="hero"><div><h2>隊員資料庫</h2><p>點選隊員查看個人最佳紀錄與隊史保持項目。</p></div></div>
 <div class="searchbar"><input id="search" class="input" placeholder="搜尋姓名、學校…"></div><div id="people" class="people"></div></section>
 
 <section id="adminPanel" class="admin" style="margin-top:40px">
-<div class="hero"><div><h2>🔐 教練後台</h2><p>登入後新增成績，系統會自動更新 PB 與隊史判定。</p></div><button class="btn primary" onclick="openPerformance()">＋ 新增成績</button></div>
+<div class="hero"><div><h2>教練後台</h2><p>登入後新增成績，系統會自動更新 PB 與隊史判定。</p></div><button class="btn primary" onclick="openPerformance()">＋ 新增成績</button></div>
 <div class="grid">
 <div class="card"><div class="muted">隊員</div><div class="stat" id="statPeople">—</div></div>
 <div class="card"><div class="muted">目前 PB 筆數</div><div class="stat" id="statPB">—</div></div>
@@ -59,7 +106,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 
 <div id="loginModal" class="modal"><div class="modalbox">
 <div class="modalhead"><h2>教練登入</h2><button onclick="closeModal('loginModal')">✕</button></div>
-<div class="notice">正式版使用 Supabase Auth。請先依專案內的 <b>supabase_schema.sql</b> 建立資料庫，再把 config.js 的網址與 anon key 填入。</div>
+<div class="notice">登入教練帳號，新增成績並管理最近的紀錄。</div>
 <label>Email</label><input id="loginEmail" class="input" type="email" placeholder="coach@example.com">
 <label style="display:block;margin-top:10px">密碼</label><input id="loginPassword" class="input" type="password">
 <div id="loginMsg"></div><button class="btn primary" style="margin-top:14px;width:100%" onclick="login()">登入</button>
@@ -167,7 +214,7 @@ function render(){
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<span class="meet-tag">${esc(r.meet||"賽事未提供")}</span>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<span class="meet-tag">${esc(r.meet||"賽事未提供")}</span>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin();
 }
 function renderPeople(){
