@@ -6,7 +6,7 @@
 <title>鬍子泳隊｜隊史紀錄資料庫</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
+  <style>
 /* 已移除被覆蓋的舊設定；手機版樣式與優先順序保留。 */
 
 #recordsView .record-card {
@@ -1403,51 +1403,316 @@ body {
   background-image: repeating-linear-gradient( 91deg, transparent 0 7px, #8bd2e580 7px 8.5px, transparent 8.5px 12px, #a4deed70 12px 13px, transparent 13px 23px ), repeating-linear-gradient( 1deg, transparent 0 9px, #8bd2e580 9px 10.5px, transparent 10.5px 17px, #a4deed70 17px 18px, transparent 18px 25px );
 }
 
- /* 修正自由式手臂：前伸手＋兩段屈肘手，取消圈狀邊框 */
+/* 隊史標題右側：純 CSS 俯視泳池插畫 */
+.record-hero{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 280px;
+  align-items:center;
+  column-gap:24px;
+}
+.record-hero>div:first-child{grid-column:1;grid-row:1 / span 2;}
+.record-hero>#dbStatus{grid-column:2;grid-row:2;justify-self:end;}
+.pool-decoration{
+  position:relative;
+  grid-column:2;
+  grid-row:1;
+  width:280px;
+  height:115px;
+  overflow:hidden;
+  pointer-events:none;
+  border-radius:48% 42% 46% 39%;
+  background:
+    radial-gradient(ellipse at 30% 40%,#e6f9fb99,transparent 65%),
+    linear-gradient(150deg,#72cbdc66,#c5eef299);
+}
+.pool-ripple{
+  position:absolute;
+  width:82px;
+  height:31px;
+  border:2px solid #fcffff99;
+  border-radius:45% 55% 43% 57%;
+  transform:rotate(-12deg);
+}
+.ripple-one{left:18px;top:25px;box-shadow:0 8px 0 -6px #3999b766;}
+.ripple-two{right:15px;bottom:17px;transform:rotate(12deg);}
+.pool-ring{
+  position:absolute;
+  width:27px;
+  height:24px;
+  border:7px solid #e890b0;
+  border-radius:48%;
+  box-shadow:1px 3px 0 #4299ad44;
+  transform:rotate(-18deg);
+}
+.ring-pink{left:29px;bottom:15px;}
+.ring-yellow{right:35px;top:16px;border-color:#f1ca59;transform:rotate(15deg);}
+.pool-swimmer{
+  --skin:#ebbd88;
+  --suit:#255d78;
+  position:absolute;
+  width:16px;
+  height:29px;
+  background:var(--skin);
+  border-radius:45% 45% 35% 35%;
+}
+.pool-swimmer::before{
+  content:"";
+  position:absolute;
+  left:3px;
+  top:-11px;
+  width:10px;
+  height:11px;
+  background:linear-gradient(#193847 0 35%,var(--skin) 35%);
+  border-radius:50%;
+}
+.pool-swimmer::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:16px;
+  height:11px;
+  background:var(--suit);
+  border-radius:0 0 5px 5px;
+}
+.swimmer-arm,.swimmer-leg{
+  position:absolute;
+  display:block;
+  background:var(--skin);
+  border-radius:8px;
+}
+.swimmer-arm{top:4px;width:25px;height:5px;}
+.arm-left{left:-20px;transform:rotate(35deg);transform-origin:right;}
+.arm-right{right:-20px;transform:rotate(-35deg);transform-origin:left;}
+.swimmer-leg{top:26px;width:5px;height:24px;}
+.leg-left{left:2px;transform:rotate(8deg);}
+.leg-right{right:2px;transform:rotate(-9deg);}
+.swimmer-one{left:82px;top:37px;transform:rotate(-42deg);}
+.swimmer-two{left:149px;top:39px;transform:rotate(25deg);--suit:#d7685c;--skin:#e6af79;}
+.swimmer-three{left:217px;top:52px;transform:rotate(73deg);--suit:#efbd48;}
+@media(max-width:850px){
+  .record-hero{grid-template-columns:minmax(0,1fr) 210px;column-gap:14px;}
+  .pool-decoration{width:280px;transform:scale(.75);transform-origin:right center;margin-left:-70px;}
+}
+@media(max-width:560px){
+  .record-hero{grid-template-columns:minmax(0,1fr) 100px;column-gap:8px;}
+  .record-hero>div:first-child{grid-row:1;}
+  .pool-decoration{transform:scale(.36);margin-left:-180px;height:115px;}
+  .record-hero>#dbStatus{grid-column:1 / -1;grid-row:2;margin-top:8px;}
+}
+
+/* 俯視自由式：頭朝左，由右向左游 */
+.pool-decoration .pool-ring{display:none;}
+.pool-decoration .pool-swimmer{
+  left:0;
+  animation:pool-swim-left 14s linear infinite;
+  transform:rotate(-90deg);
+}
+.pool-decoration .swimmer-one{top:15px;animation-delay:-3s;}
+.pool-decoration .swimmer-two{top:50px;animation-delay:-7s;}
+.pool-decoration .swimmer-three{top:84px;animation-delay:-11s;}
+
+/* 一手向前伸，另一手屈肘划水 */
 .pool-decoration .arm-left{
   width:5px;
-  height:29px;
-  left:0;
-  top:-24px;
-  border:0;
-  border-radius:5px;
-  background:var(--skin);
-  transform:rotate(-12deg);
+  height:31px;
+  left:1px;
+  top:-27px;
+  transform:rotate(-8deg);
   transform-origin:bottom center;
 }
 .pool-decoration .arm-right{
+  width:18px;
+  height:23px;
+  right:-14px;
+  top:1px;
+  background:transparent;
+  border:4px solid var(--skin);
+  border-top:0;
+  border-left:0;
+  border-radius:0 12px 10px 0;
+  transform:rotate(-16deg);
+  transform-origin:top left;
+  animation:pool-arm-stroke 1.5s ease-in-out infinite alternate;
+}
+.pool-decoration .swimmer-leg{
+  animation:pool-leg-kick .6s ease-in-out infinite alternate;
+  transform-origin:top center;
+}
+.pool-decoration .leg-right{animation-delay:-.6s;}
+
+@keyframes pool-swim-left{
+  from{transform:translateX(320px) rotate(-90deg);}
+  to{transform:translateX(-70px) rotate(-90deg);}
+}
+@keyframes pool-arm-stroke{
+  from{transform:rotate(-16deg);}
+  to{transform:rotate(14deg);}
+}
+@keyframes pool-leg-kick{
+  from{transform:rotate(-5deg);}
+  to{transform:rotate(8deg);}
+}
+@media(prefers-reduced-motion:reduce){
+  .pool-decoration .pool-swimmer,
+  .pool-decoration .arm-right,
+  .pool-decoration .swimmer-leg{animation:none;}
+  .pool-decoration .swimmer-one{left:185px;}
+  .pool-decoration .swimmer-two{left:100px;}
+  .pool-decoration .swimmer-three{left:205px;}
+}
+
+/* 隊史右側整塊泳池：隱藏狀態文字、放大插畫與水道 */
+.record-hero>#dbStatus{display:none;}
+.record-hero{
+  grid-template-columns:minmax(0,1fr) 420px;
+  column-gap:24px;
+}
+.record-hero>div:first-child{grid-column:1;grid-row:1;}
+.record-hero .pool-decoration{
+  grid-column:2;
+  grid-row:1;
+  width:420px;
+  height:180px;
+  margin:0;
+  transform:none;
+  border-radius:28px 40px 32px 38px;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 43px,#278aa855 43px 46px,transparent 46px 48px),
+    radial-gradient(ellipse at 25% 30%,#e8fbff99,transparent 65%),
+    linear-gradient(135deg,#9edee9cc,#c9eef2dd);
+  box-shadow:inset 0 0 24px #ffffff77;
+}
+.record-hero .swimmer-one{top:28px;}
+.record-hero .swimmer-two{top:76px;}
+.record-hero .swimmer-three{top:124px;}
+.record-hero .ripple-one{left:60px;top:15px;}
+.record-hero .ripple-two{right:48px;bottom:15px;}
+@keyframes pool-swim-left{
+  from{transform:translateX(460px) rotate(-90deg);}
+  to{transform:translateX(-70px) rotate(-90deg);}
+}
+@media(max-width:850px){
+  .record-hero{grid-template-columns:minmax(0,1fr) 294px;column-gap:14px;}
+  .record-hero .pool-decoration{
+    transform:scale(.7);
+    transform-origin:right center;
+    margin-left:-126px;
+    margin-top:-27px;
+    margin-bottom:-27px;
+  }
+}
+@media(max-width:560px){
+  .record-hero{grid-template-columns:minmax(0,1fr);row-gap:14px;}
+  .record-hero .pool-decoration{
+    grid-column:1;
+    grid-row:2;
+    justify-self:end;
+    width:100%;
+    height:160px;
+    transform:none;
+    margin:0;
+  }
+}
+
+/* 三條水道使用不同泳姿 */
+.pool-decoration .swimmer-arm{
   width:5px;
-  height:17px;
-  right:-2px;
-  top:2px;
+  height:28px;
+  top:3px;
   border:0;
   border-radius:5px;
   background:var(--skin);
-  transform-origin:2px 2px;
-  animation:pool-natural-stroke 1.8s ease-in-out infinite alternate;
+  transform-origin:2.5px 2.5px;
 }
-.pool-decoration .arm-right::after{
-  content:"";
-  position:absolute;
-  width:5px;
-  height:15px;
-  left:0;
-  top:12px;
-  border-radius:5px;
-  background:var(--skin);
-  transform:rotate(95deg);
-  transform-origin:2px 2px;
+.pool-decoration .arm-left{left:0;}
+.pool-decoration .arm-right{right:0;}
+.pool-decoration .arm-right::after{content:none;}
+
+/* 第一位：一手前伸、一手向後划，交替換手 */
+.pool-decoration .swimmer-one .arm-left{
+  animation:pool-crawl-arm 2.4s ease-in-out infinite;
 }
-@keyframes pool-natural-stroke{
-  from{transform:rotate(-58deg);}
-  to{transform:rotate(-38deg);}
+.pool-decoration .swimmer-one .arm-right{
+  animation:pool-crawl-arm 2.4s ease-in-out -1.2s infinite;
+}
+@keyframes pool-crawl-arm{
+  0%,100%{transform:rotate(175deg);}
+  40%{transform:rotate(70deg);}
+  65%{transform:rotate(12deg);}
+  85%{transform:rotate(95deg);}
+}
+
+/* 第二位：雙手一起伸向前方，再向外划開 */
+.pool-decoration .swimmer-two .arm-left{
+  animation:pool-paired-left 3s ease-in-out infinite;
+}
+.pool-decoration .swimmer-two .arm-right{
+  animation:pool-paired-right 3s ease-in-out infinite;
+}
+@keyframes pool-paired-left{
+  0%,100%{transform:rotate(170deg);}
+  50%{transform:rotate(105deg);}
+  75%{transform:rotate(60deg);}
+}
+@keyframes pool-paired-right{
+  0%,100%{transform:rotate(-170deg);}
+  50%{transform:rotate(-105deg);}
+  75%{transform:rotate(-60deg);}
+}
+
+/* 第三位：雙手大幅向兩側划水，腿同步開合 */
+.pool-decoration .swimmer-three .arm-left{
+  animation:pool-wide-left 3.4s ease-in-out -.8s infinite;
+}
+.pool-decoration .swimmer-three .arm-right{
+  animation:pool-wide-right 3.4s ease-in-out -.8s infinite;
+}
+@keyframes pool-wide-left{
+  0%,100%{transform:rotate(165deg);}
+  45%{transform:rotate(88deg);}
+  75%{transform:rotate(25deg);}
+}
+@keyframes pool-wide-right{
+  0%,100%{transform:rotate(-165deg);}
+  45%{transform:rotate(-88deg);}
+  75%{transform:rotate(-25deg);}
+}
+.pool-decoration .swimmer-three .leg-left{
+  animation:pool-open-left 3.4s ease-in-out -.8s infinite;
+}
+.pool-decoration .swimmer-three .leg-right{
+  animation:pool-open-right 3.4s ease-in-out -.8s infinite;
+}
+@keyframes pool-open-left{
+  0%,100%{transform:rotate(4deg);}
+  55%{transform:rotate(26deg);}
+}
+@keyframes pool-open-right{
+  0%,100%{transform:rotate(-4deg);}
+  55%{transform:rotate(-26deg);}
 }
 @media(prefers-reduced-motion:reduce){
-  .pool-decoration .arm-right{
-    animation:none;
-    transform:rotate(-48deg);
-  }
+  .pool-decoration .pool-swimmer .swimmer-arm,
+  .pool-decoration .pool-swimmer .swimmer-leg{animation:none;}
+  .pool-decoration .swimmer-one .arm-left{transform:rotate(175deg);}
+  .pool-decoration .swimmer-one .arm-right{transform:rotate(-15deg);}
+  .pool-decoration .swimmer-two .arm-left{transform:rotate(170deg);}
+  .pool-decoration .swimmer-two .arm-right{transform:rotate(-170deg);}
+  .pool-decoration .swimmer-three .arm-left{transform:rotate(88deg);}
+  .pool-decoration .swimmer-three .arm-right{transform:rotate(-88deg);}
 }
+
+/* 紅白相間水道浮繩 */
+.record-hero .pool-decoration{
+ background:
+ repeating-linear-gradient(90deg,#e36d61 0 9px,#fff9ed 9px 18px) 0 60px / 100% 5px no-repeat,
+ repeating-linear-gradient(90deg,#e36d61 0 9px,#fff9ed 9px 18px) 0 108px / 100% 5px no-repeat,
+ repeating-linear-gradient(90deg,#e36d61 0 9px,#fff9ed 9px 18px) 0 156px / 100% 5px no-repeat,
+ radial-gradient(ellipse at 25% 30%,#e8fbff99,transparent 65%),
+ linear-gradient(135deg,#9edee9cc,#c9eef2dd);
+}
+
 </style>
 
 </head>
