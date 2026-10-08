@@ -1599,11 +1599,13 @@ body::before{
 /* 泳隊標誌與表頭標語 */
 .hero-brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .hero-brand .eyebrow{margin:0;}
-.hero-logo{width:90px;height:auto;display:block;flex-shrink:0;}
+.header-brand{display:flex;align-items:center;gap:12px;min-width:0;}
+.header-logo{width:70px;height:auto;display:block;flex-shrink:0;}
 .record-hero .hero-motto{font-size:clamp(22px,2.5vw,34px);line-height:1.5;letter-spacing:0;margin-top:16px;}
 @media(max-width:560px){
  .hero-brand{gap:8px;}
- .hero-logo{width:68px;}
+ .header-brand{gap:8px;}
+ .header-logo{width:44px;}
  .hero-brand .eyebrow{font-size:16px;letter-spacing:2px;}
  .record-hero .hero-motto{font-size:22px;}
 }
@@ -1612,7 +1614,7 @@ body::before{
  --skin:#ebbd88;--suit:#255d78;--stroke:2s;
  position:absolute;left:0;width:16px;height:29px;
  background:var(--skin);border-radius:45% 45% 35% 35%;
- transform:rotate(-90deg);animation:pool-travel 9s linear infinite;
+ transform:rotate(-90deg) scale(.72);animation:pool-travel 9s linear infinite;
 }
 .pool-swimmer::before{
  content:"";position:absolute;left:3px;top:-11px;width:10px;height:11px;
@@ -1636,15 +1638,15 @@ body::before{
 .swimmer-leg{top:26px;height:23px;}
 .leg-left{left:2px;}
 .leg-right{right:2px;}
-.record-hero .swimmer-one{top:11.5px;--stroke:2s;animation-duration:9s;animation-delay:-2s;}
-.record-hero .swimmer-two{top:63.5px;--stroke:1.6s;--suit:#d7685c;--skin:#e6af79;animation-duration:7s;animation-delay:-9s;}
-.record-hero .swimmer-three{top:115.5px;--stroke:2.5s;--suit:#efbd48;animation-duration:11s;animation-delay:-10s;}
-.record-hero .swimmer-four{top:167.5px;--stroke:1.2s;--suit:#8b79b1;--skin:#e8b58c;animation-duration:5s;animation-delay:-5s;}
+.record-hero .swimmer-one{top:11.5px;--stroke:1.4s;animation-duration:6s;animation-delay:-2s;}
+.record-hero .swimmer-two{top:63.5px;--stroke:2.1s;--suit:#d7685c;--skin:#e6af79;animation-duration:10s;animation-delay:-9s;}
+.record-hero .swimmer-three{top:115.5px;--stroke:1.7s;--suit:#efbd48;animation-duration:8s;animation-delay:-10s;}
+.record-hero .swimmer-four{top:167.5px;--stroke:2.5s;--suit:#8b79b1;--skin:#e8b58c;animation-duration:12s;animation-delay:-5s;}
 /* 自由式：兩手交替，屈肘回手，雙腿交替小踢 */
 .swimmer-one .arm-left{animation:free-left var(--stroke) ease-in-out infinite;}
 .swimmer-one .arm-right{animation:free-right var(--stroke) ease-in-out infinite;}
 .swimmer-one .swimmer-arm::after{animation:free-elbow var(--stroke) ease-in-out infinite;}
-.swimmer-one .arm-right::after{animation-delay:-1s;}
+.swimmer-one .arm-right::after{animation-delay:-.7s;}
 .swimmer-one .leg-left,.swimmer-two .leg-left{animation:flutter .4s ease-in-out infinite alternate;}
 .swimmer-one .leg-right,.swimmer-two .leg-right{animation:flutter .4s ease-in-out -.4s infinite alternate;}
 @keyframes free-left{0%,100%{transform:rotate(175deg);}45%{transform:rotate(70deg);}65%{transform:rotate(8deg);}82%{transform:rotate(105deg);}}
@@ -1653,7 +1655,7 @@ body::before{
 @keyframes flutter{from{transform:rotate(-5deg);}to{transform:rotate(8deg);}}
 /* 仰式：仰面，直臂交替繞向頭頂 */
 .swimmer-two::before{
- background:radial-gradient(circle at 35% 60%,#193847 0 1px,transparent 1.2px),radial-gradient(circle at 65% 60%,#193847 0 1px,transparent 1.2px),linear-gradient(#193847 0 22%,var(--skin) 22%);
+ background:linear-gradient(#193847 0 22%,var(--skin) 22%);
 }
 .swimmer-two .swimmer-arm::after{transform:none;}
 .swimmer-two .arm-left{animation:back-left var(--stroke) linear infinite;}
@@ -1688,7 +1690,7 @@ body::before{
 @keyframes breast-knee-right{0%,35%,100%{transform:rotate(-4deg);}60%{transform:rotate(-42deg);}78%{transform:rotate(-28deg);}}
 @keyframes breast-foot-left{0%,35%,85%,100%{transform:rotate(0deg);}60%{transform:rotate(-110deg);}}
 @keyframes breast-foot-right{0%,35%,85%,100%{transform:rotate(0deg);}60%{transform:rotate(110deg);}}
-@keyframes pool-travel{from{transform:translateX(460px) rotate(-90deg);}to{transform:translateX(-70px) rotate(-90deg);}}
+@keyframes pool-travel{from{transform:translateX(460px) rotate(-90deg) scale(.72);}to{transform:translateX(-70px) rotate(-90deg) scale(.72);}}
 @media(prefers-reduced-motion:reduce){
  .pool-swimmer,.pool-swimmer .swimmer-arm,.pool-swimmer .swimmer-leg,.pool-swimmer .swimmer-arm::after,.pool-swimmer .swimmer-leg::after{animation:none;}
  .record-hero .swimmer-one{left:240px;}.record-hero .swimmer-two{left:170px;}.record-hero .swimmer-three{left:200px;}.record-hero .swimmer-four{left:130px;}
@@ -1702,7 +1704,7 @@ body::before{
 </head>
 <body>
 <header><div class="top">
-<div><div class="brand">鬍子泳隊資料庫</div></div>
+<div class="header-brand"><img class="header-logo" src="logo.png" alt="鬍子泳隊標誌"><div class="brand">鬍子泳隊資料庫</div></div>
 <div id="authArea"><button class="btn" onclick="openLogin()">教練登入</button></div>
 </div></header>
 <main>
@@ -1712,7 +1714,7 @@ body::before{
 <button class="tab coach-only" hidden data-page="admin" onclick="switchPage('admin')">🧢 教練編輯區</button>
 </nav>
 <section id="recordsPage">
- <section class="hero record-hero"><div><div class="hero-brand"><img class="hero-logo" src="logo.png" alt="鬍子泳隊標誌"><div class="eyebrow">Beard Swimming ✨</div></div><h1 class="hero-motto">成為紀錄保持者，每分每秒都值得</h1></div><div class="pool-decoration" aria-hidden="true">
+ <section class="hero record-hero"><div><div class="hero-brand"><div class="eyebrow">Beard Swimming ✨</div></div><h1 class="hero-motto">成為紀錄保持者，每分每秒都值得</h1></div><div class="pool-decoration" aria-hidden="true">
   <span class="pool-ripple ripple-one"></span>
   <span class="pool-ripple ripple-two"></span>
   <span class="pool-ring ring-pink"></span>
