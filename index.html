@@ -1641,7 +1641,9 @@ body::before{
 }
 /* 自由式與蝶式泳者：身體採用泳衣輪廓，頭與手腳維持膚色 */
 .swimmer-one,.swimmer-three{
-  background:transparent;
+  background:
+    linear-gradient(var(--skin),var(--skin))
+    center top / 5px 7px no-repeat;
 }
 /* 自由式與蝶式泳者：連身泳衣 */
 .swimmer-one::after,.swimmer-three::after{
