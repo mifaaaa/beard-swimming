@@ -166,7 +166,7 @@ header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px soli
 </div>
 </div></div><div id="editPbModal" class="modal"><div class="modalbox"><div class="modalhead"><h2>✏️ 修改 PB 紀錄</h2><button onclick="closeModal('editPbModal')">✕</button></div><p id="editPbTitle"></p><p class="muted small">調整原本那筆成績與賽事。可填83.45或1:23.45；儲存後PB與隊史會依歷史成績重新判斷，日期與備註保留。</p><label for="editPbSeconds">成績（秒或分:秒）</label><input id="editPbSeconds" class="input" inputmode="decimal" placeholder="例如83.45或1:23.45"><label for="editPbName">賽事名稱</label><input id="editPbName" class="input" list="meetOptions" maxlength="120" placeholder="例如：2611 秋季盃"><div id="editPbMsg" class="notice" aria-live="polite"></div><button id="editPbSave" class="btn primary" style="margin-top:14px;width:100%" onclick="savePbMeet()">💾 儲存紀錄</button></div></div><div id="editSwimmerModal" class="modal"><div class="modalbox"><div class="modalhead"><h2 id="editSwimmerTitle">✏️ 編輯隊員資料</h2><button onclick="closeModal('editSwimmerModal')">✕</button></div><label for="editSwimmerSchool">學校</label><input id="editSwimmerSchool" class="input" maxlength="120" placeholder="目前就讀學校"><label for="editSwimmerGrade">年級</label><input id="editSwimmerGrade" class="input" type="number" min="1" max="12" step="1" placeholder="例如：3，顯示為3年級"><label for="editSwimmerNote">備註</label><textarea id="editSwimmerNote" class="input" maxlength="1000" rows="3" placeholder="可留空"></textarea><div id="editSwimmerMsg" class="notice" aria-live="polite"></div><button id="editSwimmerSave" class="btn primary" style="margin-top:14px;width:100%" onclick="saveSwimmerProfile()">💾 儲存資料</button><div style="margin-top:22px;padding-top:16px;border-top:1px solid #eee"><p class="muted small">移出隊員名單，既有成績、PB與隊史仍保留。</p><button class="btn danger" onclick="removeEditedSwimmer()">🗑 刪除隊員</button></div></div></div>
 <div id="addSwimmerModal" class="modal"><div class="modalbox"><div class="modalhead"><h2>🏊 新增隊員</h2><button onclick="closeModal('addSwimmerModal')">✕</button></div><label for="newSwimmerName">姓名（必填）</label><input id="newSwimmerName" class="input" maxlength="60"><label for="newSwimmerGender">性別（必填）</label><select id="newSwimmerGender" class="input"><option value="">請選擇</option><option>男</option><option>女</option></select><label for="newSwimmerSchool">學校</label><input id="newSwimmerSchool" class="input" maxlength="120"><label for="newSwimmerGrade">年級</label><input id="newSwimmerGrade" class="input" type="number" min="1" max="12" step="1"><label for="newSwimmerNote">備註</label><textarea id="newSwimmerNote" class="input" rows="3" maxlength="1000"></textarea><div id="addSwimmerMsg" class="notice" aria-live="polite"></div><button id="addSwimmerButton" class="btn primary" onclick="addSwimmer()" style="margin-top:14px;width:100%">💾 新增隊員</button></div></div>
-<datalist id="meetOptions">
+<datalist id="meetOptions"></datalist>
 <div id="addMeetModal" class="modal">
   <div class="modalbox">
     <div class="modalhead">
@@ -180,7 +180,7 @@ header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px soli
   </div>
 </div>
   
-</datalist><script src="config.js"></script>
+<script src="config.js"></script>
 <script>
 const EVENTS={"長池":["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","200自","200混","200仰","200蛙","200蝶","400自"],"短池":["50自","50仰","50蛙","50蝶","100自","100混","100仰","100蛙","100蝶","200自","200混"]};
 let state={course:"長池",roster:[],pbs:[],records:[],performances:[],meets:[],audit:[],auditMore:false,user:null,coach:false,online:false};
