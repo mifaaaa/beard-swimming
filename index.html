@@ -95,7 +95,7 @@ header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px soli
 </head>
 <body>
 <header><div class="top">
-<div><div class="brand">鬍子泳隊｜隊史紀錄資料庫</div><div class="sub">每一秒的努力，都值得被記住 ✨</div></div>
+<div><div class="brand">鬍子泳隊｜隊史紀錄資料庫</div><div class="sub">Beard Swimming ✨</div></div>
 <div id="authArea"><button class="btn" onclick="openLogin()">教練登入</button></div>
 </div></header>
 <main>
@@ -113,7 +113,7 @@ header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px soli
 <div class="card"><div class="muted">目前 PB 筆數</div><div class="stat" id="statPB">—</div></div>
 <div class="card"><div class="muted">隊史紀錄</div><div class="stat" id="statRecords">—</div></div>
 </div>
-<div class="card" style="margin-top:18px"><h3>🏊 隊員管理</h3><p class="muted small">點編輯可調整學校、年級及備註；刪除隊員也在編輯內操作，歷史成績與隊史保留。</p><div class="meet-create"><input id="swimmerSearch" class="input" placeholder="🔎 搜尋隊員姓名或學校" oninput="renderSwimmerManagement()"><button class="btn primary" onclick="openAddSwimmer()">＋ 新增隊員</button></div><div id="swimmerMsg" aria-live="polite"></div><div id="swimmerList"></div></div><div class="card meet-management" style="margin-top:18px"><h3>🏟️ 賽事管理</h3><p class="muted small">可新增賽事、編輯名稱或移除賽事。改名會同步相關成績；刪除會移除選單，已有成績、PB與隊史仍保留。</p><div class="meet-create"><input id="newMeetName" class="input" maxlength="120" placeholder="例如：2611 秋季盃"><button id="createMeetButton" class="btn primary" onclick="createMeet()">＋ 新增賽事</button></div><div id="meetMsg" class="muted small" aria-live="polite"></div><div id="meetList" class="meet-list"></div></div><div class="card" style="margin-top:14px"><h3>📝 最近新增的 10 筆</h3><p class="muted small">先顯示五筆，向下捲動可查看最近十筆。依新增時間由新到舊。刪除只會刪除所選的那一筆。</p><div id="performanceList"></div></div><div class="card" style="margin-top:14px"><h3>🕒 教練更新紀錄</h3><p class="muted small">顯示最近三個月的賽事與成績操作。向下捲動查看更早紀錄，點開每筆查看詳情。</p><div id="auditMsg" aria-live="polite"></div><div id="auditList"></div><button id="auditMore" hidden></button></div>
+<div class="card" style="margin-top:18px"><h3>🏊 隊員管理</h3><p class="muted small">點編輯可調整學校、年級及備註；刪除隊員也在編輯內操作，歷史成績與隊史保留。</p><div class="meet-create"><input id="swimmerSearch" class="input" placeholder="🔎 搜尋隊員姓名或學校" oninput="renderSwimmerManagement()"><button class="btn primary" onclick="openAddSwimmer()">＋ 新增隊員</button></div><div id="swimmerMsg" aria-live="polite"></div><div id="swimmerList"></div></div><div class="card meet-management" style="margin-top:18px"><h3>🏟️ 賽事管理</h3><p class="muted small">可新增賽事、編輯名稱或移除賽事。改名會同步相關成績；刪除會移除選單，已有成績、PB與隊史仍保留。</p><div class="meet-create"><input id="newMeetName" class="input" maxlength="120" placeholder="例如：2611 秋季盃"><button id="createMeetButton" class="btn primary" onclick="createMeet()">＋ 新增賽事</button></div><div id="meetMsg" class="muted small" aria-live="polite"></div><div id="meetList" class="meet-list"></div></div><div class="card" style="margin-top:14px"><h3>📝 最近新增</h3><p class="muted small">最近新增的10筆資料，依新增時間由新到舊</p><div id="performanceList"></div></div><div class="card" style="margin-top:14px"><h3>🕒 教練更新紀錄</h3><p class="muted small">顯示最近三個月的賽事與成績操作。向下捲動查看更早紀錄，點開每筆查看詳情。</p><div id="auditMsg" aria-live="polite"></div><div id="auditList"></div><button id="auditMore" hidden></button></div>
 </section>
 </main>
 
