@@ -300,7 +300,7 @@ async function loadCloud(){
   if(generation!==cloudGeneration)return false;
   state.records=(rec||[]).map(r=>({...r,holder:r.swimmer_name,seconds:Number(r.seconds),display:fmt(r.seconds)}));
   if(!coach){clearCoachData();render();return true;}
-  const results=await Promise.all([sb.from("swimmers").select("name,gender,school,directory_visible").order("name"),allPerformances(),sb.from("meets").select("*").order("name"),sb.from("coach_update_logs").select("*").order("id",{ascending:false}).limit(21)]);
+  const results=await Promise.all([sb.from("swimmers").select("name,gender,school,directory_visible").order("name"),allPerformances(),sb.from("meets").select("*").order("name", { ascending: false }),sb.from("coach_update_logs").select("*").order("id",{ascending:false}).limit(21)]);
   for(const result of results)if(result.error)throw result.error;
   if(generation!==cloudGeneration)return false;
   state.roster=results[0].data||[];state.performances=(results[1].data||[]).map(p=>({...p,seconds:Number(p.seconds),display:fmt(p.seconds)}));state.meets=(results[2].data||[]).filter(m=>m.active!==false);
