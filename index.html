@@ -109,6 +109,7 @@ header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px soli
 }
 
 .year-grid{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}.year-grid .btn{min-width:125px;padding:16px}.meet-browser-body{max-height:55vh;overflow:auto}.modal.show{z-index:1000}#meetFamilyModal.show{z-index:1001}#meetYearModal.show{z-index:1002}#renameMeetModal.show,#addMeetModal.show{z-index:1003}
+.person-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px}.person-heading h3{margin:0}.person-heading .person-record-count{margin:0 0 0 auto;white-space:nowrap}
 </style>
 
 </head>
@@ -261,7 +262,7 @@ function renderPeople(){ if(!state.coach){document.getElementById("people").inne
  document.getElementById("people").innerHTML=arr.map(p=>{
    const n=state.pbs.filter(x=>x.name===p.name).length;
    const owned=state.records.filter(x=>x.holder===p.name).length;
-   return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><h3>${esc(p.name)}</h3><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div><div class="muted small" style="margin-top:6px">${esc(ageLabel(p.birth))} · ${esc(gradeLabel(p.grade)||"年級未提供")}</div>${owned?`<div class="person-record-count">🏆 <b>${owned}</b> 項隊史</div>`:""}</div>`
+   return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><div class="person-heading"><h3>${esc(p.name)}</h3>${owned?`<div class="person-record-count">🏆 <b>${owned}</b> 項隊史</div>`:""}</div><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div><div class="muted small" style="margin-top:6px">${esc(ageLabel(p.birth))} · ${esc(gradeLabel(p.grade)||"年級未提供")}</div></div>`
  }).join("")||`<div class="empty">找不到符合的隊員</div>`;
 }
 function openPerson(name){ if(!state.coach)return openLogin();currentPerson=name;
@@ -546,8 +547,9 @@ function ageLabel(birth){
  const [y,m,d]=today.split('-').map(Number),[by,bm,bd]=birth.split('-').map(Number);const age=y-by-((m<bm||(m===bm&&d<bd))?1:0);return age>=0?`${age} 歲`:'年齡未提供';
 }
 function meetDateRange(m){const start=m?.start_date||m?.meet_date,end=m?.end_date||m?.meet_date;if(start)return end&&end!==start?`${start} ～ ${end}`:start;return m?.year_month||inferMeetMonth(m?.name)||(editionYear(m||{})?`${editionYear(m)} 年（日期待補）`:'日期待補');}
-function meetLabel(name){if(!name)return '賽事未提供';const m=(state.allMeets||[]).find(m=>m.name===name);if(!m)return name;const year=editionYear(m);return `${familyName(m)}${year?'｜'+year+' 年':''}（${m.year_month?.slice(5)?Number(m.year_month.slice(5))+' 月 · ':''}${m.name}）`;}
-function recordMeetLabel(r){return r.record_series_name?`${r.record_series_name}${r.record_edition_year?'｜'+r.record_edition_year+' 年':''}`:(r.meet||'賽事未提供');}
+function displayMeetName(name){if(!name)return '賽事未提供';return String(name).replace(/^(?:\d{4}年\s*|\d{2}(?:0[1-9]|1[0-2])\s*)/,'').trim()||name;}
+function meetLabel(name){const m=(state.allMeets||[]).find(m=>m.name===name);return m?familyName(m):displayMeetName(name);}
+function recordMeetLabel(r){return r.record_series_name||displayMeetName(r.meet);}
 function performanceDate(p){
  const m=(state.allMeets||[]).find(m=>m.name===p.meet),start=m?.start_date||m?.meet_date,end=m?.end_date||m?.meet_date;
  const actual=p.swim_date&&!String(p.note||'').startsWith('v4 ');
