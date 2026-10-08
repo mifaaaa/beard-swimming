@@ -1402,48 +1402,14 @@ body {
   background-color: #edf9fc;
   background-image: repeating-linear-gradient( 91deg, transparent 0 7px, #8bd2e580 7px 8.5px, transparent 8.5px 12px, #a4deed70 12px 13px, transparent 13px 23px ), repeating-linear-gradient( 1deg, transparent 0 9px, #8bd2e580 9px 10.5px, transparent 10.5px 17px, #a4deed70 17px 18px, transparent 18px 25px );
 }
-/* 表頭：Logo 深藍與黃色 */
-header{
-  background:linear-gradient(120deg,#191c58,#233676);
-  border-bottom:4px solid #ffed00;
-}
-.brand-group{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  min-width:0;
-}
-.team-logo{
-  display:block;
-  width:56px;
-  height:56px;
-  flex-shrink:0;
-  object-fit:contain;
-  border-radius:50%;
-  background:#fff;
-}
-.brand-group .brand{
-  color:#ffed00;
-  line-height:1.35;
-}
-header .btn{
-  flex-shrink:0;
-  color:#fff9cc;
-  border-color:rgba(255,237,0,.4);
-}
-@media(max-width:560px){
-  .brand-group{gap:9px;}
-  .team-logo{width:42px;height:42px;}
-}
+
   
 </style>
 
 </head>
 <body>
 <header><div class="top">
-<div class="brand-group">
-  <img class="team-logo" src="team-logo.png" alt="鬍子泳隊 Logo" width="56" height="56">
-  <div class="brand">鬍子泳隊｜隊史紀錄資料庫</div>
+<div><div class="brand">鬍子泳隊｜隊史紀錄資料庫</div></div>
 </div>
 <div id="authArea"><button class="btn" onclick="openLogin()">教練登入</button></div>
 </div></header>
