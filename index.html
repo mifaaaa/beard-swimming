@@ -8,9 +8,24 @@
 <style>
 /* 淡藍色手繪泳池格線 */
 body{
-  background-color:#e9f8fc;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='144'%3E%3Cdefs%3E%3Cpattern id='tiles' width='12' height='12' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 1 Q6 0 12 1 M1 0 Q0 6 1 12' fill='none' stroke='%2382cfe5' stroke-width='1.4' opacity='.7'/%3E%3C/pattern%3E%3Cfilter id='hand'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.035' numOctaves='2' seed='7' result='noise'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='noise' scale='2.5' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='144' height='144' fill='url(%23tiles)' filter='url(%23hand)'/%3E%3C/svg%3E");
-  background-size:144px 144px;
+  background-color:#edf9fc;
+  background-image:
+    repeating-linear-gradient(
+      91deg,
+      transparent 0 7px,
+      #8bd2e580 7px 8.5px,
+      transparent 8.5px 12px,
+      #a4deed70 12px 13px,
+      transparent 13px 23px
+    ),
+    repeating-linear-gradient(
+      1deg,
+      transparent 0 9px,
+      #8bd2e580 9px 10.5px,
+      transparent 10.5px 17px,
+      #a4deed70 17px 18px,
+      transparent 18px 25px
+    );
 }
 
 /* 隊史卡片接近白色，文字仍清楚 */
