@@ -1712,6 +1712,36 @@ body {
  radial-gradient(ellipse at 25% 30%,#e8fbff99,transparent 65%),
  linear-gradient(135deg,#9edee9cc,#c9eef2dd);
 }
+/* 藍色小人：一手前伸，另一手沿身側向後划 */
+.pool-decoration .swimmer-one .arm-left{
+  left:0;
+  top:3px;
+  width:5px;
+  height:29px;
+  transform:rotate(176deg);
+  transform-origin:2.5px 2.5px;
+  animation:none;
+}
+.pool-decoration .swimmer-one .arm-right{
+  right:0;
+  top:3px;
+  width:5px;
+  height:25px;
+  transform:rotate(-18deg);
+  transform-origin:2.5px 2.5px;
+  animation:pool-blue-side-stroke 2s ease-in-out infinite alternate;
+}
+.pool-decoration .swimmer-one .arm-right::after{content:none;}
+@keyframes pool-blue-side-stroke{
+  from{transform:rotate(-12deg);}
+  to{transform:rotate(-35deg);}
+}
+@media(prefers-reduced-motion:reduce){
+  .pool-decoration .swimmer-one .arm-right{
+    animation:none;
+    transform:rotate(-18deg);
+  }
+}
 
 </style>
 
