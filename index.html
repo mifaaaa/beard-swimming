@@ -1712,35 +1712,62 @@ body {
  radial-gradient(ellipse at 25% 30%,#e8fbff99,transparent 65%),
  linear-gradient(135deg,#9edee9cc,#c9eef2dd);
 }
-/* 藍色小人：一手前伸，另一手沿身側向後划 */
-.pool-decoration .swimmer-one .arm-left{
-  left:0;
-  top:3px;
-  width:5px;
-  height:29px;
-  transform:rotate(176deg);
-  transform-origin:2.5px 2.5px;
-  animation:none;
+
+/* 四位泳者、透明泳池與藍色格紋 */
+.record-hero .pool-decoration{
+ height:220px;
+ box-shadow:none;
+ background:
+ repeating-linear-gradient(90deg,#e36d61 0 9px,#fff9ed 9px 18px) 0 52px / 100% 5px no-repeat,
+ repeating-linear-gradient(90deg,#e36d61 0 9px,#fff9ed 9px 18px) 0 104px / 100% 5px no-repeat,
+ repeating-linear-gradient(90deg,#e36d61 0 9px,#fff9ed 9px 18px) 0 156px / 100% 5px no-repeat,
+ repeating-linear-gradient(91deg,transparent 0 18px,#68bdd633 18px 20px,transparent 20px 29px),
+ repeating-linear-gradient(1deg,transparent 0 15px,#68bdd633 15px 17px,transparent 17px 27px),
+ linear-gradient(135deg,#9edee922,#c9eef233);
 }
-.pool-decoration .swimmer-one .arm-right{
-  right:0;
-  top:3px;
-  width:5px;
-  height:25px;
-  transform:rotate(-18deg);
-  transform-origin:2.5px 2.5px;
-  animation:pool-blue-side-stroke 2s ease-in-out infinite alternate;
+.pool-decoration .pool-ripple,.pool-decoration .pool-ring{display:none;}
+.record-hero .swimmer-one{top:13px;}
+.record-hero .swimmer-two{top:65px;}
+.record-hero .swimmer-three{top:117px;}
+.record-hero .swimmer-four{
+ top:169px;
+ --suit:#8b79b1;
+ --skin:#e8b58c;
+ animation-delay:-5s;
 }
-.pool-decoration .swimmer-one .arm-right::after{content:none;}
-@keyframes pool-blue-side-stroke{
-  from{transform:rotate(-12deg);}
-  to{transform:rotate(-35deg);}
+/* 藍色與新增泳者：使用黃色泳者的同步划手與踢腿 */
+.pool-decoration .swimmer-one .arm-left,
+.pool-decoration .swimmer-four .arm-left{
+ top:3px;left:0;width:5px;height:28px;
+ transform-origin:2.5px 2.5px;
+ animation:pool-wide-left 3.4s ease-in-out -.8s infinite;
+}
+.pool-decoration .swimmer-one .arm-right,
+.pool-decoration .swimmer-four .arm-right{
+ top:3px;right:0;width:5px;height:28px;
+ transform-origin:2.5px 2.5px;
+ animation:pool-wide-right 3.4s ease-in-out -.8s infinite;
+}
+.pool-decoration .swimmer-one .leg-left,
+.pool-decoration .swimmer-four .leg-left{
+ animation:pool-open-left 3.4s ease-in-out -.8s infinite;
+}
+.pool-decoration .swimmer-one .leg-right,
+.pool-decoration .swimmer-four .leg-right{
+ animation:pool-open-right 3.4s ease-in-out -.8s infinite;
+}
+@media(max-width:850px) and (min-width:561px){
+ .record-hero .pool-decoration{margin-top:-33px;margin-bottom:-33px;}
 }
 @media(prefers-reduced-motion:reduce){
-  .pool-decoration .swimmer-one .arm-right{
-    animation:none;
-    transform:rotate(-18deg);
-  }
+ .pool-decoration .pool-swimmer,
+ .pool-decoration .pool-swimmer .swimmer-arm,
+ .pool-decoration .pool-swimmer .swimmer-leg{animation:none;}
+ .pool-decoration .swimmer-four{left:160px;transform:rotate(-90deg);}
+ .pool-decoration .swimmer-one .arm-left,
+ .pool-decoration .swimmer-four .arm-left{transform:rotate(88deg);}
+ .pool-decoration .swimmer-one .arm-right,
+ .pool-decoration .swimmer-four .arm-right{transform:rotate(-88deg);}
 }
 
 </style>
@@ -1769,6 +1796,10 @@ body {
     <i class="swimmer-arm arm-left"></i><i class="swimmer-arm arm-right"></i>
     <i class="swimmer-leg leg-left"></i><i class="swimmer-leg leg-right"></i>
   </span>
+<span class="pool-swimmer swimmer-four">
+ <i class="swimmer-arm arm-left"></i><i class="swimmer-arm arm-right"></i>
+ <i class="swimmer-leg leg-left"></i><i class="swimmer-leg leg-right"></i>
+</span>
 </div><div id="dbStatus" class="muted small"></div></section>
 <div class="records-toolbar"><div class="tabs"><button class="tab active" data-course="長池">長池 50m</button><button class="tab" data-course="短池">短池 25m</button></div>
 <div class="exportbar coach-only" hidden><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><div id="recordsView"></div>
