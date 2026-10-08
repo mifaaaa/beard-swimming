@@ -121,7 +121,7 @@ header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px soli
 <div id="authArea"><button class="btn" onclick="openLogin()">教練登入</button></div>
 </div></header>
 <main>
-<section class="hero"><div><div class="eyebrow">Beard Swimming ✨</div><h1>🏆 隊史紀錄</h1><p>每一秒都值得被記住。速度會變，紀錄會留下。</p></div><div id="dbStatus" class="muted small"></div></section>
+<section class="hero"><div><div class="eyebrow">Beard Swimming ✨</div><h1>隊史紀錄</h1><p>每一秒都值得被記住。速度會變，紀錄會留下。</p></div><div id="dbStatus" class="muted small"></div></section>
 <div class="records-toolbar"><div class="tabs"><button class="tab active" data-course="長池">長池 50m</button><button class="tab" data-course="短池">短池 25m</button></div>
 <div class="exportbar coach-only" hidden><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><div id="recordsView"></div>
 
@@ -256,7 +256,7 @@ function render()
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date">🏆 ${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<div class="record-meet"><span class="meet-tag">${esc(recordMeetLabel(r))}</span><div class="muted small record-meet-date">${esc(teamDate(r))}</div></div>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin();
 }
 function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
@@ -562,7 +562,7 @@ function actualPerformanceDate(p){
  return p.swim_date;
 }
 function performanceDate(p){return actualPerformanceDate(p)||'破紀錄日期待補';}
-function teamDate(r){return r.record_date||'破紀錄日期待補';}
+function teamDate(r){return r.record_date||r.record_start_date||r.record_year_month||(r.record_edition_year?`${r.record_edition_year} 年（日期待補）`:'日期待補');}
 async function deleteEditingPerformance(){
  if(!state.coach||!sb)return openLogin();const p=state.performances.find(r=>r.id===editingPbId);if(!p)return;
  if(!confirm(`刪除這筆成績？\n${p.swimmer_name}｜${p.course} ${p.event}｜${fmt(p.seconds)}\nPB與隊史將依其他歷史成績重新判斷。`))return;
