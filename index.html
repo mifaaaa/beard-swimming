@@ -15,9 +15,9 @@ main{max-width:1180px;margin:0 auto;padding:24px 16px 60px}.hero{display:flex;ju
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.tab{background:#e9eef4;color:#43556b}.tab.active{background:#102f43;color:#fff}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}.record-card{position:relative}
 
-.record-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px;}
-.record-item-title{font-size:26px;font-weight:900;color:var(--accent2);line-height:1.1;}
-.meet-badge{background:#eef7fa;color:#075985;border:1px solid #bce2ef;border-radius:6px;padding:2px 6px;font-size:11px;font-weight:700;display:inline-block;}
+.record-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;}
+.record-item-title{font-size:22px;font-weight:900;color:var(--accent2);line-height:1.1;}
+.meet-badge{background:#eef7fa;color:#075985;border:1px solid #bce2ef;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;display:inline-block;white-space:nowrap;}
 
 table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:16px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}th{background:#f4f7fa;color:#52657a;font-size:13px}td strong{font-size:18px}
 .searchbar{display:flex;gap:10px;margin:15px 0}.searchbar input{flex:1}.input,select{border:1px solid #d7dee8;background:#fff;border-radius:11px;padding:10px 12px;width:100%}
@@ -73,7 +73,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 <div class="modalhead"><h2 id="perfModalTitle">新增 / 修改成績</h2><button onclick="closeModal('performanceModal')">✕</button></div>
 <div class="formgrid">
 <div><label>隊員</label><select id="pSwimmer"></select></div>
-<div><label>泳池</label><select id="pCourse"><option>長池</option><option>短池</option></select></div>
+<div><label>泳池</label><select id="pCourse" onchange="fillEvents()"><option>長池</option><option>短池</option></select></div>
 <div><label>項目</label><select id="pEvent"></select></div>
 <div><label>成績（秒數或 分:秒 如 05:24.60）</label><input id="pSeconds" class="input" placeholder="05:24.60 或 63.74"></div>
 <div><label>日期</label><input id="pDate" class="input" type="date"></div>
@@ -93,7 +93,7 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 
 <script src="config.js"></script>
 <script>
-const DEMO_DATA = {"roster":[{"name":"李亮樂","gender":"女","school":"中正國中","grade":"9","birth":"2011/01/14","note":"99尾~100頭"},{"name":"曾子僑","gender":"女","school":"重慶國中","grade":"8","birth":"2011/11/12","note":"100尾~101頭"},{"name":"潘沅駿","gender":"男","school":"土城國中","grade":"8","birth":"2012/04/25","note":null},{"name":"彭奕凱","gender":"男","school":"中山國小","grade":"7","birth":"2012/09/29","note":"101尾~102頭"},{"name":"劉昱成","gender":"男","school":"板橋國小","grade":"7","birth":"2012/11/05","note":null},{"name":"胡庭瑞","gender":"男","school":"中山國小","grade":"6","birth":"2014/05/12","note":"102尾~103頭"},{"name":"陳言安","gender":"男","school":"埔墘國小","grade":"6","birth":"2014/05/14","note":null},{"name":"鍾昊恩","gender":"男","school":"大觀國小","grade":"6","birth":"2014/05/17","note":null},{"name":"張境晏","gender":"女","school":"中山國小","grade":"6","birth":"2014/06/23","note":null},{"name":"曾子瑞","gender":"男","school":"中山國小","grade":"6","birth":"2014/07/16","note":null},{"name":"王柔伊","gender":"女","school":"中山國小","grade":"5","birth":"2015/02/04","note":"103尾~104頭"},{"name":"陳衍均","gender":"男","school":"大觀國小","grade":"5","birth":"2015/02/27","note":null},{"name":"姚家興","gender":"男","school":"中山國小","grade":"5","birth":"2015/03/13","note":null},{"name":"尹亮允","gender":"女","school":"中山國小","grade":"4","birth":"2015/09/29","note":"104尾~105頭"},{"name":"黃惟淵","gender":"男","school":"莒光國小","grade":"4","birth":"2016/01/09","note":null},{"name":"潘昱晴","gender":"女","school":"廣福國小","grade":"4","birth":"2016/01/17","note":null},{"name":"廖書汎","gender":"男","school":"中山國小","grade":"4","birth":"2016/07/11","note":null},{"name":"唐紫芯","gender":"女","school":"裕德國際學校","grade":"4","birth":"2016/08/08","note":null},{"name":"翁晨軒","gender":"男","school":"大觀國小","grade":"3","birth":"2017/01/22","note":"105尾~106頭"},{"name":"楊鎧銓","gender":"男","school":"康橋國際學校","grade":"3","birth":"2017/03/08","note":null},{"name":"高珩晉","gender":"男","school":"康橋國際學校","grade":"3","birth":"2017/08/21","note":null},{"name":"王暐蘅","gender":"男","school":"中山國小","grade":"2","birth":"2017/09/25","note":"106尾~107頭"},{"name":"張可勻","gender":"男","school":"土城國小","grade":"2","birth":"2018/06/21","note":null},{"name":"高赫言","gender":"男","school":"康橋國際學校","grade":"1","birth":"2018/11/13","note":"107尾~108頭"},{"name":"陳廷峰","gender":"男","school":"大觀國中","grade":"9","birth":"2010/12/26","note":null},{"name":"簡歆宸","gender":"女","school":"大觀國小","grade":"5","birth":"2015/05/18","note":null},{"name":"簡歆芸","gender":"女","school":"大觀國小","grade":"2","birth":"2018/05/06","note":null},{"name":"梁義謹","gender":"男","school":"大觀國中","grade":"9","birth":"2011/01/15","note":null},{"name":"吳秉曄","gender":"男","school":"實踐國小","grade":"6","birth":"2013/12/23","note":null},{"name":"王欣蔓","gender":"女","school":"中山國小","grade":"6","birth":null,"note":null},{"name":"邱苡甯","gender":"女","school":null,"grade":"4","birth":null,"note":null},{"name":"邱莛玹","gender":"女","school":null,"grade":"4","birth":null,"note":null},{"name":"林祉妡","gender":null,"school":null,"grade":"4","birth":null,"note":null},{"name":"張可言","gender":"男","school":"土城國中","grade":"7","birth":"2013/01/31","note":null},{"name":"翁唯軒","gender":"男","school":"恆毅中學","grade":"9","birth":"2010/11/04","note":null},{"name":"池永璋","gender":"男","school":"大觀國中","grade":"8","birth":"2012/06/01","note":null},{"name":"洪瑀彤","gender":"女","school":"中山國小","grade":"7","birth":"2012/10/10","note":null},{"name":"王霈晴","gender":"女","school":"中山國小","grade":"7","birth":"2012/10/12","note":null},{"name":"高語均","gender":"女","school":"中山國小","grade":"7","birth":"2013/02/11","note":null},{"name":"鄧宇勝","gender":"男","school":"大觀國小","grade":"7","birth":"2013/05/08","note":null},{"name":"李瑨宸","gender":"男","school":"福瑞斯特高級中學","grade":"4","birth":"2015/11/24","note":null},{"name":"古羽立","gender":"男","school":"康橋國際學校","grade":"3","birth":"2016/11/29","note":null}],"pbs":[],"records":[]};
+const DEMO_DATA = {"roster":[{"name":"李亮樂","gender":"女","school":"中正國中","birth":"2011/01/14","note":"99尾~100頭"},{"name":"曾子僑","gender":"女","school":"重慶國中","birth":"2011/11/12","note":"100尾~101頭"},{"name":"潘沅駿","gender":"男","school":"土城國中","birth":"2012/04/25","note":null},{"name":"彭奕凱","gender":"男","school":"中山國小","birth":"2012/09/29","note":"101尾~102頭"},{"name":"劉昱成","gender":"男","school":"板橋國小","birth":"2012/11/05","note":null},{"name":"胡庭瑞","gender":"男","school":"中山國小","birth":"2014/05/12","note":"102尾~103頭"},{"name":"陳言安","gender":"男","school":"埔墘國小","birth":"2014/05/14","note":null},{"name":"鍾昊恩","gender":"男","school":"大觀國小","birth":"2014/05/17","note":null},{"name":"張境晏","gender":"女","school":"中山國小","birth":"2014/06/23","note":null},{"name":"曾子瑞","gender":"男","school":"中山國小","birth":"2014/07/16","note":null},{"name":"王柔伊","gender":"女","school":"中山國小","birth":"2015/02/04","note":"103尾~104頭"},{"name":"陳衍均","gender":"男","school":"大觀國小","birth":"2015/02/27","note":null},{"name":"姚家興","gender":"男","school":"中山國小","birth":"2015/03/13","note":null},{"name":"尹亮允","gender":"女","school":"中山國小","birth":"2015/09/29","note":"104尾~105頭"},{"name":"黃惟淵","gender":"男","school":"莒光國小","birth":"2016/01/09","note":null},{"name":"潘昱晴","gender":"女","school":"廣福國小","birth":"2016/01/17","note":null},{"name":"廖書汎","gender":"男","school":"中山國小","birth":"2016/07/11","note":null},{"name":"唐紫芯","gender":"女","school":"裕德國際學校","birth":"2016/08/08","note":null},{"name":"翁晨軒","gender":"男","school":"大觀國小","birth":"2017/01/22","note":"105尾~106頭"},{"name":"楊鎧銓","gender":"男","school":"康橋國際學校","birth":"2017/03/08","note":null},{"name":"高珩晉","gender":"男","school":"康橋國際學校","birth":"2017/08/21","note":null},{"name":"王暐蘅","gender":"男","school":"中山國小","birth":"2017/09/25","note":"106尾~107頭"},{"name":"張可勻","gender":"男","school":"土城國小","birth":"2018/06/21","note":null},{"name":"高赫言","gender":"男","school":"康橋國際學校","birth":"2018/11/13","note":"107尾~108頭"},{"name":"陳廷峰","gender":"男","school":"大觀國中","birth":"2010/12/26","note":null},{"name":"簡歆宸","gender":"女","school":"大觀國小","birth":"2015/05/18","note":null},{"name":"簡歆芸","gender":"女","school":"大觀國小","birth":"2018/05/06","note":null},{"name":"梁義謹","gender":"男","school":"大觀國中","birth":"2011/01/15","note":null},{"name":"吳秉曄","gender":"男","school":"實踐國小","birth":"2013/12/23","note":null},{"name":"王欣蔓","gender":"女","school":"中山國小","birth":null,"note":null},{"name":"邱苡甯","gender":"女","school":null,"birth":null,"note":null},{"name":"邱莛玹","gender":"女","school":null,"birth":null,"note":null},{"name":"林祉妡","gender":null,"school":null,"birth":null,"note":null},{"name":"張可言","gender":"男","school":"土城國中","birth":"2013/01/31","note":null},{"name":"翁唯軒","gender":"男","school":"恆毅中學","birth":"2010/11/04","note":null},{"name":"池永璋","gender":"男","school":"大觀國中","birth":"2012/06/01","note":null},{"name":"洪瑀彤","gender":"女","school":"中山國小","birth":"2012/10/10","note":null},{"name":"王霈晴","gender":"女","school":"中山國小","birth":"2012/10/12","note":null},{"name":"高語均","gender":"女","school":"中山國小","birth":"2013/02/11","note":null},{"name":"鄧宇勝","gender":"男","school":"大觀國小","birth":"2013/05/08","note":null},{"name":"李瑨宸","gender":"男","school":"福瑞斯特高級中學","birth":"2015/11/24","note":null},{"name":"古羽立","gender":"男","school":"康橋國際學校","birth":"2016/11/29","note":null}],"pbs":[],"records":[]};
 
 const EVENT_ORDER = ["50自", "50仰", "50蛙", "50蝶", "100自", "100仰", "100蛙", "100蝶", "200混", "200自", "200蛙", "400自"];
 const EVENTS = {
@@ -338,15 +338,8 @@ function openLogin(){document.getElementById("loginModal").classList.add("show")
 
 function openPerformanceModal(swimmerName, course, event, seconds, meet) {
   if(!state.user) return openLogin();
-  fillForms();
+  fillForms(swimmerName, course);
   
-  if (swimmerName) {
-    document.getElementById("pSwimmer").value = swimmerName;
-  }
-  if (course) {
-    document.getElementById("pCourse").value = course;
-    fillEvents();
-  }
   if (event) {
     document.getElementById("pEvent").value = event;
   }
@@ -354,6 +347,7 @@ function openPerformanceModal(swimmerName, course, event, seconds, meet) {
     document.getElementById("pSeconds").value = seconds;
     document.getElementById("deletePerfBtn").style.display = "block";
   } else {
+    document.getElementById("pSeconds").value = "";
     document.getElementById("deletePerfBtn").style.display = "none";
   }
   if (meet) {
@@ -390,20 +384,25 @@ function checkNewMeet(selectEl) {
   }
 }
 
-function fillForms(){
+function fillForms(targetSwimmer, targetCourse){
  const activeSwimmers = (state.roster||[]).filter(p => p.name !== "鄧丞勛" && (state.rawPerformances||[]).some(x => x.swimmer_name === p.name));
  document.getElementById("pSwimmer").innerHTML=(activeSwimmers.length ? activeSwimmers : state.roster.filter(p=>p.name!=="鄧丞勛")).map(p=>`<option value="${esc(p.name)}">${esc(p.name)}</option>`).join("");
- document.getElementById("pCourse").onchange=fillEvents; 
- document.getElementById("pCourse").value=state.course; 
+ 
+ if (targetSwimmer) {
+   document.getElementById("pSwimmer").value = targetSwimmer;
+ }
+
+ document.getElementById("pCourse").value = targetCourse || state.course;
  fillEvents();
  fillMeetTags();
  document.getElementById("pDate").value=new Date().toISOString().slice(0,10);
- document.getElementById("pSeconds").value = "";
- document.getElementById("deletePerfBtn").style.display = "none";
  document.getElementById("pMsg").innerHTML = "";
 }
 
-function fillEvents(){const c=document.getElementById("pCourse").value;document.getElementById("pEvent").innerHTML=EVENTS[c].map(x=>`<option>${x}</option>`).join("")}
+function fillEvents(){
+  const c = document.getElementById("pCourse").value;
+  document.getElementById("pEvent").innerHTML = EVENTS[c].map(x=>`<option>${x}</option>`).join("");
+}
 
 async function login(){
  if(!sb){document.getElementById("loginMsg").innerHTML="<div class='notice error'>尚未設定 Supabase。</div>";return}
