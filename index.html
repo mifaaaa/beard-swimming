@@ -2032,6 +2032,8 @@ async function exportExcel(kind){ if(!state.coach)return openLogin();
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function fmt(sec){sec=Number(sec);if(!Number.isFinite(sec))return "—";if(sec>=60){let m=Math.floor(sec/60);return String(m).padStart(2,"0")+":"+String((sec-m*60).toFixed(2)).padStart(5,"0")}return sec.toFixed(2)}
 function syncPageTabs(){
+  document.querySelector('[data-page="records"]').style.fontSize =
+  state.coach ? '' : '20px';
  if(!state.coach&&state.page!=='records')state.page='records';
  document.getElementById('recordsPage').hidden=state.page!=='records';
  document.getElementById('peopleSection').hidden=!state.coach||state.page!=='people';
