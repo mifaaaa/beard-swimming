@@ -77,30 +77,39 @@ button{transition:background .16s,box-shadow .16s,transform .16s}button:hover{fi
 @media(max-width:560px){header{padding:18px 16px}.brand{font-size:15px;letter-spacing:0}.sub{font-size:9px;letter-spacing:0}.top{gap:10px;align-items:center}header .btn{font-size:11px;padding:8px 10px;white-space:nowrap}main{padding:25px 16px 45px}.hero{display:flex;align-items:flex-start;gap:10px}.hero h1{font-size:29px}.hero h2{font-size:23px}.hero p{font-size:12px}.eyebrow{font-size:9px;margin-bottom:8px}#dbStatus{font-size:9px;padding:5px 7px;margin-top:5px}.records-toolbar{gap:13px;padding-bottom:18px}.tabs{width:100%}.tab{flex:1;padding:8px 12px}.exportbar{width:100%;gap:8px}.export-btn{flex:1;font-size:11px;padding:10px 6px}.grid{grid-template-columns:1fr;gap:11px}.record-card{min-height:140px;padding:18px 20px}.record-card h2{font-size:33px;margin-top:15px}.meet-tag{font-size:11px}.people{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.person{padding:15px 12px;min-height:140px}.person h3{font-size:17px}.person>.muted{font-size:11px}.person:after{right:11px;bottom:18px;font-size:14px}.person-record-count{font-size:11px;padding:4px 7px}.person-record-count b{font-size:13px}.people-section{margin-top:36px!important;padding-top:24px}.modal{padding:14px}.modalbox{padding:20px;border-radius:18px;max-height:92vh}.modalhead{top:-20px}.modalhead h2{font-size:20px}.record-row>strong{font-size:20px}.pb-meet{font-size:11px}.formgrid{grid-template-columns:1fr}.admin .hero{flex-wrap:wrap}.admin .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.admin .grid .card{padding:12px 9px;border-radius:11px}.admin .grid .muted{font-size:10px}.admin .stat{font-size:25px}.record-row .danger{font-size:11px;white-space:nowrap}}
 @media(prefers-reduced-motion:reduce){button,.person{transition:none}.person:hover{transform:none}}
 
+:root{--bg:#f7fbff;--accent:#1588b0;--line:#dcebf2}
+body{background:radial-gradient(circle at 94% 8%,#e0f5ff 0,transparent 28%),radial-gradient(circle at 4% 70%,#fff0e5 0,transparent 25%),#f7fbff}
+header{background:linear-gradient(120deg,#174b66,#217d9a);border-bottom:4px solid #a6e1ec;border-radius:0 0 23px 23px}
+.eyebrow{color:#5b8fa7}.hero h1{font-size:36px}.meet-tag{background:#dff2fa;border-radius:10px}.record-card{border-radius:22px;border-color:#e0eef4;box-shadow:0 5px 16px #327da40a}.record-card h2{color:#1a5973}
+.card{border-radius:20px}.person{background:linear-gradient(140deg,#fff,#f1faff)}.person-record-count{background:#fff3d9;color:#916934;border-radius:999px}.person-record-count b{color:#886428}
+.btn,.tab{border-radius:12px}.btn.primary{background:#1588b0}.tabs{background:#e7f1f7;border-radius:16px}.tab.active{color:#177697}.export-btn{background:#fff!important;border-color:#d3e8f2}
+.modalbox{border-radius:25px}.person-add{background:#1588b0!important;border-radius:14px}.meet-create{display:flex;gap:10px;margin:15px 0}.meet-create input{flex:1;min-width:0}.meet-create button{flex-shrink:0}.meet-list{max-height:330px;overflow:auto;padding-right:5px}.btn:disabled{opacity:.5;cursor:not-allowed}.coach-only[hidden]{display:none!important}
+@media(max-width:560px){.hero h1{font-size:27px}.hero h2{font-size:22px}.brand{font-size:14px}.meet-create{flex-wrap:wrap}.meet-create button{width:100%}.record-row>span{overflow-wrap:anywhere}.meet-list .record-row{gap:9px}}
+
 </style>
 
 </head>
 <body>
 <header><div class="top">
-<div><div class="brand">鬍子泳隊｜紀錄資料庫</div><div class="sub">公開查詢 · 教練管理 · PB / 隊史自動判定</div></div>
+<div><div class="brand">🦭 鬍子泳隊｜紀錄小屋</div><div class="sub">每一秒的努力，都值得被記住 ✨</div></div>
 <div id="authArea"><button class="btn" onclick="openLogin()">教練登入</button></div>
 </div></header>
 <main>
-<section class="hero"><div><div class="eyebrow">BEARD SWIM TEAM · RECORDS</div><h1>隊史紀錄</h1><p>每一秒都值得被記住。速度會變，紀錄會留下。</p></div><div id="dbStatus" class="muted small"></div></section>
+<section class="hero"><div><div class="eyebrow">BEARD SWIM TEAM · RECORDS</div><h1>🏆 隊史紀錄</h1><p>每一秒都值得被記住。速度會變，紀錄會留下。</p></div><div id="dbStatus" class="muted small"></div></section>
 <div class="records-toolbar"><div class="tabs"><button class="tab active" data-course="長池">長池 50m</button><button class="tab" data-course="短池">短池 25m</button></div>
-<div class="exportbar"><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><div id="recordsView"></div>
+<div class="exportbar coach-only" hidden><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><div id="recordsView"></div>
 
-<section class="people-section" style="margin-top:34px"><div class="hero"><div><h2>隊員資料庫</h2><p>點選隊員查看個人最佳紀錄與隊史保持項目。</p></div></div>
+<section id="peopleSection" class="people-section coach-only" hidden style="margin-top:34px"><div class="hero"><div><h2>🐬 隊員資料庫</h2><p>點選隊員查看個人最佳紀錄與隊史保持項目。</p></div></div>
 <div class="searchbar"><input id="search" class="input" placeholder="搜尋姓名、學校…"></div><div id="people" class="people"></div></section>
 
-<section id="adminPanel" class="admin" style="margin-top:40px">
-<div class="hero"><div><h2>教練後台</h2><p>登入後新增成績，系統會自動更新 PB 與隊史判定。</p></div><button class="btn primary" onclick="openPerformance()">＋ 新增成績</button></div>
+<section id="adminPanel" class="admin coach-only" hidden style="margin-top:40px">
+<div class="hero"><div><h2>🧢 教練小天地</h2><p>登入後新增成績，系統會自動更新 PB 與隊史判定。</p></div><button class="btn primary" onclick="openPerformance()">＋ 新增成績</button></div>
 <div class="grid">
 <div class="card"><div class="muted">隊員</div><div class="stat" id="statPeople">—</div></div>
 <div class="card"><div class="muted">目前 PB 筆數</div><div class="stat" id="statPB">—</div></div>
 <div class="card"><div class="muted">隊史紀錄</div><div class="stat" id="statRecords">—</div></div>
 </div>
-<div class="card" style="margin-top:14px"><h3>最近新增的 10 筆</h3><p class="muted small">依新增時間由新到舊，方便確認剛輸入的成績。刪除只會刪除所選的那一筆。</p><div id="performanceList"></div></div>
+<div class="card meet-management" style="margin-top:18px"><h3>🏟️ 賽事管理</h3><p class="muted small">先建立新賽事，就能在新增成績時選擇。刪除賽事會從選單移除，已有成績、PB與隊史仍會保留。</p><div class="meet-create"><input id="newMeetName" class="input" maxlength="120" placeholder="例如：2611 秋季盃"><button id="createMeetButton" class="btn primary" onclick="createMeet()">＋ 新增賽事</button></div><div id="meetMsg" class="muted small" aria-live="polite"></div><div id="meetList" class="meet-list"></div></div><div class="card" style="margin-top:14px"><h3>📝 最近新增的 10 筆</h3><p class="muted small">依新增時間由新到舊，方便確認剛輸入的成績。刪除只會刪除所選的那一筆。</p><div id="performanceList"></div></div>
 </section>
 </main>
 
@@ -128,17 +137,15 @@ button{transition:background .16s,box-shadow .16s,transform .16s}button:hover{fi
 
 <datalist id="meetOptions"></datalist><script src="config.js"></script>
 <script>
-const DEMO_DATA = {"roster":[{"name":"李亮樂","gender":"女","school":"中正國中","grade":"9","birth":"2011/01/14","note":"99尾~100頭"},{"name":"曾子僑","gender":"女","school":"重慶國中","grade":"8","birth":"2011/11/12","note":"100尾~101頭"},{"name":"潘沅駿","gender":"男","school":"土城國中","grade":"8","birth":"2012/04/25","note":null},{"name":"彭奕凱","gender":"男","school":"中山國小","grade":"7","birth":"2012/09/29","note":"101尾~102頭"},{"name":"劉昱成","gender":"男","school":"板橋國小","grade":"7","birth":"2012/11/05","note":null},{"name":"胡庭瑞","gender":"男","school":"中山國小","grade":"6","birth":"2014/05/12","note":"102尾~103頭"},{"name":"陳言安","gender":"男","school":"埔墘國小","grade":"6","birth":"2014/05/14","note":null},{"name":"鍾昊恩","gender":"男","school":"大觀國小","grade":"6","birth":"2014/05/17","note":null},{"name":"張境晏","gender":"女","school":"中山國小","grade":"6","birth":"2014/06/23","note":null},{"name":"曾子瑞","gender":"男","school":"中山國小","grade":"6","birth":"2014/07/16","note":null},{"name":"王柔伊","gender":"女","school":"中山國小","grade":"5","birth":"2015/02/04","note":"103尾~104頭"},{"name":"陳衍均","gender":"男","school":"大觀國小","grade":"5","birth":"2015/02/27","note":null},{"name":"姚家興","gender":"男","school":"中山國小","grade":"5","birth":"2015/03/13","note":null},{"name":"尹亮允","gender":"女","school":"中山國小","grade":"4","birth":"2015/09/29","note":"104尾~105頭"},{"name":"黃惟淵","gender":"男","school":"莒光國小","grade":"4","birth":"2016/01/09","note":null},{"name":"潘昱晴","gender":"女","school":"廣福國小","grade":"4","birth":"2016/01/17","note":null},{"name":"廖書汎","gender":"男","school":"中山國小","grade":"4","birth":"2016/07/11","note":null},{"name":"唐紫芯","gender":"女","school":"裕德國際學校","grade":"4","birth":"2016/08/08","note":null},{"name":"翁晨軒","gender":"男","school":"大觀國小","grade":"3","birth":"2017/01/22","note":"105尾~106頭"},{"name":"楊鎧銓","gender":"男","school":"康橋國際學校","grade":"3","birth":"2017/03/08","note":null},{"name":"高珩晉","gender":"男","school":"康橋國際學校","grade":"3","birth":"2017/08/21","note":null},{"name":"王暐蘅","gender":"男","school":"中山國小","grade":"2","birth":"2017/09/25","note":"106尾~107頭"},{"name":"張可勻","gender":"男","school":"土城國小","grade":"2","birth":"2018/06/21","note":null},{"name":"高赫言","gender":"男","school":"康橋國際學校","grade":"1","birth":"2018/11/13","note":"107尾~108頭"},{"name":"陳廷峰","gender":"男","school":"大觀國中","grade":"9","birth":"2010/12/26","note":null},{"name":"簡歆宸","gender":"女","school":"大觀國小","grade":"5","birth":"2015/05/18","note":null},{"name":"簡歆芸","gender":"女","school":"大觀國小","grade":"2","birth":"2018/05/06","note":null},{"name":"鄧丞勛","gender":"男","school":"大觀國小","grade":"2","birth":"2018/07/17","note":null},{"name":"梁義謹","gender":"男","school":"大觀國中","grade":"9","birth":"2011/01/15","note":null},{"name":"吳秉曄","gender":"男","school":"實踐國小","grade":"6","birth":"2013/12/23","note":null},{"name":"王欣蔓","gender":"女","school":"中山國小","grade":"6","birth":null,"note":null},{"name":"邱苡甯","gender":"女","school":null,"grade":"4","birth":null,"note":null},{"name":"邱莛玹","gender":"女","school":null,"grade":"4","birth":null,"note":null},{"name":"林祉妡","gender":null,"school":null,"grade":"4","birth":null,"note":null},{"name":"張可言","gender":"男","school":"土城國中","grade":"7","birth":"2013/01/31","note":null},{"name":"翁唯軒","gender":"男","school":"恆毅中學","grade":"9","birth":"2010/11/04","note":null},{"name":"池永璋","gender":"男","school":"大觀國中","grade":"8","birth":"2012/06/01","note":null},{"name":"洪瑀彤","gender":"女","school":"中山國小","grade":"7","birth":"2012/10/10","note":null},{"name":"王霈晴","gender":"女","school":"中山國小","grade":"7","birth":"2012/10/12","note":null},{"name":"高語均","gender":"女","school":"中山國小","grade":"7","birth":"2013/02/11","note":null},{"name":"鄧宇勝","gender":"男","school":"大觀國小","grade":"7","birth":"2013/05/08","note":null},{"name":"李瑨宸","gender":"男","school":"福瑞斯特高級中學","grade":"4","birth":"2015/11/24","note":null},{"name":"古羽立","gender":"男","school":"康橋國際學校","grade":"3","birth":"2016/11/29","note":null}],"pbs":[{"name":"李亮樂","course":"長池","event":"50自","seconds":31.33,"meet":"2509 泳協北A2"},{"name":"李亮樂","course":"長池","event":"50仰","seconds":38.51,"meet":null},{"name":"李亮樂","course":"長池","event":"50蛙","seconds":45.08,"meet":null},{"name":"李亮樂","course":"長池","event":"50蝶","seconds":33.55,"meet":"2601 新北市中"},{"name":"李亮樂","course":"長池","event":"100自","seconds":69.81,"meet":"2601 泳協北A1"},{"name":"李亮樂","course":"長池","event":"100仰","seconds":90.85,"meet":null},{"name":"李亮樂","course":"長池","event":"100蝶","seconds":87.32,"meet":null},{"name":"潘沅駿","course":"長池","event":"50自","seconds":29.38,"meet":"2609 新莊主委"},{"name":"潘沅駿","course":"長池","event":"50仰","seconds":34.19,"meet":"2609 新莊主委"},{"name":"潘沅駿","course":"長池","event":"50蛙","seconds":33.29,"meet":"2605 三峽春長"},{"name":"潘沅駿","course":"長池","event":"50蝶","seconds":32.47,"meet":"2606 全國中正"},{"name":"潘沅駿","course":"長池","event":"100自","seconds":63.74,"meet":"2604 三峽春長"},{"name":"潘沅駿","course":"長池","event":"100仰","seconds":73.78,"meet":"2609 永和幼獅"},{"name":"潘沅駿","course":"長池","event":"100蛙","seconds":72.51,"meet":"2601 泳協北A1"},{"name":"潘沅駿","course":"長池","event":"100蝶","seconds":70.77,"meet":"2609 永和幼獅"},{"name":"潘沅駿","course":"長池","event":"200自","seconds":141.69,"meet":"2509 泳協北A2"},{"name":"潘沅駿","course":"長池","event":"200混","seconds":152.03,"meet":"2604 夢想春季"},{"name":"潘沅駿","course":"長池","event":"200蛙","seconds":159.47,"meet":"2606 全國中正"},{"name":"彭奕凱","course":"長池","event":"50自","seconds":31.34,"meet":null},{"name":"彭奕凱","course":"長池","event":"50仰","seconds":38.44,"meet":null},{"name":"彭奕凱","course":"長池","event":"50蛙","seconds":40.32,"meet":null},{"name":"彭奕凱","course":"長池","event":"50蝶","seconds":35.39,"meet":null},{"name":"彭奕凱","course":"長池","event":"100自","seconds":67.92,"meet":null},{"name":"彭奕凱","course":"長池","event":"100蛙","seconds":86.38,"meet":null},{"name":"彭奕凱","course":"長池","event":"200自","seconds":150.99,"meet":null},{"name":"彭奕凱","course":"長池","event":"200混","seconds":168.71,"meet":null},{"name":"曾子瑞","course":"長池","event":"50自","seconds":32.09,"meet":null},{"name":"曾子瑞","course":"長池","event":"50仰","seconds":36.88,"meet":null},{"name":"曾子瑞","course":"長池","event":"50蛙","seconds":40.48,"meet":null},{"name":"曾子瑞","course":"長池","event":"50蝶","seconds":35.09,"meet":null},{"name":"曾子瑞","course":"長池","event":"100自","seconds":69.87,"meet":null},{"name":"曾子瑞","course":"長池","event":"100仰","seconds":78.34,"meet":null},{"name":"曾子瑞","course":"長池","event":"100蛙","seconds":88.48,"meet":null},{"name":"曾子瑞","course":"長池","event":"100蝶","seconds":79.65,"meet":null},{"name":"曾子瑞","course":"長池","event":"200自","seconds":148.62,"meet":null},{"name":"曾子瑞","course":"長池","event":"200混","seconds":166.76,"meet":null},{"name":"曾子瑞","course":"長池","event":"400自","seconds":315.93,"meet":"2610 泳協北A2"},{"name":"陳言安","course":"長池","event":"50自","seconds":34.35,"meet":null},{"name":"陳言安","course":"長池","event":"50仰","seconds":40.04,"meet":null},{"name":"陳言安","course":"長池","event":"50蛙","seconds":45.21,"meet":null},{"name":"陳言安","course":"長池","event":"50蝶","seconds":37.05,"meet":null},{"name":"陳言安","course":"長池","event":"100自","seconds":75.38,"meet":null},{"name":"陳言安","course":"長池","event":"200自","seconds":169.38,"meet":null},{"name":"陳言安","course":"長池","event":"200混","seconds":178.9,"meet":null},{"name":"張境晏","course":"長池","event":"50自","seconds":36.53,"meet":null},{"name":"張境晏","course":"長池","event":"50仰","seconds":41.7,"meet":null},{"name":"張境晏","course":"長池","event":"50蛙","seconds":49.94,"meet":null},{"name":"張境晏","course":"長池","event":"50蝶","seconds":39.49,"meet":null},{"name":"張境晏","course":"長池","event":"100自","seconds":78.78,"meet":null},{"name":"張境晏","course":"長池","event":"200自","seconds":178.37,"meet":null},{"name":"張境晏","course":"長池","event":"200混","seconds":196.52,"meet":null},{"name":"王柔伊","course":"長池","event":"50自","seconds":36.22,"meet":null},{"name":"王柔伊","course":"長池","event":"50仰","seconds":41.65,"meet":null},{"name":"王柔伊","course":"長池","event":"50蛙","seconds":47.48,"meet":null},{"name":"王柔伊","course":"長池","event":"50蝶","seconds":38.62,"meet":null},{"name":"王柔伊","course":"長池","event":"100自","seconds":77.45,"meet":null},{"name":"王柔伊","course":"長池","event":"100仰","seconds":86.5,"meet":null},{"name":"王柔伊","course":"長池","event":"100蛙","seconds":103.33,"meet":null},{"name":"王柔伊","course":"長池","event":"100蝶","seconds":89.17,"meet":null},{"name":"王柔伊","course":"長池","event":"200自","seconds":171.66,"meet":null},{"name":"王柔伊","course":"長池","event":"200混","seconds":187.07,"meet":null},{"name":"姚家興","course":"長池","event":"50自","seconds":34.29,"meet":null},{"name":"姚家興","course":"長池","event":"50仰","seconds":41.23,"meet":null},{"name":"姚家興","course":"長池","event":"50蛙","seconds":43.31,"meet":null},{"name":"姚家興","course":"長池","event":"50蝶","seconds":39.46,"meet":null},{"name":"姚家興","course":"長池","event":"100自","seconds":74.44,"meet":null},{"name":"姚家興","course":"長池","event":"100仰","seconds":86.82,"meet":null},{"name":"姚家興","course":"長池","event":"100蛙","seconds":95.74,"meet":null},{"name":"姚家興","course":"長池","event":"100蝶","seconds":88.55,"meet":null},{"name":"姚家興","course":"長池","event":"200自","seconds":167.04,"meet":null},{"name":"姚家興","course":"長池","event":"200混","seconds":178.19,"meet":null},{"name":"潘昱晴","course":"長池","event":"50自","seconds":32.8,"meet":null},{"name":"潘昱晴","course":"長池","event":"50仰","seconds":38.05,"meet":null},{"name":"潘昱晴","course":"長池","event":"50蛙","seconds":43.49,"meet":null},{"name":"潘昱晴","course":"長池","event":"50蝶","seconds":35.78,"meet":null},{"name":"潘昱晴","course":"長池","event":"100自","seconds":69.85,"meet":null},{"name":"潘昱晴","course":"長池","event":"100仰","seconds":80.38,"meet":null},{"name":"潘昱晴","course":"長池","event":"100蛙","seconds":90.44,"meet":null},{"name":"潘昱晴","course":"長池","event":"100蝶","seconds":80.65,"meet":"2610 泳協北A2"},{"name":"潘昱晴","course":"長池","event":"200自","seconds":148.72,"meet":"2610 泳協北A2"},{"name":"潘昱晴","course":"長池","event":"200混","seconds":167.44,"meet":"2605 新北對抗"},{"name":"尹亮允","course":"長池","event":"50自","seconds":33.98,"meet":null},{"name":"尹亮允","course":"長池","event":"50仰","seconds":39.69,"meet":null},{"name":"尹亮允","course":"長池","event":"50蛙","seconds":41.84,"meet":"2610 泳協北A2"},{"name":"尹亮允","course":"長池","event":"50蝶","seconds":37.23,"meet":null},{"name":"尹亮允","course":"長池","event":"100自","seconds":72.04,"meet":null},{"name":"尹亮允","course":"長池","event":"100仰","seconds":83.13,"meet":null},{"name":"尹亮允","course":"長池","event":"100蛙","seconds":88.69,"meet":"2609 永和幼獅"},{"name":"尹亮允","course":"長池","event":"100蝶","seconds":86.42,"meet":null},{"name":"尹亮允","course":"長池","event":"200自","seconds":153.14,"meet":null},{"name":"尹亮允","course":"長池","event":"200混","seconds":168.42,"meet":null},{"name":"尹亮允","course":"長池","event":"200蛙","seconds":188.11,"meet":"2610 泳協北A2"},{"name":"尹亮允","course":"長池","event":"400自","seconds":324.6,"meet":"2610 泳協北A2"},{"name":"楊鎧銓","course":"長池","event":"50自","seconds":38.1,"meet":null},{"name":"楊鎧銓","course":"長池","event":"50仰","seconds":41.76,"meet":null},{"name":"楊鎧銓","course":"長池","event":"50蛙","seconds":50.68,"meet":null},{"name":"楊鎧銓","course":"長池","event":"50蝶","seconds":38.36,"meet":null},{"name":"楊鎧銓","course":"長池","event":"100自","seconds":79.5,"meet":null},{"name":"楊鎧銓","course":"長池","event":"100仰","seconds":90.78,"meet":null},{"name":"楊鎧銓","course":"長池","event":"100蛙","seconds":109.64,"meet":null},{"name":"楊鎧銓","course":"長池","event":"100蝶","seconds":82.57,"meet":null},{"name":"楊鎧銓","course":"長池","event":"200自","seconds":174.04,"meet":null},{"name":"楊鎧銓","course":"長池","event":"200混","seconds":187.0,"meet":null},{"name":"高珩晉","course":"長池","event":"50自","seconds":38.7,"meet":null},{"name":"高珩晉","course":"長池","event":"50仰","seconds":45.94,"meet":null},{"name":"高珩晉","course":"長池","event":"50蛙","seconds":53.17,"meet":null},{"name":"高珩晉","course":"長池","event":"50蝶","seconds":49.02,"meet":null},{"name":"高珩晉","course":"長池","event":"100自","seconds":84.19,"meet":null},{"name":"王暐蘅","course":"長池","event":"50自","seconds":37.05,"meet":null},{"name":"王暐蘅","course":"長池","event":"50仰","seconds":43.57,"meet":null},{"name":"王暐蘅","course":"長池","event":"50蛙","seconds":47.97,"meet":null},{"name":"王暐蘅","course":"長池","event":"50蝶","seconds":40.31,"meet":null},{"name":"王暐蘅","course":"長池","event":"100自","seconds":79.12,"meet":null},{"name":"王暐蘅","course":"長池","event":"100仰","seconds":93.0,"meet":null},{"name":"王暐蘅","course":"長池","event":"100蛙","seconds":101.3,"meet":null},{"name":"王暐蘅","course":"長池","event":"100蝶","seconds":84.14,"meet":null},{"name":"王暐蘅","course":"長池","event":"200自","seconds":171.55,"meet":null},{"name":"王暐蘅","course":"長池","event":"200混","seconds":186.91,"meet":null},{"name":"高赫言","course":"長池","event":"50自","seconds":39.53,"meet":null},{"name":"高赫言","course":"長池","event":"50仰","seconds":46.81,"meet":null},{"name":"高赫言","course":"長池","event":"50蛙","seconds":55.1,"meet":null},{"name":"高赫言","course":"長池","event":"50蝶","seconds":47.2,"meet":null},{"name":"高赫言","course":"長池","event":"100自","seconds":99.64,"meet":null},{"name":"曾子瑞","course":"短池","event":"50蝶","seconds":35.72,"meet":null},{"name":"曾子瑞","course":"短池","event":"100仰","seconds":78.08,"meet":"2512 Xports"},{"name":"曾子瑞","course":"短池","event":"100混","seconds":78.81,"meet":"2512 Xports"},{"name":"王柔伊","course":"短池","event":"50自","seconds":38.44,"meet":null},{"name":"王柔伊","course":"短池","event":"100混","seconds":101.33,"meet":null},{"name":"姚家興","course":"短池","event":"50蝶","seconds":42.43,"meet":null},{"name":"姚家興","course":"短池","event":"100自","seconds":78.9,"meet":null},{"name":"姚家興","course":"短池","event":"100混","seconds":88.59,"meet":null},{"name":"尹亮允","course":"短池","event":"50蛙","seconds":45.23,"meet":"2512 Xports"},{"name":"尹亮允","course":"短池","event":"100仰","seconds":85.04,"meet":"2512 Xports"},{"name":"尹亮允","course":"短池","event":"100混","seconds":85.76,"meet":"2512 Xports"},{"name":"楊鎧銓","course":"短池","event":"50蛙","seconds":51.88,"meet":null},{"name":"楊鎧銓","course":"短池","event":"100蝶","seconds":86.8,"meet":null},{"name":"楊鎧銓","course":"短池","event":"100混","seconds":93.88,"meet":null},{"name":"高珩晉","course":"短池","event":"50仰","seconds":48.96,"meet":null},{"name":"高珩晉","course":"短池","event":"100自","seconds":91.21,"meet":null},{"name":"高珩晉","course":"短池","event":"100混","seconds":101.75,"meet":null},{"name":"王暐蘅","course":"短池","event":"50仰","seconds":45.91,"meet":null},{"name":"王暐蘅","course":"短池","event":"50蝶","seconds":45.46,"meet":null},{"name":"王暐蘅","course":"短池","event":"100混","seconds":96.84,"meet":null},{"name":"高赫言","course":"短池","event":"50仰","seconds":49.57,"meet":null},{"name":"高赫言","course":"短池","event":"100混","seconds":110.14,"meet":null}],"records":[{"course":"長池","gender":"男","event":"50自","holder":"潘沅駿","seconds":29.38,"meet":"2609 新莊主委"},{"course":"長池","gender":"女","event":"50自","holder":"李亮樂","seconds":31.33,"meet":"2509 泳協北A2"},{"course":"長池","gender":"男","event":"50仰","holder":"潘沅駿","seconds":34.19,"meet":"2609 新莊主委"},{"course":"長池","gender":"女","event":"50仰","holder":"高語均","seconds":36.87,"meet":"2506 全國青年"},{"course":"長池","gender":"男","event":"50蛙","holder":"潘沅駿","seconds":33.29,"meet":"2605 三峽春長"},{"course":"長池","gender":"女","event":"50蛙","holder":"尹亮允","seconds":41.84,"meet":"2610 泳協北A2"},{"course":"長池","gender":"男","event":"50蝶","holder":"潘沅駿","seconds":32.47,"meet":"2606 全國中正"},{"course":"長池","gender":"女","event":"50蝶","holder":"李亮樂","seconds":33.55,"meet":"2601 新北市中"},{"course":"長池","gender":"男","event":"100自","holder":"潘沅駿","seconds":63.74,"meet":"2604 三峽春長"},{"course":"長池","gender":"女","event":"100自","holder":"李亮樂","seconds":69.81,"meet":"2601 泳協北A1"},{"course":"長池","gender":"男","event":"100仰","holder":"潘沅駿","seconds":73.78,"meet":"2609 永和幼獅"},{"course":"長池","gender":"女","event":"100仰","holder":"高語均","seconds":79.86,"meet":"2506 全國青年"},{"course":"長池","gender":"男","event":"100蛙","holder":"潘沅駿","seconds":72.51,"meet":"2601 泳協北A1"},{"course":"長池","gender":"女","event":"100蛙","holder":"尹亮允","seconds":88.69,"meet":"2609 永和幼獅"},{"course":"長池","gender":"男","event":"100蝶","holder":"潘沅駿","seconds":70.77,"meet":"2609 永和幼獅"},{"course":"長池","gender":"女","event":"100蝶","holder":"潘昱晴","seconds":80.65,"meet":"2610 泳協北A2"},{"course":"長池","gender":"男","event":"200混","holder":"潘沅駿","seconds":152.03,"meet":"2604 夢想春季"},{"course":"長池","gender":"女","event":"200混","holder":"潘昱晴","seconds":167.44,"meet":"2605 新北對抗"},{"course":"長池","gender":"男","event":"200自","holder":"潘沅駿","seconds":141.69,"meet":"2509 泳協北A2"},{"course":"長池","gender":"女","event":"200自","holder":"潘昱晴","seconds":148.72,"meet":"2610 泳協北A2"},{"course":"長池","gender":"男","event":"200蛙","holder":"潘沅駿","seconds":159.47,"meet":"2606 全國中正"},{"course":"長池","gender":"女","event":"200蛙","holder":"尹亮允","seconds":188.11,"meet":"2610 泳協北A2"},{"course":"長池","gender":"男","event":"400自","holder":"曾子瑞","seconds":315.93,"meet":"2610 泳協北A2"},{"course":"長池","gender":"女","event":"400自","holder":"尹亮允","seconds":324.6,"meet":"2610 泳協北A2"},{"course":"短池","gender":"男","event":"50自","holder":"吳中暟","seconds":30.36,"meet":"2412 Xports"},{"course":"短池","gender":"女","event":"50自","holder":"李亮樂","seconds":31.6,"meet":"2412 Xports"},{"course":"短池","gender":"男","event":"50仰","holder":"曾子瑞","seconds":37.7,"meet":"2512 Xports"},{"course":"短池","gender":"女","event":"50仰","holder":"高語均","seconds":38.5,"meet":"2412 Xports"},{"course":"短池","gender":"男","event":"50蛙","holder":"潘沅駿","seconds":35.81,"meet":"2412 Xports"},{"course":"短池","gender":"女","event":"50蛙","holder":"尹亮允","seconds":45.23,"meet":"2512 Xports"},{"course":"短池","gender":"男","event":"50蝶","holder":"曾子瑞","seconds":35.79,"meet":"2512 Xports"},{"course":"短池","gender":"女","event":"50蝶","holder":"李亮樂","seconds":34.81,"meet":"2412 Xports"},{"course":"短池","gender":"男","event":"100自","holder":"吳中暟","seconds":65.81,"meet":"2412 Xports"},{"course":"短池","gender":"女","event":"100自","holder":"高語均","seconds":74.28,"meet":"2412 Xports"},{"course":"短池","gender":"男","event":"100仰","holder":"曾子瑞","seconds":78.08,"meet":"2512 Xports"},{"course":"短池","gender":"女","event":"100仰","holder":"尹亮允","seconds":85.04,"meet":"2512 Xports"},{"course":"短池","gender":"男","event":"100蛙","holder":"潘沅駿","seconds":78.88,"meet":"2412 Xports"},{"course":"短池","gender":"男","event":"100蝶","holder":"吳中暟","seconds":81.59,"meet":"2412 Xports"},{"course":"短池","gender":"男","event":"100混","holder":"曾子瑞","seconds":78.81,"meet":"2512 Xports"},{"course":"短池","gender":"女","event":"100混","holder":"尹亮允","seconds":85.76,"meet":"2512 Xports"},{"course":"短池","gender":"男","event":"200混","holder":"潘沅駿","seconds":162.9,"meet":"2412 Xports"}]};
-const EVENTS={長池:["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","200混","200自","200蛙","400自"],短池:["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","100混","200混","200自"]};
-let state={course:"長池", roster:DEMO_DATA.roster, pbs:DEMO_DATA.pbs, records:DEMO_DATA.records, performances:[], user:null, online:false};
-const PB_NAMES=new Set(["李亮樂","潘沅駿","彭奕凱","曾子瑞","陳言安","張境晏","王柔伊","姚家興","潘昱晴","尹亮允","楊鎧銓","高珩晉","王暐蘅","高赫言"]);
+const EVENTS={"長池":["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","200自","200混","200仰","200蛙","200蝶","400自"],"短池":["50自","50仰","50蛙","50蝶","100自","100混","100仰","100蛙","100蝶","200自","200混"]};
+let state={course:"長池",roster:[],pbs:[],records:[],performances:[],meets:[],user:null,coach:false,online:false};
 let currentPerson=null;
 let sb=null;
 if(window.SUPABASE_CONFIG?.url && window.SUPABASE_CONFIG?.anonKey && !window.SUPABASE_CONFIG.url.includes("YOUR_")){
   sb=supabase.createClient(window.SUPABASE_CONFIG.url,window.SUPABASE_CONFIG.anonKey);
   state.online=true;
-  sb.auth.getSession().then(({data})=>{state.user=data.session?.user||null; updateAuth(); if(state.user) loadCloud();});
-  sb.auth.onAuthStateChange((_e,s)=>{state.user=s?.user||null;updateAuth();if(state.user)loadCloud();});
+  sb.auth.getSession().then(({data})=>{state.user=data.session?.user||null;updateAuth();loadCloud();});
+  sb.auth.onAuthStateChange((_e,s)=>{const changed=state.user?.id!==s?.user?.id;state.user=s?.user||null;if(changed||_e==="SIGNED_OUT"){cloudGeneration++;clearCoachData();}setTimeout(()=>loadCloud(),0);});
 }
 // Standalone XLSX export: text cells are literal strings, never formulas.
 function parseSwimTime(value){
@@ -181,7 +188,7 @@ function createXlsx(sheets){
  return zipStored(files);
 }
 function exportSheets(kind){
- const swimmers=state.roster.filter(s=>PB_NAMES.has(s.name)).sort((a,b)=>state.records.filter(r=>r.holder===b.name).length-state.records.filter(r=>r.holder===a.name).length||a.name.localeCompare(b.name,"zh-Hant"));
+ const swimmers=state.roster.filter(s=>s.directory_visible).sort((a,b)=>state.records.filter(r=>r.holder===b.name).length-state.records.filter(r=>r.holder===a.name).length||a.name.localeCompare(b.name,"zh-Hant"));
  return ["長池","短池"].map(course=>{
   const rows=[[kind==="pb"?"選手":"隊史保持人","性別","項目","成績（分:秒）","總秒數","賽事","比賽日期"]];
   if(kind==="pb")for(const s of swimmers)for(const event of EVENTS[course]){
@@ -196,10 +203,10 @@ function exportSheets(kind){
   return {name:course,rows};
  });
 }
-async function exportExcel(kind){
+async function exportExcel(kind){ if(!state.coach)return openLogin();
  const buttons=[...document.querySelectorAll(".export-btn")];buttons.forEach(b=>b.disabled=true);
  try{
-  if(sb && !await loadCloud())throw new Error("無法取得最新資料，請確認網路後再試。");
+  if(!sb||!await loadCloud()||!state.coach)throw new Error("無法取得教練資料，請重新登入後再試。");
   const date=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Taipei"}).format(new Date());
   const blob=createXlsx(exportSheets(kind)),url=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=url;a.download=`鬍子泳隊_${kind==="pb"?"選手最新PB":"隊史紀錄"}_${date}${sb?"":"_預覽"}.xlsx`;
@@ -209,24 +216,29 @@ async function exportExcel(kind){
 
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function fmt(sec){sec=Number(sec);if(!Number.isFinite(sec))return "—";if(sec>=60){let m=Math.floor(sec/60);return String(m).padStart(2,"0")+":"+String((sec-m*60).toFixed(2)).padStart(5,"0")}return sec.toFixed(2)}
-function updateAuth(){document.getElementById("authArea").innerHTML=state.user?`<button class="btn" onclick="logout()">登出教練帳號</button>`:`<button class="btn" onclick="openLogin()">教練登入</button>`;document.getElementById("adminPanel").classList.toggle("show",!!state.user)}
-function render(){
+function updateAuth(){
+ document.getElementById("authArea").innerHTML=state.user?'<button class="btn" onclick="logout()">登出 👋</button>':'<button class="btn" onclick="openLogin()">教練登入 🔑</button>';
+ document.querySelectorAll(".coach-only").forEach(el=>el.hidden=!state.coach);
+ document.getElementById("adminPanel").classList.toggle("show",state.coach);
+}
+function render()
+{
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<span class="meet-tag">${esc(r.meet||"賽事未提供")}</span>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=["男","女"].map(g=>`<h2>隊史紀錄（${g}）</h2><div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card ${r?"":"is-empty"}"><div class="record-heading"><div class="muted">${esc(ev)}</div>${r?`<span class="meet-tag">${esc(r.meet||"賽事未提供")}</span>`:""}</div>${r?`<h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b>`:`<h2>暫無成績</h2>`}</div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin();
 }
-function renderPeople(){
+function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
  const q=document.getElementById("search").value.trim().toLowerCase();
- const arr=state.roster.filter(x=>PB_NAMES.has(x.name)&&(!q||[x.name,x.school].filter(Boolean).join(" ").toLowerCase().includes(q))).sort((a,b)=>state.records.filter(r=>r.holder===b.name).length-state.records.filter(r=>r.holder===a.name).length||a.name.localeCompare(b.name,"zh-Hant"));
+ const arr=state.roster.filter(x=>x.directory_visible&&(!q||[x.name,x.school].filter(Boolean).join(" ").toLowerCase().includes(q))).sort((a,b)=>state.records.filter(r=>r.holder===b.name).length-state.records.filter(r=>r.holder===a.name).length||a.name.localeCompare(b.name,"zh-Hant"));
  document.getElementById("people").innerHTML=arr.map(p=>{
    const n=state.pbs.filter(x=>x.name===p.name).length;
    const owned=state.records.filter(x=>x.holder===p.name).length;
    return `<div class="card person" onclick="openPerson('${esc(p.name)}')"><h3>${esc(p.name)}</h3><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div><div class="person-record-count">🏆 <b>${owned}</b> 項隊史</div></div>`
  }).join("")||`<div class="empty">找不到符合的隊員</div>`;
 }
-function openPerson(name){ currentPerson=name;
+function openPerson(name){ if(!state.coach)return openLogin();currentPerson=name;
  const p=state.roster.find(x=>x.name===name)||{name};
  const pb=state.pbs.filter(x=>x.name===name);
  const rec=state.records.filter(x=>x.holder===name);
@@ -237,11 +249,11 @@ function openPerson(name){ currentPerson=name;
    return `<div class="card" style="margin:12px 0"><h3>${c} PB</h3>${rows.length?rows.map(x=>`<div class="record-row"><span>${esc(x.event)}<span class="pb-meet">創下 PB 賽事：${esc(x.meet||"賽事未提供")}</span></span><strong>${esc(x.display||fmt(x.seconds))}</strong></div>`).join(""):"<div class='muted'>尚無成績</div>"}</div>`;
  }).join("");
  const recHtml=rec.length?`<div class="notice">🏆 此選手目前保持 <b>${rec.length}</b> 項隊史紀錄</div>${rec.map(r=>`<div class="record-row"><span>${esc(r.course)} · ${esc(r.event)} · ${esc(r.gender)}</span><strong>${esc(r.display||fmt(r.seconds))}</strong></div>`).join("")}`:"";
- document.getElementById("personBody").innerHTML=`<div class="card"><b>${esc(p.name)}</b><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div></div>${state.user?`<button class="btn primary person-add" onclick="openPerformance(currentPerson)">新增選手成績／賽事</button>`:""}${recHtml}${groups}`;
+ document.getElementById("personBody").innerHTML=`<div class="card"><b>${esc(p.name)}</b><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}</div></div>${state.coach?`<button class="btn primary person-add" onclick="openPerformance(currentPerson)">🏊 新增選手成績／賽事</button>`:""}${recHtml}${groups}`;
  document.getElementById("personModal").classList.add("show");
 }
-function renderAdmin(){
- document.getElementById("statPeople").textContent=state.roster.filter(x=>PB_NAMES.has(x.name)).length;
+function renderAdmin(){ if(!state.coach){document.getElementById("performanceList").innerHTML="";return;}renderMeets();
+ document.getElementById("statPeople").textContent=state.roster.filter(x=>x.directory_visible).length;
  document.getElementById("statPB").textContent=state.pbs.length;
  document.getElementById("statRecords").textContent=state.records.length;
  const list=document.getElementById("performanceList");
@@ -250,7 +262,7 @@ function renderAdmin(){
  list.innerHTML=rows.length?rows.map(p=>`<div class="record-row" style="gap:10px;align-items:center"><div style="flex:1"><b>${esc(p.swimmer_name)}</b> · ${esc(p.course)} ${esc(p.event)}<div class="muted small">${esc(p.display||fmt(p.seconds))} · ${esc(p.meet||"未填賽事")} · ${esc(p.swim_date||"")}<div>新增時間：${p.created_at?esc(new Date(p.created_at).toLocaleString("zh-TW",{timeZone:"Asia/Taipei"})):"未提供"}</div></div></div><button class="btn danger" onclick="event.stopPropagation();deletePerformance('${esc(p.id)}')">🗑 刪除</button></div>`).join(""):`<div class="muted">目前沒有成績資料。</div>`;
 }
 function openLogin(){document.getElementById("loginModal").classList.add("show")}
-function openPerformance(name){if(!state.user)return openLogin();fillForms();if(name)document.getElementById("pSwimmer").value=name;document.getElementById("pMeet").setAttribute("list","meetOptions");document.getElementById("meetOptions").innerHTML=[...new Set([...state.records,...state.performances].map(x=>x.meet).filter(Boolean))].map(m=>`<option value="${esc(m)}">`).join("");document.getElementById("performanceModal").classList.add("show")}
+function openPerformance(name){if(!state.coach)return openLogin();fillForms();if(name)document.getElementById("pSwimmer").value=name;document.getElementById("pMeet").setAttribute("list","meetOptions");document.getElementById("meetOptions").innerHTML=state.meets.map(x=>x.name).map(m=>`<option value="${esc(m)}">`).join("");document.getElementById("performanceModal").classList.add("show")}
 function closeModal(id){document.getElementById(id).classList.remove("show")}
 function fillForms(){
  document.getElementById("pSwimmer").innerHTML=state.roster.map(p=>`<option value="${esc(p.name)}">${esc(p.name)}</option>`).join("");
@@ -264,7 +276,7 @@ async function login(){
  document.getElementById("loginMsg").innerHTML=error?`<div class='notice error'>${esc(error.message)}</div>`:"<div class='notice success'>登入成功</div>";
  if(!error)setTimeout(()=>closeModal("loginModal"),500);
 }
-async function logout(){if(sb)await sb.auth.signOut();state.user=null;updateAuth()}
+async function logout(){cloudGeneration++;clearCoachData();state.user=null;render();updateAuth();if(sb)await sb.auth.signOut();}
 function computeDerivedData(perfList){
  const pbMap=new Map();
  for(const p of perfList||[]){
@@ -275,34 +287,55 @@ function computeDerivedData(perfList){
  state.pbs=[...pbMap.values()].map(p=>({...p,name:p.swimmer_name,seconds:Number(p.seconds),display:fmt(Number(p.seconds))}));
 }
 async function allPerformances(){let rows=[];for(let start=0;;start+=1000){const {data,error}=await sb.from("performances").select("*").order("id").range(start,start+999);if(error)throw error;rows.push(...data);if(data.length<1000)return {data:rows,error:null};}}
+let cloudGeneration=0;
+function clearCoachData(){state.coach=false;state.roster=[];state.pbs=[];state.performances=[];state.meets=[];currentPerson=null;document.getElementById("personTitle").textContent="個人紀錄";document.getElementById("personBody").innerHTML="";document.getElementById("people").innerHTML="";document.getElementById("performanceList").innerHTML="";document.getElementById("meetList").innerHTML="";document.getElementById("pSwimmer").innerHTML="";document.getElementById("meetOptions").innerHTML="";for(const id of ["pMeet","pNote","pSeconds","newMeetName","loginPassword"])document.getElementById(id).value="";for(const id of ["personModal","performanceModal"])closeModal(id);updateAuth();}
 async function loadCloud(){
-
+ const generation=++cloudGeneration;
  try{
-  if(!sb){render();return true}
-  const [{data:sw,error:swErr},{data:perf,error:perfErr},{data:rec,error:recErr}]=await Promise.all([
-    sb.from("swimmers").select("*").order("name"),
-    allPerformances(),
-    sb.from("team_records").select("*")
-  ]);
-  if(swErr)throw swErr;if(perfErr)throw perfErr;if(recErr)throw recErr;
-  if(sw)state.roster=sw.map(x=>({name:x.name,gender:x.gender,school:x.school,grade:x.grade,birth:x.birth,note:x.note}));
-  state.performances=(perf||[]).map(x=>({...x,seconds:Number(x.seconds),display:fmt(Number(x.seconds))}));
-  computeDerivedData(state.performances);
-  if(rec)state.records=rec.map(x=>({course:x.course,gender:x.gender,event:x.event,holder:x.swimmer_name,seconds:Number(x.seconds),display:fmt(Number(x.seconds)),meet:x.meet}));
-  render();return true;
- }catch(e){console.error(e);document.getElementById("dbStatus").textContent="⚠️ 資料庫讀取失敗";return false}
+  if(!sb){render();updateAuth();return false;}
+  const {data:rec,error:recError}=await sb.from("team_records").select("*");if(recError)throw recError;
+  let coach=false;
+  if(state.user){const {data,error}=await sb.rpc("is_coach");if(error)throw error;coach=data===true;}
+  if(generation!==cloudGeneration)return false;
+  state.records=(rec||[]).map(r=>({...r,holder:r.swimmer_name,seconds:Number(r.seconds),display:fmt(r.seconds)}));
+  if(!coach){clearCoachData();render();return true;}
+  const results=await Promise.all([sb.from("swimmers").select("name,gender,school,directory_visible").order("name"),allPerformances(),sb.from("meets").select("*").order("name")]);
+  for(const result of results)if(result.error)throw result.error;
+  if(generation!==cloudGeneration)return false;
+  state.roster=results[0].data||[];state.performances=(results[1].data||[]).map(p=>({...p,seconds:Number(p.seconds),display:fmt(p.seconds)}));state.meets=(results[2].data||[]).filter(m=>m.active!==false);
+  computeDerivedData(state.performances);state.coach=true;render();updateAuth();return true;
+ }catch(e){if(generation!==cloudGeneration)return false;clearCoachData();render();document.getElementById("dbStatus").textContent="⚠️ 資料讀取失敗，請重新整理";console.error(e);return false;}
 }
-async function submitPerformance(){
+function renderMeets(){
+ const list=document.getElementById("meetList");if(!state.coach){list.innerHTML="";return;}
+ list.innerHTML=state.meets.map(m=>{const count=state.performances.filter(p=>String(p.meet||"").trim()===m.name).length;return `<div class="record-row"><span>🏟️ ${esc(m.name)}<span class="pb-meet">${count} 筆成績</span></span><button class="btn danger" data-meet-id="${esc(m.id)}">刪除賽事</button></div>`;}).join("")||'<div class="muted small">還沒有賽事，先建立第一場吧 🌱</div>';
+ list.querySelectorAll("button[data-meet-id]").forEach(b=>b.onclick=()=>deleteMeet(b.dataset.meetId));
+}
+async function createMeet(){
+ if(!state.coach||!sb)return openLogin();
+ const input=document.getElementById("newMeetName"),name=input.value.trim(),message=document.getElementById("meetMsg"),button=document.getElementById("createMeetButton");
+ if(!name){message.textContent="請輸入新賽事的名稱";return;}button.disabled=true;
+ try{const {data,error}=await sb.rpc("create_meet",{p_name:name});if(error)throw error;input.value="";await loadCloud();message.textContent=data.message;}
+ catch(e){message.textContent=e.message;}finally{button.disabled=false;}
+}
+async function deleteMeet(id){
+ if(!state.coach||!sb)return openLogin();const meet=state.meets.find(m=>m.id===id);if(!meet)return;
+ if(!confirm(`從賽事選單移除「${meet.name}」？\n已有成績、PB和隊史仍會保留。`))return;
+ const {error}=await sb.rpc("delete_meet",{p_id:id});if(error){document.getElementById("meetMsg").textContent=error.message;return;}
+ await loadCloud();document.getElementById("meetMsg").textContent="賽事已移除，原有成績與PB保留";
+}
+
+async function submitPerformance(){ if(!state.coach)return openLogin();
  const payload={swimmer_name:document.getElementById("pSwimmer").value,course:document.getElementById("pCourse").value,event:document.getElementById("pEvent").value,seconds:parseSwimTime(document.getElementById("pSeconds").value),swim_date:document.getElementById("pDate").value,meet:document.getElementById("pMeet").value,note:document.getElementById("pNote").value};
  if(!EVENTS[payload.course].includes(payload.event)){document.getElementById("pMsg").innerHTML="<div class='notice error'>此項目不屬於所選泳池。</div>";return}
  if(!payload.meet.trim()){document.getElementById("pMsg").innerHTML="請輸入或選擇賽事名稱（新名稱會隨成績保存）。";return} if(!Number.isFinite(payload.seconds)||payload.seconds<=0){document.getElementById("pMsg").innerHTML="<div class='notice error'>請輸入成績，例如 1:23.45 或 83.45；冒號後秒數須小於 60。</div>";return}
  if(!sb){document.getElementById("pMsg").innerHTML="<div class='notice error'>尚未連接雲端資料庫。</div>";return}
  const {data,error}=await sb.rpc("record_performance",payload);
  document.getElementById("pMsg").innerHTML=error?`<div class='notice error'>${esc(error.message)}</div>`:`<div class='notice success'>${data?.message||"成績已儲存，PB／隊史已自動判定。"}</div>`;
- if(!error){await loadCloud();if(currentPerson)openPerson(currentPerson);setTimeout(()=>closeModal("performanceModal"),500)}
+ if(!error){await loadCloud();if(currentPerson&&state.coach)openPerson(currentPerson);setTimeout(()=>closeModal("performanceModal"),500)}
 }
 async function deletePerformance(id){
- if(!state.user||!sb)return openLogin();
+ if(!state.coach||!sb)return openLogin();
  const p=(state.performances||[]).find(x=>x.id===id);
  if(!p)return;
  if(!confirm(`確定刪除這筆成績？\n${p.swimmer_name}｜${p.course} ${p.event}｜${p.display||fmt(p.seconds)}\n${p.meet||"未填賽事"}`))return;
