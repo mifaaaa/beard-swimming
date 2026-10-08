@@ -1937,7 +1937,7 @@ function recordAnimation(event,gender){
  const stroke=strokes[String(event).slice(-1)];
  const sex=gender==='女'?'female':gender==='男'?'male':null;
  if(!stroke||!sex)return '';
- return `<img class="record-swimmer-gif" src="${stroke}-${sex}.gif" alt="" aria-hidden="true" width="540" height="360">`;
+ return `<img class="record-swimmer-gif" src="${stroke}-${sex}.webp" alt="" aria-hidden="true" width="540" height="360">`;
 }
 
 function render()
