@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-192.png">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./vendor/supabase-2.49.8.js"></script>
 
   <style>
 /* 已移除被覆蓋的舊設定；手機版樣式與優先順序保留。 */
@@ -1753,7 +1753,7 @@ body::before{
 </style>
 
 </head>
-<body>
+<body><section id="offlineScores" class="card" hidden style="margin:12px auto;max-width:1100px" aria-live="polite"><b data-status></b><p data-notice class="muted small"></p><p class="small">待同步操作尚未改動雲端成績與 PB；請在此手機完成同步。</p><button class="btn primary" data-sync onclick="scoreSynchronize()">立即同步</button> <button class="btn ghost" onclick="scoreExport()">備份待同步紀錄</button><details><summary>查看待同步操作</summary><ul data-list></ul></details></section>
 <header><div class="top">
 <div class="header-brand"><img class="header-logo" src="logo.png" alt="鬍子泳隊標誌"><div class="brand">鬍子泳隊</div></div>
 <div style="display:flex;align-items:center;gap:14px;">
@@ -1866,8 +1866,8 @@ let sb=null;
 if(window.SUPABASE_CONFIG?.url && window.SUPABASE_CONFIG?.anonKey && !window.SUPABASE_CONFIG.url.includes("YOUR_")){
   sb=supabase.createClient(window.SUPABASE_CONFIG.url,window.SUPABASE_CONFIG.anonKey);
   state.online=true;
-  sb.auth.getSession().then(({data})=>{state.user=data.session?.user||null;updateAuth();loadCloud();});
-  sb.auth.onAuthStateChange((_e,s)=>{const changed=state.user?.id!==s?.user?.id;state.user=s?.user||null;if(changed||_e==="SIGNED_OUT"){cloudGeneration++;clearCoachData();}setTimeout(()=>loadCloud(),0);});
+  sb.auth.getSession().then(({data})=>{state.user=data.session?.user||null;updateAuth();if(window.scoreBooted)loadCloud();});
+  sb.auth.onAuthStateChange((_e,s)=>{const changed=state.user?.id!==s?.user?.id;state.user=s?.user||null;if(changed||_e==="SIGNED_OUT"){cloudGeneration++;clearCoachData();}setTimeout(()=>{if(window.scoreBooted)loadCloud();},0);});
 }
 // Standalone XLSX export: text cells are literal strings, never formulas.
 function parseSwimTime(value){
@@ -2046,14 +2046,15 @@ async function loadCloud(){
   if(state.user){const {data,error}=await sb.rpc("is_coach");if(error)throw error;coach=data===true;}
   if(generation!==cloudGeneration)return false;
   state.records=(rec||[]).map(r=>({...r,holder:r.swimmer_name,seconds:Number(r.seconds),display:fmt(r.seconds)}));
-  if(!coach){clearCoachData();render();return true;}
+  try{await scoreDB('put','public-records',{records:state.records,at:Date.now()});}catch(e){scoreNotice='公開隊史無法儲存到手機，請確認可用空間。';}
+  if(!coach){if(state.user){await scoreDB('delete','snapshot:'+state.user.id);await scoreDB('delete','active');scoreOwner=null;}clearCoachData();render();return true;}
   const {data:admin,error:adminError}=await sb.rpc("is_admin");if(adminError)throw adminError;if(generation!==cloudGeneration)return false;state.admin=admin===true;
   const results=await Promise.all([sb.from("swimmers").select("id,name,gender,school,grade,birth,note,updated_at,directory_visible,active").order("name"),allPerformances(),sb.from("meets").select("*").order("name",{ascending:false})]);
   for(const result of results)if(result.error)throw result.error;
   if(generation!==cloudGeneration)return false;
   state.roster=results[0].data||[];state.performances=(results[1].data||[]).map(p=>({...p,seconds:Number(p.seconds),display:fmt(p.seconds)}));state.allMeets=results[2].data||[];state.meets=state.allMeets.filter(m=>m.active!==false);
   computeDerivedData(state.performances);state.coach=true;render();updateAuth();refreshOpenScoreMeets();await loadAdminAudit(false);return true;
- }catch(e){if(generation!==cloudGeneration)return false;clearCoachData();render();document.getElementById("dbStatus").textContent="⚠️ 資料讀取失敗，請重新整理";console.error(e);return false;}
+ }catch(e){if(generation!==cloudGeneration)return false;if(typeof scoreRestore==="function"&&await scoreRestore())return false;clearCoachData();render();document.getElementById("dbStatus").textContent="⚠️ 資料讀取失敗，請重新整理";console.error(e);return false;}
 }
 let currentMeetFamily=null,currentMeetYear=null,editingMeetVersion=null;
 function familyName(m){return m.series_name||String(m.name||'').replace(/^(?:\d{4}年\s*|\d{4}\s*)/,'').trim()||m.name;}
@@ -2146,20 +2147,22 @@ async function submitPerformance(){ if(!state.coach)return openLogin();
  if(!EVENTS[payload.course].includes(payload.event)){document.getElementById("pMsg").innerHTML="<div class='notice error'>此項目不屬於所選泳池。</div>";return}
  if(!payload.meet.trim()){document.getElementById("pMsg").innerHTML="請輸入或選擇賽事名稱（新名稱會隨成績保存）。";return} if(!Number.isFinite(payload.seconds)||payload.seconds<=0){document.getElementById("pMsg").innerHTML="<div class='notice error'>請輸入成績，例如 1:23.45 或 83.45；冒號後秒數須小於 60。</div>";return}
  if(!sb){document.getElementById("pMsg").innerHTML="<div class='notice error'>尚未連接雲端資料庫。</div>";return}
- const {data,error}=await sb.rpc("record_performance",payload);
- document.getElementById("pMsg").innerHTML=error?`<div class='notice error'>${esc(error.message)}</div>`:`<div class='notice success'>${data?.message||"成績已儲存，PB／隊史已自動判定。"}</div>`;
- if(!error){await loadCloud();if(currentPerson&&state.coach)openPerson(currentPerson);setTimeout(()=>closeModal("performanceModal"),500)}
+ if(scoreSaving||scoreSyncing){document.getElementById('pMsg').textContent='請稍候，目前正在處理成績。';return;}
+ scoreSaving=true;
+ try{await scoreEnqueue(payload,'add');document.getElementById('pMsg').textContent='已存到此手機，待同步。';closeModal('performanceModal');document.getElementById('pSeconds').value='';document.getElementById('pNote').value='';}
+ catch(e){document.getElementById('pMsg').textContent='儲存失敗：'+e.message;return;}
+ finally{scoreSaving=false;}
+ if(navigator.onLine)await scoreSynchronize();
+
 }
 async function deletePerformance(id){
  if(!state.coach||!sb)return openLogin();
  const p=(state.performances||[]).find(x=>x.id===id);
  if(!p)return;
  if(!confirm(`確定刪除這筆成績？\n${p.swimmer_name}｜${p.course} ${p.event}｜${p.display||fmt(p.seconds)}\n${p.meet||"未填賽事"}`))return;
- const {data,error}=await sb.rpc("delete_performance",{performance_id:id});
- if(error){alert("刪除失敗："+error.message);return}
- await loadCloud();
+ try{await scoreQueueChange('delete',p,{});}catch(e){alert(e.message);}
 }
-document.getElementById("personModal").addEventListener("click",e=>{if(e.target===e.currentTarget)closeModal("personModal")});document.querySelectorAll("[data-course]").forEach(b=>b.onclick=()=>{state.course=b.dataset.course;render()});render();updateAuth();if(sb)loadCloud();
+document.getElementById("personModal").addEventListener("click",e=>{if(e.target===e.currentTarget)closeModal("personModal")});document.querySelectorAll("[data-course]").forEach(b=>b.onclick=()=>{state.course=b.dataset.course;render()});render();updateAuth();
 let editingPbId=null;
 function openPbMeet(id){
  if(!state.coach)return openLogin();
@@ -2181,10 +2184,7 @@ async function savePbMeet(){
  const seconds=parseSwimTime(document.getElementById('editPbSeconds').value);if(!seconds||seconds>99999.999){msg.textContent='請填有效成績，例如83.45或1:23.45';return;}
  button.disabled=true;
  try{
- const {data,error}=await sb.rpc('update_performance_record_detail',{p_note:document.getElementById('editPbNote').value,p_previous_note:row.note??null,p_swim_date:document.getElementById('editPbDate').value||null,p_previous_date:row.swim_date||null,p_id:row.id,p_meet:name,p_seconds:seconds,p_previous_meet:row.meet||'',p_previous_seconds:Number(row.seconds)});
- if(error)throw error;
- const loaded=await loadCloud();
- if(!loaded)throw new Error('已儲存，但資料重新讀取失敗，請重新整理確認');
+ await scoreQueueChange('edit',row,{meet:name,seconds,swim_date:document.getElementById('editPbDate').value||null,note:document.getElementById('editPbNote').value});
  if(!state.coach)return;
  closeModal('editPbModal');if(currentPerson)openPerson(currentPerson);
  }catch(e){if(state.coach)msg.textContent=e.message;}finally{button.disabled=false;}
@@ -2313,8 +2313,7 @@ async function deleteEditingPerformance(){
  if(!state.coach||!sb)return openLogin();const p=state.performances.find(r=>r.id===editingPbId);if(!p)return;
  if(!confirm(`刪除這筆成績？\n${p.swimmer_name}｜${p.course} ${p.event}｜${fmt(p.seconds)}\nPB與隊史將依其他歷史成績重新判斷。`))return;
  const button=document.getElementById('deletePbButton'),msg=document.getElementById('editPbMsg');button.disabled=true;
- try{const {error}=await sb.rpc('delete_performance',{performance_id:p.id});if(error)throw error;
- if(!await loadCloud())throw new Error('已刪除，請重新整理確認');if(!state.coach)return;
+ try{await scoreQueueChange('delete',p,{});if(!state.coach)return;
  closeModal('editPbModal');if(currentPerson)openPerson(currentPerson);
  }catch(e){if(state.coach)msg.textContent=e.message;}finally{button.disabled=false;}
 }
@@ -2361,4 +2360,5 @@ async function loadAdminAudit(append=false){
 }
 
 </script>
+<script src="./offline-scores.js"></script><script>window.scoreBooted=true;scoreInstall().catch(e=>{scoreNotice="離線功能未能啟動："+e.message;scorePanel();});</script>
 </body></html>
