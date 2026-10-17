@@ -1763,6 +1763,27 @@ body::before{
  }
 }
 </style>
+  <style>
+/* 頂部改為與 Logo 一致的深藍漸層 */
+header {
+  background: linear-gradient(120deg, #181c5c, #30377c);
+}
+
+/* 移除泳池方格，保留泳道與泳者 */
+.record-hero .pool-decoration {
+  background:
+    repeating-linear-gradient(
+      90deg, #e36d61 0 9px, #fff9ed 9px 18px
+    ) 0 50px / 100% 4px no-repeat,
+    repeating-linear-gradient(
+      90deg, #e36d61 0 9px, #fff9ed 9px 18px
+    ) 0 102px / 100% 4px no-repeat,
+    repeating-linear-gradient(
+      90deg, #e36d61 0 9px, #fff9ed 9px 18px
+    ) 0 154px / 100% 4px no-repeat,
+    linear-gradient(135deg, #b0e5ee, #d1f0f4);
+}
+</style>
 </head>
 <body><section id="offlineScores" class="card" hidden style="margin:12px auto;max-width:1100px" aria-live="polite"><b data-status></b><p data-notice class="muted small"></p><p class="small">待同步操作尚未改動雲端成績與 PB；請在此手機完成同步。</p><button class="btn primary" data-sync onclick="scoreSynchronize()">立即同步</button> <button class="btn ghost" onclick="scoreExport()">備份待同步紀錄</button><details><summary>查看待同步操作</summary><ul data-list></ul></details></section>
 <header><div class="top">
