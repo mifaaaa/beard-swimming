@@ -1763,6 +1763,20 @@ body::before{
 @media(max-width:560px){
  .record-stroke-logo{top:10px;right:10px;width:90px;height:90px;}
 }
+    /* 個別調整 Logo 高度 */
+.record-stroke-logo[data-stroke="仰"]{top:4px;}
+.record-stroke-logo[data-stroke="自"]{top:-15px;}
+.record-stroke-logo[data-stroke="蛙"]{top:-12px;}
+.record-stroke-logo[data-stroke="蝶"]{top:-23px;}
+.record-stroke-logo[data-stroke="混"]{top:-10px;}
+
+@media(max-width:560px){
+ .record-stroke-logo[data-stroke="仰"]{top:3px;}
+ .record-stroke-logo[data-stroke="自"]{top:-11px;}
+ .record-stroke-logo[data-stroke="蛙"]{top:-9px;}
+ .record-stroke-logo[data-stroke="蝶"]{top:-18px;}
+ .record-stroke-logo[data-stroke="混"]{top:-7px;}
+}
 </style>
 
 
@@ -2018,7 +2032,7 @@ function recordStrokeLogo(event){
  const logos={'自':'自由式logo.png','仰':'仰式logo.png','蛙':'蛙式logo.png','蝶':'蝶式logo.png','混':'四式logo.png'};
  const src=logos[String(event).trim().slice(-1)];
  if(!src)return '';
- return `<img class="record-stroke-logo" src="${src}" alt="" aria-hidden="true" width="112" height="112">`;
+ return `<img class="record-stroke-logo" data-stroke="${String(event).trim().slice(-1)}" src="${src}" alt="" aria-hidden="true" width="112" height="112">`;
 }
 
 function render()
