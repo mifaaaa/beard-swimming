@@ -37,7 +37,8 @@ async function scorePanel(){
  const box=document.getElementById('offlineScores');if(!box)return;
  try{
   const q=await scoreDrafts();
-  box.hidden=false;
+  box.hidden=navigator.onLine&&q.length===0;
+  if(box.hidden)return;
   box.querySelector('[data-status]').textContent=(navigator.onLine&&!scoreOffline?'🟢 已連網':'📴 離線資料模式')+' · 待同步 '+q.length+' 筆'+(scoreSyncing?' · 同步中':'');
   box.querySelector('[data-notice]').textContent=scoreNotice;
   box.querySelector('[data-list]').innerHTML=q.map(x=>'<li>'+esc(({add:'新增',edit:'修改',delete:'刪除'})[x.operation])+' · '+esc(x.payload.swimmer_name)+' · '+esc(x.payload.meet)+' · '+esc(x.payload.event)+' · '+esc(fmt(x.payload.seconds||x.payload.previous?.seconds))+' · '+esc(x.payload.swim_date||x.payload.previous?.swim_date||'日期未填')+(x.error?' — '+esc(x.error):' — 待同步')+(x.rejected?' <button class="btn ghost" onclick="scoreDiscard(\''+x.id+'\')">取消此待同步操作</button>':'')+'</li>').join('');
