@@ -1752,6 +1752,17 @@ body::before{
 }
 </style>
 
+
+<style id="motto-single-line">
+@media(max-width:560px){
+ .record-hero .hero-motto{
+  font-size:clamp(11px,4vw,22px);
+  white-space:nowrap;
+  letter-spacing:0;
+  line-height:1.5;
+ }
+}
+</style>
 </head>
 <body><section id="offlineScores" class="card" hidden style="margin:12px auto;max-width:1100px" aria-live="polite"><b data-status></b><p data-notice class="muted small"></p><p class="small">待同步操作尚未改動雲端成績與 PB；請在此手機完成同步。</p><button class="btn primary" data-sync onclick="scoreSynchronize()">立即同步</button> <button class="btn ghost" onclick="scoreExport()">備份待同步紀錄</button><details><summary>查看待同步操作</summary><ul data-list></ul></details></section>
 <header><div class="top">
