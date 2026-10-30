@@ -1790,7 +1790,7 @@ body::before{
  .pb-overview{padding:16px 7px;border-radius:20px;}
  .pb-overview-heading{padding:0 6px;}.pb-overview h3{font-size:20px;}
  .pb-overview .person-course-tabs{width:100%;}.pb-overview .person-course-tabs .tab{flex:1;}
- .pb-matrix{border-spacing:3px;min-width:480px;}.pb-matrix th:first-child{width:51px;}
+ .pb-matrix{border-spacing:3px;min-width:320px;}.pb-matrix th:first-child{width:51px;}
  .pb-matrix th{font-size:11px;}.pb-matrix tbody th{font-size:13px;}
  .pb-matrix td,.pb-cell{height:58px;}.pb-cell{border-radius:10px;font-size:14px;letter-spacing:-.7px;}
  .pb-matrix tbody th{position:sticky;left:0;background:#fff;z-index:1;}
@@ -1812,6 +1812,75 @@ body::before{
  }
 }
 </style>
+<script id="beard-install-script">
+// Mobile home-screen installation invitation; no cloud data is changed.
+(()=>{
+ const snoozeKey='beard-install-snooze-until';
+ const installedKey='beard-home-installed';
+ function rememberInstalled(){try{localStorage.setItem(installedKey,'yes');}catch{}}
+ function rememberedInstalled(){try{return localStorage.getItem(installedKey)==='yes';}catch{return false;}}
+ let deferredPrompt=null,dialog,launchButton,action,help,returnFocus;
+ const isIos=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ const inApp=/Line\/|FBAN|FBAV|Instagram/i.test(navigator.userAgent);
+ const standalone=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ const mobile=()=>/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(window.matchMedia('(max-width: 767px)').matches&&window.matchMedia('(pointer: coarse)').matches);
+ const snoozed=()=>{try{return Number(localStorage.getItem(snoozeKey))>Date.now();}catch{return false;}};
+ function snooze(days=7){try{localStorage.setItem(snoozeKey,String(Date.now()+days*86400000));}catch{}}
+ function updateAction(){
+  if(!action)return;
+  action.textContent=deferredPrompt?'安裝到主畫面':'查看加入步驟';
+ }
+ function showHelp(){
+  help.hidden=false;
+  if(inApp){help.textContent='請先從右上角選單選擇「用瀏覽器開啟」，或複製網址到 Safari／Chrome，再加入主畫面。';}
+  else if(isIos){help.textContent='1. 用 Safari 開啟鬍子泳隊網站。\n2. 點「分享」（方框向上的箭頭，可能在「更多」選單內）。\n3. 選「加入主畫面」，若有「作為網頁 App 打開」請保持開啟。\n4. 點「加入」，就能從手機主畫面開啟。';}
+  else{help.textContent='1. 用 Chrome 或支援安裝的瀏覽器開啟網站。\n2. 點瀏覽器選單「⋮」。\n3. 選「安裝應用程式」或「加到主畫面」，再依畫面確認。\n若沒有這些選項，請稍後重試或改用 Chrome。';}
+ }
+ function open(){
+  if(!dialog||standalone()||rememberedInstalled()||dialog.open)return;
+  returnFocus=document.activeElement;help.hidden=true;help.textContent='';updateAction();
+  dialog.showModal();
+ }
+ function close(){
+  if(dialog?.open)dialog.close();
+  if(returnFocus?.isConnected)returnFocus.focus();
+ }
+ window.addEventListener('beforeinstallprompt',event=>{
+  event.preventDefault();deferredPrompt=event;updateAction();
+ });
+ window.addEventListener('appinstalled',()=>{
+  deferredPrompt=null;rememberInstalled();close();if(launchButton)launchButton.hidden=true;
+ });
+ function init(){
+  if(standalone()){rememberInstalled();return;}
+  if(!mobile()||rememberedInstalled())return;
+  const style=document.createElement('style');
+  style.textContent=`#beardInstallDialog{width:calc(100% - 32px);max-width:390px;max-height:85dvh;overflow:auto;border:0;border-radius:24px;padding:26px;color:#102e47;background:#fff;box-shadow:0 20px 70px #102e4733;font-family:inherit;}#beardInstallDialog::backdrop{background:#102e4780;}#beardInstallDialog h2{font-size:23px;line-height:1.4;margin:12px 0;}#beardInstallDialog p{font-size:15px;line-height:1.8;color:#577080;}#beardInstallDialog .install-icon{width:64px;height:64px;border-radius:16px;}#beardInstallDialog button{font:inherit;cursor:pointer;}#beardInstallDialog .install-close{position:absolute;top:14px;right:14px;border:0;background:#f1f5f6;border-radius:50%;width:32px;height:32px;color:#577080;}#beardInstallDialog .install-yes{display:block;width:100%;padding:13px;border:0;border-radius:13px;background:#075985;color:#fff;font-weight:700;}#beardInstallDialog .install-later{display:block;width:100%;padding:13px;margin-top:6px;border:0;background:transparent;color:#577080;}#beardInstallDialog #beardInstallHelp{background:#f1f7fa;border-radius:12px;padding:14px;white-space:pre-line;font-size:14px;text-align:left;}#beardInstallLaunch{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:6;border:1px solid #b9d7e3;border-radius:30px;padding:10px 16px;background:#fff;color:#075985;box-shadow:0 3px 15px #102e4726;font:600 13px sans-serif;cursor:pointer;}#beardInstallLaunch[hidden]{display:none;}`;
+  document.head.append(style);
+  dialog=document.createElement('dialog');dialog.id='beardInstallDialog';
+  dialog.setAttribute('aria-labelledby','beardInstallTitle');dialog.setAttribute('aria-describedby','beardInstallDescription');
+  dialog.innerHTML='<button type="button" class="install-close" aria-label="稍後再說，關閉安裝提示">×</button><img class="install-icon" src="./app-icon-192.png" alt="鬍子泳隊"><h2 id="beardInstallTitle">把鬍子泳隊加入主畫面？</h2><p id="beardInstallDescription">下次點手機上的圖示，就能快速查看隊史與個人最佳成績。</p><p id="beardInstallHelp" role="status" hidden></p><button type="button" class="install-yes">查看加入步驟</button><button type="button" class="install-later">稍後再說</button><button type="button" class="install-later install-already">已經加入，不再提醒</button>';
+  document.body.append(dialog);
+  help=dialog.querySelector('#beardInstallHelp');action=dialog.querySelector('.install-yes');
+  const dismiss=()=>{snooze();close();};
+  dialog.querySelector('.install-close').addEventListener('click',dismiss);
+  dialog.querySelector('.install-later').addEventListener('click',dismiss);
+  dialog.querySelector('.install-already').addEventListener('click',()=>{rememberInstalled();close();launchButton.hidden=true;});
+  dialog.addEventListener('cancel',event=>{event.preventDefault();dismiss();});
+  action.addEventListener('click',async()=>{
+   if(!deferredPrompt){showHelp();return;}
+   const prompt=deferredPrompt;deferredPrompt=null;action.disabled=true;
+   try{await prompt.prompt();const choice=await prompt.userChoice;if(choice.outcome==='accepted'){rememberInstalled();close();if(launchButton)launchButton.hidden=true;}else{dismiss();}}
+   catch{showHelp();}
+   finally{action.disabled=false;updateAction();}
+  });
+  launchButton=document.createElement('button');launchButton.id='beardInstallLaunch';launchButton.type='button';launchButton.textContent='＋ 加入主畫面';launchButton.addEventListener('click',open);document.body.append(launchButton);
+  if(!snoozed())open();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+
+</script>
 </head>
 <body><section id="offlineScores" class="card" hidden style="margin:12px auto;max-width:1100px" aria-live="polite"><b data-status></b><p data-notice class="muted small"></p><p class="small">待同步操作尚未改動雲端成績與 PB；請在此手機完成同步。</p><button class="btn primary" data-sync onclick="scoreSynchronize()">立即同步</button> <button class="btn ghost" onclick="scoreExport()">備份待同步紀錄</button><details><summary>查看待同步操作</summary><ul data-list></ul></details></section>
 <header><div class="top">
@@ -2060,7 +2129,7 @@ function switchPersonCourse(course){
  if(currentPerson)openPerson(currentPerson);
 }
 function personOwnsRecord(pb){return state.records.some(r=>r.holder===currentPerson&&r.course===pb.course&&r.event===pb.event&&Number(r.seconds)===Number(pb.seconds));}
-function personPbRows(name,course){return state.pbs.filter(x=>x.name===name&&x.course===course&&Number.isFinite(Number(x.seconds))&&Number(x.seconds)>0);}
+function personPbRows(name,course){return state.pbs.filter(x=>x.name===name&&x.course===course&&PERSON_DISTANCES.includes(Number(String(x.event).match(/^\d+/)?.[0]))&&Number.isFinite(Number(x.seconds))&&Number(x.seconds)>0);}
 function selectPersonEvent(event){
  personSelectedEvent=event;
  document.querySelectorAll('#personBody [data-person-event]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.personEvent===event)));
@@ -2157,7 +2226,7 @@ function renderMeets(){
  const q=document.getElementById('meetSearch').value.trim().toLowerCase();
  const names=[...new Set(state.meets.map(familyName))].filter(n=>n.toLowerCase().includes(q)||familyMeets(n).some(m=>m.name.toLowerCase().includes(q)));
  names.sort((a,b)=>Math.max(...familyMeets(b).map(m=>editionYear(m)||0))-Math.max(...familyMeets(a).map(m=>editionYear(m)||0))||a.localeCompare(b,'zh-Hant'));
- list.innerHTML=names.map((name,i)=>{const rows=familyMeets(name),years=[...new Set(rows.map(editionYear).filter(Boolean))].sort((a,b)=>b-a);return `<div class="record-row"><span><b>🏟️ ${esc(name)}</b><span class="pb-meet">${years.length?`共 ${rows.length} 屆 · ${years.length} 個年度 · ${years.join('、')}`:'年度待補'}</span></span><button class="btn primary" data-family="${i}">查看年度 ›</button></div>`;}).join('')||'<p class="muted">目前沒有符合的賽事 🌱</p>';
+ list.innerHTML=names.map((name,i)=>{const rows=familyMeets(name),years=[...new Set(rows.map(editionYear).filter(Boolean))].sort((a,b)=>b-a);return `<div class="record-row"><span><b>🏟️ ${esc(name)}</b><span class="pb-meet">${years.length?`共 ${rows.length} 屆 · ${years.length} 個年度 · ${years.join('、')}`:'年度待補'}${rows.length>years.length?' · 每年場次可分別編輯':''}</span></span><button class="btn primary" data-family="${i}">查看年度 ›</button></div>`;}).join('')||'<p class="muted">目前沒有符合的賽事 🌱</p>';
  list.querySelectorAll('[data-family]').forEach(b=>b.onclick=()=>openMeetFamily(names[Number(b.dataset.family)]));
 }
 function openMeetFamily(name){
