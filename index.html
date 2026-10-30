@@ -1881,6 +1881,67 @@ body::before{
 })();
 
 </script>
+<style id="compact-team-records">
+/* Compact team records on desktop and mobile. */
+body.records-compact header{padding:8px 24px;}
+body.records-compact .header-logo{width:54px;}
+body.records-compact .page-tabs .tab{padding:8px 14px;}
+body.records-compact main{padding-top:16px;padding-bottom:20px;}
+body.records-compact .page-tabs{margin-bottom:12px;}
+#recordsPage .record-hero{display:block;margin:0 0 12px;min-height:0;padding:0;}
+#recordsPage .record-hero .pool-decoration,#recordsPage .record-hero .eyebrow{display:none;}
+#recordsPage .record-hero .hero-motto{margin:0;font-size:19px;line-height:1.5;}
+#recordsPage .records-toolbar{display:flex;flex-direction:row;gap:12px;align-items:center;padding:0 0 12px;margin:0;}
+#recordsPage .records-toolbar>.tabs{width:auto;}
+#recordsPage .records-toolbar .tab{padding:8px 16px;}
+.team-table-wrap{border:1px solid #bed7e2;border-radius:16px;overflow:hidden;background:#fff;}
+#recordsView .team-table{width:100%;table-layout:fixed;border-collapse:collapse;margin:0;}
+#recordsView .team-table caption{text-align:left;padding:10px 14px;font-size:13px;color:#648092;background:#f5fafc;}
+#recordsView .team-table th,#recordsView .team-table td{border:0;border-bottom:1px solid #e4edf0;padding:4px 14px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4;}
+#recordsView .team-table th{background:#e8f3f7;font-size:13px;font-weight:650;color:#577482;}
+#recordsView .team-table tr:last-child td{border-bottom:0;}
+#recordsView .team-table td{background:#fff;color:#15394b;font-size:14px;}
+#recordsView .team-table tbody tr:nth-child(even) td{background:#f8fbfc;}
+#recordsView .team-table .team-event{width:13%;font-weight:750;}
+#recordsView .team-table .team-time{width:21%;font-size:18px;font-weight:850;color:#075985;font-variant-numeric:tabular-nums;letter-spacing:-.5px;}
+#recordsView .team-table .team-holder{width:18%;font-weight:650;}
+#recordsView .team-table .team-competition{width:48%;}
+#recordsView .team-table thead .team-time{font-size:13px;}
+.team-meet-button{display:block;width:100%;border:0;padding:0;background:transparent;color:#476879;font:inherit;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:pointer;}
+.team-meet-button:hover{text-decoration:underline;}.team-meet-button:focus-visible{outline:2px solid #075985;outline-offset:2px;}
+.team-table-date{color:#8195a0;margin-left:14px;font-size:12px;}
+#teamRecordDetail{border:0;border-radius:20px;padding:24px;max-width:440px;width:calc(100% - 32px);color:#15394b;}
+#teamRecordDetail::backdrop{background:#102e4780;}#teamRecordDetail h2{font-size:22px;margin:0 0 18px;}
+#teamRecordDetail dl{display:grid;grid-template-columns:64px 1fr;gap:12px;font-size:15px;line-height:1.6;}
+#teamRecordDetail dt{color:#718793;}#teamRecordDetail dd{margin:0;overflow-wrap:anywhere;}
+@media(max-width:560px){
+ body.records-compact header{padding:8px 12px;}
+ body.records-compact .header-logo{width:38px;}
+ body.records-compact .brand{font-size:16px;}
+ body.records-compact header .btn{font-size:11px;padding:7px 9px;}
+ body.records-compact main{padding:8px 8px 16px;}
+ body.records-compact .page-tabs{margin-bottom:8px;padding:3px;}
+ body.records-compact .page-tabs .tab{padding:7px 3px;font-size:12px;}
+ #recordsPage .record-hero{margin-bottom:8px;}
+ #recordsPage .record-hero .hero-motto{font-size:13px;line-height:1.5;}
+ #recordsPage .records-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding-bottom:8px;}
+ #recordsPage .records-toolbar>.tabs{display:flex;width:100%;padding:3px;gap:2px;}
+ #recordsPage .records-toolbar .tab{font-size:11px;padding:8px 3px;white-space:nowrap;}
+ #recordsPage .exportbar{grid-column:1/-1;margin:0;gap:6px;}
+ #recordsPage .exportbar>span{display:none;}
+ #recordsPage .export-btn{padding:5px 6px;font-size:10px;}
+ #recordsView .team-table caption{padding:6px 8px;font-size:11px;}
+ #recordsView .team-table th,#recordsView .team-table td{padding:6px 6px;}
+ #recordsView .team-table th{font-size:10px;}
+ #recordsView .team-table td{font-size:12px;height:32px;}
+ #recordsView .team-table .team-event{width:14%;}
+ #recordsView .team-table .team-time{width:24%;font-size:16px;}
+ #recordsView .team-table .team-holder{width:20%;}
+ #recordsView .team-table .team-competition{width:42%;}
+ .team-table-date{display:none;}
+}
+
+</style>
 </head>
 <body><section id="offlineScores" class="card" hidden style="margin:12px auto;max-width:1100px" aria-live="polite"><b data-status></b><p data-notice class="muted small"></p><p class="small">待同步操作尚未改動雲端成績與 PB；請在此手機完成同步。</p><button class="btn primary" data-sync onclick="scoreSynchronize()">立即同步</button> <button class="btn ghost" onclick="scoreExport()">備份待同步紀錄</button><details><summary>查看待同步操作</summary><ul data-list></ul></details></section>
 <header><div class="top">
@@ -2068,6 +2129,7 @@ async function exportExcel(kind){ if(!state.coach)return openLogin();
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function fmt(sec){sec=Number(sec);if(!Number.isFinite(sec))return "—";if(sec>=60){let m=Math.floor(sec/60);return String(m).padStart(2,"0")+":"+String((sec-m*60).toFixed(2)).padStart(5,"0")}return sec.toFixed(2)}
 function syncPageTabs(){
+ document.body.classList.toggle("records-compact",state.page==="records");
  document.querySelector('[data-page="records"]').style.fontSize=state.coach?'':'20px';
  if(!state.coach&&state.page!=='records')state.page='records';
  document.getElementById('recordsPage').hidden=state.page!=='records';
@@ -2102,12 +2164,27 @@ function recordAnimation(event,gender){
  return `<img class="record-swimmer-gif" src="${stroke}-${sex}.webp" alt="" aria-hidden="true" width="540" height="360">`;
 }
 
+function renderCompactRecords(){
+ const rows=EVENTS[state.course].map(event=>state.records.find(r=>r.course===state.course&&r.gender===state.gender&&r.event===event)).filter(Boolean);
+ const view=document.getElementById('recordsView');
+ if(!rows.length){view.innerHTML='<div class="empty">目前尚無這個組別的隊史紀錄</div>';return;}
+ view.innerHTML=`<div class="team-table-wrap"><table class="team-table"><caption>${esc(state.course)} ${state.gender==='男'?'男子':'女子'}隊史・${rows.length} 項紀錄　<span>點賽事查看詳情</span></caption><thead><tr><th scope="col" class="team-event">項目</th><th scope="col" class="team-time">成績</th><th scope="col" class="team-holder">保持者</th><th scope="col" class="team-competition">破紀錄賽事</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td class="team-event">${esc(r.event)}</td><td class="team-time">${esc(fmt(r.seconds).replace(/^0(?=\d:)/,''))}</td><td class="team-holder" title="${esc(r.holder)}">${esc(r.holder)}</td><td class="team-competition"><button type="button" class="team-meet-button" data-team-detail="${i}" aria-label="查看${esc(r.event)}，${esc(r.holder)}，${esc(recordMeetLabel(r))}的完整紀錄" title="${esc(recordMeetLabel(r))} · ${esc(teamDate(r))}">${esc(recordMeetLabel(r))}<span class="team-table-date">${esc(teamDate(r))}</span></button></td></tr>`).join('')}</tbody></table></div>`;
+ view.querySelectorAll('[data-team-detail]').forEach(button=>button.onclick=()=>openTeamRecordDetail(rows[Number(button.dataset.teamDetail)]));
+}
+function openTeamRecordDetail(record){
+ let dialog=document.getElementById('teamRecordDetail');
+ if(!dialog){dialog=document.createElement('dialog');dialog.id='teamRecordDetail';dialog.setAttribute('aria-labelledby','teamRecordDetailTitle');document.body.append(dialog);}
+ dialog.innerHTML=`<h2 id="teamRecordDetailTitle">${esc(record.course)} ${esc(record.event)} 隊史紀錄</h2><dl><dt>成績</dt><dd><strong>${esc(fmt(record.seconds))}</strong></dd><dt>保持者</dt><dd>${esc(record.holder)}</dd><dt>組別</dt><dd>${esc(record.gender)}</dd><dt>賽事</dt><dd>${esc(recordMeetLabel(record))}</dd><dt>日期</dt><dd>${esc(teamDate(record))}</dd></dl><button type="button" class="btn primary">關閉</button>`;
+ dialog.querySelector('button').onclick=()=>dialog.close();
+ dialog.showModal();
+}
+
 function render()
 {
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll("[data-course]").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card"><div class="record-left"><div class="record-item">${esc(ev)}</div><h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b></div><div class="record-meet"><div class="muted small record-meet-date${teamDateHasRange(r)?' date-range':''}">${esc(teamDate(r))}</div><span class="meet-tag">${esc(recordMeetLabel(r))}</span></div></div>`}).join("")}</div>`).join("");
+renderCompactRecords();
  renderPeople(); renderAdmin(); syncPageTabs();
 }
 function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
