@@ -1,15 +1,9 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>鬍子泳隊</title>
-<meta property="og:type" content="website">
-<meta property="og:title" content="鬍子泳隊">
-<meta property="og:description" content="成為紀錄保持者，每分每秒都值得。">
-<meta property="og:url" content="https://beard-swimming.vercel.app/">
-<meta property="og:image" content="https://beard-swimming.vercel.app/app-icon-maskable-192.png">
 <!-- 手機主畫面 App 設定 -->
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#075985">
@@ -18,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="鬍子泳隊">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-180.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./app-icon-192.png?v=3">
+<link rel="icon" type="image/png" sizes="192x192" href="./app-icon-192.png">
 
 <script src="./vendor/supabase-2.49.8.js"></script>
 
@@ -1443,24 +1437,11 @@ header {
 html{background:#edf9fc;scrollbar-gutter:stable;}
 body{background:transparent;isolation:isolate;}
 body::before{
- content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
+ content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+
   background-color: #edf9fc;
-  background-image:
-    linear-gradient(
-      to right,
-      rgba(139, 210, 229, 0.5) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(139, 210, 229, 0.5) 1px,
-      transparent 1px
-    );
-  background-size: 24px 24px;
+  background-image: repeating-linear-gradient( 91deg, transparent 0 7px, #8bd2e580 7px 8.5px, transparent 8.5px 12px, #a4deed70 12px 13px, transparent 13px 23px ), repeating-linear-gradient( 1deg, transparent 0 9px, #8bd2e580 9px 10.5px, transparent 10.5px 17px, #a4deed70 17px 18px, transparent 18px 25px );
+
 }
 #recordsPage,#peopleSection,#adminPanel{overflow-anchor:none;}
 #recordsPage[hidden],#peopleSection[hidden],#adminPanel[hidden]{display:none!important;}
@@ -1755,34 +1736,69 @@ body::before{
  .swimmer-three .arm-left{transform:rotate(88deg);}.swimmer-three .arm-right{transform:rotate(-88deg);}
  .swimmer-four .arm-left{transform:rotate(170deg);}.swimmer-four .arm-right{transform:rotate(-170deg);}
 }
-/* 隊史卡片：右上角依項目顯示泳式 Logo */
-.record-stroke-logo{
+/* 隊史卡片：依性別和泳式顯示動畫，置於右上角 */
+.record-swimmer-gif{
  position:absolute;
- top:12px;
- right:14px;
- width:112px;
- height:112px;
+ top:4px;
+ right:4px;
+ width:150px;
+ height:100px;
  object-fit:contain;
  pointer-events:none;
 }
 .record-card .record-meet{position:relative;}
 @media(max-width:560px){
- .record-stroke-logo{top:10px;right:10px;width:90px;height:90px;}
+ .record-swimmer-gif{width:135px;height:90px;}
 }
-    /* 個別調整 Logo 高度 */
-.record-stroke-logo[data-stroke="仰"]{top:4px;}
-.record-stroke-logo[data-stroke="自"]{top:-10px;}
-.record-stroke-logo[data-stroke="蛙"]{top:-9px;}
-.record-stroke-logo[data-stroke="蝶"]{top:-15px;}
-.record-stroke-logo[data-stroke="混"]{top:-10px;}
-
+/* Athlete PB overview */
+#personModal .modalbox{max-width:940px;background:#f5f6f2;padding:24px;}
+#personModal .modalhead{align-items:center;gap:12px;}
+#personModal .modalhead h2{font-size:clamp(20px,4vw,27px);}
+.person-summary{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;}
+.person-summary span{border:1px solid #d8e3e6;border-radius:30px;padding:7px 12px;background:white;color:#35576a;font-size:13px;}
+.pb-overview{background:#fff;border:1px solid #dce3df;border-radius:24px;padding:22px;margin-top:18px;}
+.pb-overview-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.pb-overview h3{margin:0;font-size:23px;color:#102e47;}
+.pb-overview .person-course-tabs{margin:0;background:#e9e9e0;border-radius:16px;padding:5px;display:flex;gap:4px;}
+.pb-overview .person-course-tabs .tab{border:0;border-radius:12px;padding:10px 16px;color:#67716f;background:transparent;font-size:14px;}
+.pb-overview .person-course-tabs .tab.active{background:#fff;color:#102e47;box-shadow:0 2px 6px #102e471c;font-weight:800;}
+.pb-hint{font-size:13px;color:#748078;margin:5px 0 0;}
+.pb-matrix{width:100%;border-spacing:4px;border-collapse:separate;table-layout:fixed;}
+.pb-matrix-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.pb-swipe-hint{display:none;}
+.pb-matrix th{font-size:14px;color:#7a827e;font-weight:500;padding:8px 0;}
+.pb-matrix th:first-child{width:70px;}
+.pb-matrix tbody th{text-align:left;font-size:17px;font-weight:800;color:#102e47;white-space:nowrap;}
+.pb-matrix td{padding:0;text-align:center;height:72px;}
+.pb-matrix th,.pb-matrix td{background:transparent;border:0;box-shadow:none;}
+.pb-cell{position:relative;display:block;width:100%;height:72px;background:#f1f3ef;border:2px solid transparent;border-radius:14px;color:#102e47;cursor:pointer;font-size:clamp(13px,2.8vw,23px);font-weight:850;font-variant-numeric:tabular-nums;letter-spacing:-.7px;padding:2px;}
+.pb-cell:hover{background:#e5f1f5;}
+.pb-cell[aria-pressed="true"]{background:#e8f4fa;border-color:#1683a8;color:#075985;}
+.pb-cell:focus-visible,.person-course-tabs .tab:focus-visible{outline:3px solid #db8d2e;outline-offset:2px;}
+.pb-team{position:absolute;right:5px;top:3px;font-size:11px;line-height:1;}
+.pb-empty{color:#bdc3ba;font-size:20px;}
+.pb-detail{margin-top:16px;background:#f5f9fa;border:1px solid #dce7eb;border-radius:18px;padding:18px;scroll-margin-top:20px;}
+.pb-detail-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.pb-detail-heading h4{margin:0;font-size:18px;}
+.pb-detail-time{font-size:30px;font-weight:850;color:#075985;font-variant-numeric:tabular-nums;}
+.pb-detail dl{display:grid;grid-template-columns:44px 1fr;gap:9px 14px;margin:14px 0;line-height:1.5;font-size:14px;}
+.pb-detail dt{color:#76837f;}.pb-detail dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;}
+.pb-detail-placeholder{color:#748078;text-align:center;font-size:14px;margin:0;padding:8px;}
+.pb-legend{font-size:12px;color:#748078;margin:14px 0 0;}
 @media(max-width:560px){
- .record-stroke-logo[data-stroke="仰"]{top:3px;}
- .record-stroke-logo[data-stroke="自"]{top:-9px;}
- .record-stroke-logo[data-stroke="蛙"]{top:-6px;}
- .record-stroke-logo[data-stroke="蝶"]{top:-12px;}
- .record-stroke-logo[data-stroke="混"]{top:-7px;}
+ #personModal .modalbox{padding:16px 10px;border-radius:22px;}
+ .pb-overview{padding:16px 7px;border-radius:20px;}
+ .pb-overview-heading{padding:0 6px;}.pb-overview h3{font-size:20px;}
+ .pb-overview .person-course-tabs{width:100%;}.pb-overview .person-course-tabs .tab{flex:1;}
+ .pb-matrix{border-spacing:3px;min-width:480px;}.pb-matrix th:first-child{width:51px;}
+ .pb-matrix th{font-size:11px;}.pb-matrix tbody th{font-size:13px;}
+ .pb-matrix td,.pb-cell{height:58px;}.pb-cell{border-radius:10px;font-size:14px;letter-spacing:-.7px;}
+ .pb-matrix tbody th{position:sticky;left:0;background:#fff;z-index:1;}
+ .pb-swipe-hint{display:block;font-size:12px;color:#748078;margin:8px 6px;}
+ .pb-team{font-size:9px;right:3px;top:3px;}.pb-detail{padding:14px;margin:14px 5px 0;}
+ .person-summary{gap:6px;}.person-summary span{font-size:12px;padding:6px 9px;}
 }
+
 </style>
 
 
@@ -1796,31 +1812,6 @@ body::before{
  }
 }
 </style>
-  <style>
-/* 頂部改為與 Logo 一致的深藍漸層 */
-header {
-  background: linear-gradient(120deg, #181c5c, #30377c);
-}
-
-/* 移除泳池方格，保留泳道與泳者 */
-.record-hero .pool-decoration {
-  background:
-    repeating-linear-gradient(
-      90deg, #e36d61 0 9px, #fff9ed 9px 18px
-    ) 0 50px / 100% 4px no-repeat,
-    repeating-linear-gradient(
-      90deg, #e36d61 0 9px, #fff9ed 9px 18px
-    ) 0 102px / 100% 4px no-repeat,
-    repeating-linear-gradient(
-      90deg, #e36d61 0 9px, #fff9ed 9px 18px
-    ) 0 154px / 100% 4px no-repeat,
-    linear-gradient(
-      135deg,
-      rgba(176, 229, 238, 0.7),
-      rgba(209, 240, 244, 0.7)
-    );
-}
-</style>
 </head>
 <body><section id="offlineScores" class="card" hidden style="margin:12px auto;max-width:1100px" aria-live="polite"><b data-status></b><p data-notice class="muted small"></p><p class="small">待同步操作尚未改動雲端成績與 PB；請在此手機完成同步。</p><button class="btn primary" data-sync onclick="scoreSynchronize()">立即同步</button> <button class="btn ghost" onclick="scoreExport()">備份待同步紀錄</button><details><summary>查看待同步操作</summary><ul data-list></ul></details></section>
 <header><div class="top">
@@ -1832,7 +1823,7 @@ header {
     rel="noopener noreferrer"
     aria-label="鬍子泳隊 Instagram"
     title="追蹤鬍子泳隊 Instagram"
-    style="display:flex;align-items:center;color:#ffffff;flex-shrink:0;"
+    style="display:flex;align-items:center;color:#1a5973;flex-shrink:0;"
   >
     <svg width="28" height="28" viewBox="0 0 24 24"
          fill="none" stroke="currentColor" stroke-width="1.8"
@@ -1928,19 +1919,7 @@ header {
   
 <script src="config.js"></script>
 <script>
-const EVENTS={
-  "長池":[
-    "50自","50仰","50蛙","50蝶",
-    "100自","100仰","100蛙","100蝶",
-    "200自","200仰","200蛙","200蝶","200混",
-    "400自"
-  ],
-  "短池":[
-    "50自","50仰","50蛙","50蝶",
-    "100自","100仰","100蛙","100蝶","100混",
-    "200自","200混"
-  ]
-};
+const EVENTS={"長池":["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","200自","200混","200仰","200蛙","200蝶","400自"],"短池":["50自","50仰","50蛙","50蝶","100自","100混","100仰","100蛙","100蝶","200自","200混"]};
 let state={page:"records",gender:"男",course:"長池",roster:[],pbs:[],records:[],performances:[],meets:[],allMeets:[],audit:[],auditMore:false,admin:false,user:null,coach:false,online:false};
 let currentPerson=null;
 let sb=null;
@@ -2046,11 +2025,12 @@ function updateAuth(){
  document.querySelectorAll(".coach-only").forEach(el=>el.hidden=!state.coach);
  document.getElementById("adminPanel").classList.toggle("show",state.coach);document.getElementById("adminAuditPanel").hidden=!state.admin;syncPageTabs();
 }
-function recordStrokeLogo(event){
- const logos={'自':'自由式logo.png','仰':'仰式logo.png','蛙':'蛙式logo.png','蝶':'蝶式logo.png','混':'四式logo.png'};
- const src=logos[String(event).trim().slice(-1)];
- if(!src)return '';
- return `<img class="record-stroke-logo" data-stroke="${String(event).trim().slice(-1)}" src="${src}" alt="" aria-hidden="true" width="112" height="112">`;
+function recordAnimation(event,gender){
+ const strokes={'自':'freestyle','仰':'backstroke','蝶':'butterfly','蛙':'breaststroke'};
+ const stroke=strokes[String(event).slice(-1)];
+ const sex=gender==='女'?'female':gender==='男'?'male':null;
+ if(!stroke||!sex)return '';
+ return `<img class="record-swimmer-gif" src="${stroke}-${sex}.webp" alt="" aria-hidden="true" width="540" height="360">`;
 }
 
 function render()
@@ -2058,7 +2038,7 @@ function render()
  document.getElementById("dbStatus").textContent=state.online?"☁️ 雲端資料庫模式":"💾 預覽資料模式";
  document.querySelectorAll("[data-course]").forEach(b=>b.classList.toggle("active",b.dataset.course===state.course));
  const rs=state.records.filter(r=>r.course===state.course);
-document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card">${recordStrokeLogo(ev)}<div class="record-left"><div class="record-item">${esc(ev)}</div><h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b></div><div class="record-meet"><div class="muted small record-meet-date${teamDateHasRange(r)?' date-range':''}">${esc(teamDate(r))}</div><span class="meet-tag">${esc(recordMeetLabel(r))}</span></div></div>`}).join("")}</div>`).join("");
+document.getElementById("recordsView").innerHTML=[state.gender].map(g=>`<div class="grid">${EVENTS[state.course].filter(ev=>rs.some(x=>x.gender===g&&x.event===ev)).map(ev=>{const r=rs.find(x=>x.gender===g&&x.event===ev);return `<div class="card record-card"><div class="record-left"><div class="record-item">${esc(ev)}</div><h2>${esc(fmt(r.seconds))}</h2><b>${esc(r.holder)}</b></div><div class="record-meet"><div class="muted small record-meet-date${teamDateHasRange(r)?' date-range':''}">${esc(teamDate(r))}</div><span class="meet-tag">${esc(recordMeetLabel(r))}</span></div></div>`}).join("")}</div>`).join("");
  renderPeople(); renderAdmin(); syncPageTabs();
 }
 function renderPeople(){ if(!state.coach){document.getElementById("people").innerHTML="";return;}
@@ -2070,22 +2050,54 @@ function renderPeople(){ if(!state.coach){document.getElementById("people").inne
  }).join("")||`<div class="empty">找不到符合的隊員</div>`;
 }
 let personCourse='長池';
-function switchPersonCourse(course){personCourse=course;if(currentPerson)openPerson(currentPerson);}
-function openPerson(name){ if(!state.coach)return openLogin();if(currentPerson!==name)personCourse='長池';currentPerson=name;
+let personSelectedEvent=null;
+const PERSON_STROKES=[['自由式','自'],['仰式','仰'],['蛙式','蛙'],['蝶式','蝶'],['混合式','混']];
+const PERSON_DISTANCES=[50,100,200,400,800,1500];
+function personTime(row){return String(row.display||fmt(row.seconds)).replace(/^0(?=\d:)/,'');}
+function switchPersonCourse(course){
+ if(!['長池','短池'].includes(course))return;
+ personCourse=course;personSelectedEvent=null;
+ if(currentPerson)openPerson(currentPerson);
+}
+function personOwnsRecord(pb){return state.records.some(r=>r.holder===currentPerson&&r.course===pb.course&&r.event===pb.event&&Number(r.seconds)===Number(pb.seconds));}
+function personPbRows(name,course){return state.pbs.filter(x=>x.name===name&&x.course===course&&Number.isFinite(Number(x.seconds))&&Number(x.seconds)>0);}
+function selectPersonEvent(event){
+ personSelectedEvent=event;
+ document.querySelectorAll('#personBody [data-person-event]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.personEvent===event)));
+ renderPersonPbDetail();
+}
+function renderPersonPbDetail(){
+ const target=document.getElementById('personPbDetail');if(!target)return;
+ const row=personPbRows(currentPerson,personCourse).find(x=>x.event===personSelectedEvent);
+ if(!row){target.innerHTML='<p class="pb-detail-placeholder">點選上方成績，查看賽事、日期與備註</p>';return;}
+ const stroke=PERSON_STROKES.find(x=>x[1]===row.event.slice(-1));
+ const label=stroke?row.event.replace(stroke[1],'m '+stroke[0]):row.event;
+ target.innerHTML=`<div class="pb-detail-heading"><h4>${esc(label)}${personOwnsRecord(row)?' <span class="team-pb-badge">🏆 隊史紀錄</span>':''}</h4><strong class="pb-detail-time">${esc(row.display||fmt(row.seconds))}</strong></div><dl><dt>泳池</dt><dd>${esc(personCourse)} ${personCourse==='長池'?'50m':'25m'}</dd><dt>賽事</dt><dd>${esc(meetLabel(row.meet))}</dd><dt>日期</dt><dd>${esc(performanceDate(row))}</dd>${row.note&&!String(row.note).startsWith('v4 ')?`<dt>備註</dt><dd>${esc(row.note)}</dd>`:''}</dl>${state.coach?'<button class="btn primary small" id="personEditSelected">✏️ 修改這筆紀錄</button>':''}`;
+ const edit=document.getElementById('personEditSelected');if(edit)edit.onclick=()=>openPbMeet(row.id);
+}
+function openPerson(name){
+ if(!state.coach)return openLogin();
+ if(currentPerson!==name){personCourse='長池';personSelectedEvent=null;}
+ currentPerson=name;
  const p=state.roster.find(x=>x.name===name)||{name};
- const pb=state.pbs.filter(x=>x.name===name);
- const rec=state.records.filter(x=>x.holder===name);
- document.getElementById("personTitle").textContent=`${name}｜個人紀錄`;
- const groups=[personCourse].map(c=>{
-   const events=EVENTS[c];
-   const rows=events.map(ev=>pb.find(x=>x.course===c&&x.event===ev)).filter(Boolean);
-   return `<div class="card" style="margin:12px 0"><h3>${c} PB</h3>${rows.length?rows.map(x=>`<div class="record-row"><span>${esc(x.event)}${rec.some(r=>r.course===x.course&&r.event===x.event&&Number(r.seconds)===Number(x.seconds))?'<span class="team-pb-badge">🏆 隊史紀錄</span>':''}<span class="pb-meet">賽事：${esc(meetLabel(x.meet))}</span><span class="pb-meet">日期：${esc(performanceDate(x))}</span>${x.note&&!String(x.note).startsWith("v4 ")?`<span class="pb-meet performance-note">📝 備註：${esc(x.note)}</span>`:""}</span><span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><strong>${esc(x.display||fmt(x.seconds))}</strong><button class="btn primary small" data-edit-pb="${esc(x.id)}">✏️ 修改紀錄</button></span></div>`).join(""):"<div class='muted'>尚無成績</div>"}</div>`;
- }).join("");
- document.getElementById("personBody").innerHTML=`<div class="card person-profile" role="button" tabindex="0" data-edit-person="${esc(p.id||'')}" aria-label="編輯隊員基本資料"><div class="person-heading"><b>${esc(p.name)}</b><span class="muted small">✏️ 編輯資料</span></div><div class="muted">${esc(p.gender||"")} · ${esc(p.school||"")}${p.grade?` · ${esc(gradeLabel(p.grade))}`:""}</div>${p.note?`<div class="muted small" style="margin-top:8px;white-space:pre-wrap">📝 備註：${esc(p.note)}</div>`:""}</div>${state.coach?`<button class="btn primary person-add" onclick="openPerformance(currentPerson)">🏊 新增選手成績／賽事</button>`:""}<div class="tabs person-course-tabs" aria-label="個人紀錄泳池"><button class="tab ${personCourse==='長池'?'active':''}" onclick="switchPersonCourse('長池')">長池 50m</button><button class="tab ${personCourse==='短池'?'active':''}" onclick="switchPersonCourse('短池')">短池 25m</button></div>${groups}`;
+ const rows=personPbRows(name,personCourse);
+ const owned=rows.filter(personOwnsRecord).length;
+ document.getElementById('personTitle').textContent=`${name}｜個人紀錄`;
+ const matrix=PERSON_STROKES.map(([label,suffix])=>`<tr><th scope="row">${label}</th>${PERSON_DISTANCES.map(distance=>{
+   const event=distance+suffix;
+   const row=rows.find(x=>x.event===event);
+   if(!row)return `<td><span class="pb-empty" aria-label="${distance}m ${label} 尚無成績">—</span></td>`;
+   const team=personOwnsRecord(row);
+   return `<td><button type="button" class="pb-cell" data-person-event="${esc(event)}" aria-pressed="${event===personSelectedEvent}" aria-label="${distance}m ${label} ${esc(personTime(row))}${team?'，隊史紀錄':''}，查看詳情">${team?'<span class="pb-team" aria-hidden="true">🏆</span>':''}${esc(personTime(row))}</button></td>`;
+ }).join('')}</tr>`).join('');
+ document.getElementById('personBody').innerHTML=`<div class="card person-profile" role="button" tabindex="0" data-edit-person="${esc(p.id||'')}" aria-label="編輯隊員基本資料"><div class="person-heading"><b>${esc(p.name)}</b><span class="muted small">✏️ 編輯資料</span></div><div class="muted">${esc(p.gender||'')} · ${esc(p.school||'')}${p.grade?` · ${esc(gradeLabel(p.grade))}`:''}</div>${p.note?`<div class="muted small" style="margin-top:8px;white-space:pre-wrap">📝 備註：${esc(p.note)}</div>`:''}</div><div class="person-summary"><span>${esc(personCourse)}・${rows.length} 項個人最佳</span><span>🏆 ${owned} 項隊史紀錄</span></div><button class="btn primary person-add" onclick="openPerformance(currentPerson)">＋ 新增選手成績／賽事</button><section class="pb-overview" aria-label="個人最佳總覽"><div class="pb-overview-heading"><div><h3>個人最佳總覽</h3><p class="pb-hint">點一格，看該項成績詳情</p></div><div class="tabs person-course-tabs" role="group" aria-label="個人紀錄泳池"><button class="tab ${personCourse==='長池'?'active':''}" aria-pressed="${personCourse==='長池'}" onclick="switchPersonCourse('長池')">長池 50m</button><button class="tab ${personCourse==='短池'?'active':''}" aria-pressed="${personCourse==='短池'}" onclick="switchPersonCourse('短池')">短池 25m</button></div></div><p class="pb-swipe-hint">左右滑動查看所有距離</p><div class="pb-matrix-scroll" tabindex="0" aria-label="成績表，可左右滑動"><table class="pb-matrix" aria-label="${esc(personCourse)}各泳式與距離的個人最佳成績"><thead><tr><th scope="col"><span class="pb-hint">公尺</span></th>${PERSON_DISTANCES.map(d=>`<th scope="col">${d}</th>`).join('')}</tr></thead><tbody>${matrix}</tbody></table></div>${rows.length?'':'<p class="pb-detail-placeholder">這位選手目前尚無'+esc(personCourse)+'成績</p>'}<p class="pb-legend">🏆 隊史紀錄　　— 尚無成績</p><div id="personPbDetail" class="pb-detail" aria-live="polite"></div></section>`;
  const profile=document.querySelector('[data-edit-person]');
  if(profile){profile.onclick=()=>{if(profile.dataset.editPerson)openEditSwimmer(profile.dataset.editPerson);};profile.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();profile.click();}};}
- document.querySelectorAll("button[data-edit-pb]").forEach(b=>b.onclick=()=>openPbMeet(b.dataset.editPb));document.getElementById("personModal").classList.add("show");
+ document.querySelectorAll('#personBody [data-person-event]').forEach(b=>b.onclick=()=>selectPersonEvent(b.dataset.personEvent));
+ renderPersonPbDetail();
+ document.getElementById('personModal').classList.add('show');
 }
+
 function renderAdmin(){if(!state.coach)return;renderMeets();renderSwimmerManagement();fitScrollLists();}
 function openLogin(){document.getElementById("loginModal").classList.add("show")}
 function openPerformance(name){if(!state.coach)return openLogin();fillForms();if(name)document.getElementById("pSwimmer").value=name;setupScoreMeets("pMeet");document.getElementById("performanceModal").classList.add("show")}
@@ -2441,10 +2453,4 @@ async function loadAdminAudit(append=false){
 
 </script>
 <script src="./offline-scores.js"></script><script>window.scoreBooted=true;scoreInstall().catch(e=>{scoreNotice="離線功能未能啟動："+e.message;scorePanel();});</script>
-<script>
-  window.va = window.va || function () {
-    (window.vaq = window.vaq || []).push(arguments);
-  };
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
 </body></html>
