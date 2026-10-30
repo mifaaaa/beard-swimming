@@ -2336,7 +2336,7 @@ function renderMeets(){
  const q=document.getElementById('meetSearch').value.trim().toLowerCase();
  const names=[...new Set(state.meets.map(familyName))].filter(n=>n.toLowerCase().includes(q)||familyMeets(n).some(m=>m.name.toLowerCase().includes(q)));
  names.sort((a,b)=>Math.max(...familyMeets(b).map(m=>editionYear(m)||0))-Math.max(...familyMeets(a).map(m=>editionYear(m)||0))||a.localeCompare(b,'zh-Hant'));
- list.innerHTML=names.map((name,i)=>{const rows=familyMeets(name),years=[...new Set(rows.map(editionYear).filter(Boolean))].sort((a,b)=>b-a);return `<div class="record-row"><span><b>🏟️ ${esc(name)}</b><span class="pb-meet">${years.length?`共 ${rows.length} 屆 · ${years.length} 個年度 · ${years.join('、')}`:'年度待補'}${rows.length>years.length?' · 每年場次可分別編輯':''}</span></span><button class="btn primary" data-family="${i}">查看年度 ›</button></div>`;}).join('')||'<p class="muted">目前沒有符合的賽事 🌱</p>';
+ list.innerHTML=names.map((name,i)=>{const rows=familyMeets(name),years=[...new Set(rows.map(editionYear).filter(Boolean))].sort((a,b)=>b-a);return `<div class="record-row"><span><b>🏟️ ${esc(name)}</b><span class="pb-meet">${years.length?`共 ${rows.length} 屆 · ${years.length} 個年度 · ${years.join('、')}`:'年度待補'}</span></span><button class="btn primary" data-family="${i}">查看年度 ›</button></div>`;}).join('')||'<p class="muted">目前沒有符合的賽事 🌱</p>';
  list.querySelectorAll('[data-family]').forEach(b=>b.onclick=()=>openMeetFamily(names[Number(b.dataset.family)]));
 }
 function openMeetFamily(name){
