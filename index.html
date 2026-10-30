@@ -1942,6 +1942,33 @@ body.records-compact .page-tabs{margin-bottom:12px;}
 }
 
 </style>
+<style id="compact-team-cards">
+/* Keep a separate card and the original stroke logo for every record. */
+.team-record-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+.team-record-heading{font-size:12px;color:#648092;margin:0 0 8px;}
+#recordsView .team-record-card{min-width:0;min-height:0;padding:10px 12px;border:1px solid #b6d6e3;border-radius:16px;background:linear-gradient(145deg,#fff,#f3fafc);box-shadow:0 3px 9px #0f658f12;display:grid;grid-template-rows:36px 30px auto;gap:3px;}
+.team-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.team-card-event{background:#fff3bf;color:#805b00;padding:3px 8px;border-radius:7px;font-size:14px;font-weight:750;}
+.team-card-logo{display:block;width:48px;height:48px;object-fit:contain;mix-blend-mode:multiply;}
+.team-card-result{display:flex;align-items:center;justify-content:space-between;gap:4px;min-width:0;}
+.team-card-time{font-size:24px;font-weight:850;color:#075985;font-variant-numeric:tabular-nums;letter-spacing:-.6px;white-space:nowrap;}
+.team-card-holder{font-size:14px;color:#476879;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.team-card-meet{font-size:12px;line-height:1.4;min-width:0;}
+.team-card-meet .team-table-date{display:block;margin:3px 0 0;font-size:11px;}
+@media(min-width:561px) and (max-width:900px){.team-record-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:560px){
+ .team-record-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;}
+ .team-record-heading{font-size:10px;margin-bottom:6px;}
+ #recordsView .team-record-card{padding:4px 8px;border-radius:11px;grid-template-rows:20px 22px 14px;gap:2px;}
+ .team-card-event{font-size:11px;padding:2px 6px;border-radius:5px;}
+ .team-card-logo{width:30px;height:30px;}
+ .team-card-time{font-size:20px;line-height:22px;}
+ .team-card-holder{font-size:11px;}
+ .team-card-meet{font-size:11px;line-height:14px;}
+ .team-card-meet .team-table-date{display:none;}
+}
+
+</style>
 </head>
 <body><section id="offlineScores" class="card" hidden style="margin:12px auto;max-width:1100px" aria-live="polite"><b data-status></b><p data-notice class="muted small"></p><p class="small">待同步操作尚未改動雲端成績與 PB；請在此手機完成同步。</p><button class="btn primary" data-sync onclick="scoreSynchronize()">立即同步</button> <button class="btn ghost" onclick="scoreExport()">備份待同步紀錄</button><details><summary>查看待同步操作</summary><ul data-list></ul></details></section>
 <header><div class="top">
@@ -2164,13 +2191,19 @@ function recordAnimation(event,gender){
  return `<img class="record-swimmer-gif" src="${stroke}-${sex}.webp" alt="" aria-hidden="true" width="540" height="360">`;
 }
 
+function recordStrokeLogo(event){
+ const logos={'自':'自由式logo.png','仰':'仰式logo.png','蛙':'蛙式logo.png','蝶':'蝶式logo.png','混':'四式logo.png'};
+ const src=logos[String(event).trim().slice(-1)];
+ return src?`<img class="team-card-logo" src="${src}" alt="" aria-hidden="true" width="48" height="48">`:'';
+}
 function renderCompactRecords(){
  const rows=EVENTS[state.course].map(event=>state.records.find(r=>r.course===state.course&&r.gender===state.gender&&r.event===event)).filter(Boolean);
  const view=document.getElementById('recordsView');
  if(!rows.length){view.innerHTML='<div class="empty">目前尚無這個組別的隊史紀錄</div>';return;}
- view.innerHTML=`<div class="team-table-wrap"><table class="team-table"><caption>${esc(state.course)} ${state.gender==='男'?'男子':'女子'}隊史・${rows.length} 項紀錄　<span>點賽事查看詳情</span></caption><thead><tr><th scope="col" class="team-event">項目</th><th scope="col" class="team-time">成績</th><th scope="col" class="team-holder">保持者</th><th scope="col" class="team-competition">破紀錄賽事</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td class="team-event">${esc(r.event)}</td><td class="team-time">${esc(fmt(r.seconds).replace(/^0(?=\d:)/,''))}</td><td class="team-holder" title="${esc(r.holder)}">${esc(r.holder)}</td><td class="team-competition"><button type="button" class="team-meet-button" data-team-detail="${i}" aria-label="查看${esc(r.event)}，${esc(r.holder)}，${esc(recordMeetLabel(r))}的完整紀錄" title="${esc(recordMeetLabel(r))} · ${esc(teamDate(r))}">${esc(recordMeetLabel(r))}<span class="team-table-date">${esc(teamDate(r))}</span></button></td></tr>`).join('')}</tbody></table></div>`;
+ view.innerHTML=`<p class="team-record-heading">${esc(state.course)} ${state.gender==='男'?'男子':'女子'}隊史・${rows.length} 項紀錄　點賽事查看詳情</p><div class="team-record-grid">${rows.map((r,i)=>`<article class="team-record-card" aria-label="${esc(r.event)}隊史紀錄"><div class="team-card-top"><span class="team-card-event">${esc(r.event)}</span>${recordStrokeLogo(r.event)}</div><div class="team-card-result"><strong class="team-card-time">${esc(fmt(r.seconds).replace(/^0(?=\d:)/,''))}</strong><b class="team-card-holder" title="${esc(r.holder)}">${esc(r.holder)}</b></div><div class="team-card-meet"><button type="button" class="team-meet-button" data-team-detail="${i}" aria-label="查看${esc(r.event)}，${esc(r.holder)}，${esc(recordMeetLabel(r))}的完整紀錄" title="${esc(recordMeetLabel(r))} · ${esc(teamDate(r))}">${esc(recordMeetLabel(r))}</button><span class="team-table-date">${esc(teamDate(r))}</span></div></article>`).join('')}</div>`;
  view.querySelectorAll('[data-team-detail]').forEach(button=>button.onclick=()=>openTeamRecordDetail(rows[Number(button.dataset.teamDetail)]));
 }
+
 function openTeamRecordDetail(record){
  let dialog=document.getElementById('teamRecordDetail');
  if(!dialog){dialog=document.createElement('dialog');dialog.id='teamRecordDetail';dialog.setAttribute('aria-labelledby','teamRecordDetailTitle');document.body.append(dialog);}
