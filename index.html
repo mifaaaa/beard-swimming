@@ -1767,6 +1767,7 @@ body::before{
 .pb-matrix-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .pb-swipe-hint{display:none;}
 .pb-matrix th{font-size:14px;color:#7a827e;font-weight:500;padding:8px 0;}
+.pb-matrix thead th{text-align:center;}
 .pb-matrix th:first-child{width:70px;}
 .pb-matrix tbody th{text-align:left;font-size:17px;font-weight:800;color:#102e47;white-space:nowrap;}
 .pb-matrix td{padding:0;text-align:center;height:72px;}
@@ -2262,7 +2263,7 @@ function openPerson(name){
  const rows=personPbRows(name,personCourse);
  const owned=rows.filter(personOwnsRecord).length;
  document.getElementById('personTitle').textContent=`${name}｜個人紀錄`;
- const matrix=PERSON_STROKES.map(([label,suffix])=>`<tr><th scope="row">${label}</th>${PERSON_DISTANCES.map(distance=>{
+ const matrix=PERSON_STROKES.filter(([,suffix])=>PERSON_DISTANCES.some(distance=>rows.some(x=>x.event===distance+suffix))).map(([label,suffix])=>`<tr><th scope="row">${label}</th>${PERSON_DISTANCES.map(distance=>{
    const event=distance+suffix;
    const row=rows.find(x=>x.event===event);
    if(!row)return `<td><span class="pb-empty" aria-label="${distance}m ${label} 尚無成績">—</span></td>`;
