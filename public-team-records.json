@@ -1,0 +1,374 @@
+{
+  "updatedAt": "2026-11-20T00:00:00+08:00",
+  "records": [
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "50自",
+      "holder": "潘沅駿",
+      "seconds": 29.38,
+      "record_series_name": "中和主委測試賽",
+      "publicDate": "2026-09-26"
+    },
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "50仰",
+      "holder": "潘沅駿",
+      "seconds": 34.19,
+      "record_series_name": "中和主委測試賽",
+      "publicDate": "2026-09-26"
+    },
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "50蛙",
+      "holder": "潘沅駿",
+      "seconds": 33.29,
+      "record_series_name": "三峽XPORTS盃春長",
+      "publicDate": "2026-05-16~17"
+    },
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "50蝶",
+      "holder": "潘沅駿",
+      "seconds": 32.47,
+      "record_series_name": "泳協全國中正盃",
+      "publicDate": "2026-06-11~15"
+    },
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "100自",
+      "holder": "潘沅駿",
+      "seconds": 63.74,
+      "record_series_name": "三峽XPORTS盃春長",
+      "publicDate": "2026-05-16~17"
+    },
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "100仰",
+      "holder": "潘沅駿",
+      "seconds": 73.78,
+      "record_series_name": "新北永和幼獅盃",
+      "publicDate": "2026-09-28"
+    },
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "100蛙",
+      "holder": "潘沅駿",
+      "seconds": 72.51,
+      "record_series_name": "泳協北區A1",
+      "publicDate": "2026-01-23~25"
+    },
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "100蝶",
+      "holder": "潘沅駿",
+      "seconds": 70.77,
+      "record_series_name": "新北永和幼獅盃",
+      "publicDate": "2026-09-28"
+    },
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "200自",
+      "holder": "潘沅駿",
+      "seconds": 141.69,
+      "record_series_name": "泳協北區A2",
+      "publicDate": "2025-09-19~21"
+    },
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "200混",
+      "holder": "潘沅駿",
+      "seconds": 152.03,
+      "record_series_name": "夢想盃冬季賽",
+      "publicDate": "2025-11-29~30"
+    },
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "200蛙",
+      "holder": "潘沅駿",
+      "seconds": 159.47,
+      "record_series_name": "泳協全國中正盃",
+      "publicDate": "2026-06-11~15"
+    },
+    {
+      "course": "長池",
+      "gender": "男",
+      "event": "400自",
+      "holder": "曾子瑞",
+      "seconds": 315.93,
+      "record_series_name": "泳協北區A2",
+      "publicDate": "2026-10-02~04"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "50自",
+      "holder": "李亮樂",
+      "seconds": 31.33,
+      "record_series_name": "泳協北區A2",
+      "publicDate": "2025-09-19~21"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "50仰",
+      "holder": "高語均",
+      "seconds": 36.87,
+      "record_series_name": "泳協全國青年盃",
+      "publicDate": "2025-06-06~09"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "50蛙",
+      "holder": "尹亮允",
+      "seconds": 41.84,
+      "record_series_name": "泳協北區A2",
+      "publicDate": "2026-10-02~04"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "50蝶",
+      "holder": "李亮樂",
+      "seconds": 33.55,
+      "record_series_name": "新北市中運",
+      "publicDate": "2026-01-31~02-01"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "100自",
+      "holder": "李亮樂",
+      "seconds": 69.81,
+      "record_series_name": "泳協北區A1",
+      "publicDate": "2026-01-23~25"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "100仰",
+      "holder": "高語均",
+      "seconds": 79.86,
+      "record_series_name": "泳協全國青年盃",
+      "publicDate": "2025-06-06~09"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "100蛙",
+      "holder": "尹亮允",
+      "seconds": 88.69,
+      "record_series_name": "新北永和幼獅盃",
+      "publicDate": "2026-09-28"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "100蝶",
+      "holder": "潘昱晴",
+      "seconds": 80.65,
+      "record_series_name": "泳協北區A2",
+      "publicDate": "2026-10-02~04"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "200自",
+      "holder": "潘昱晴",
+      "seconds": 148.72,
+      "record_series_name": "泳協北區A2",
+      "publicDate": "2026-10-02~04"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "200混",
+      "holder": "潘昱晴",
+      "seconds": 167.44,
+      "record_series_name": "新北對抗賽",
+      "publicDate": "2026-05-27"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "200蛙",
+      "holder": "尹亮允",
+      "seconds": 188.11,
+      "record_series_name": "泳協北區A2",
+      "publicDate": "2026-10-02~04"
+    },
+    {
+      "course": "長池",
+      "gender": "女",
+      "event": "400自",
+      "holder": "尹亮允",
+      "seconds": 324.6,
+      "record_series_name": "泳協北區A2",
+      "publicDate": "2026-10-02~04"
+    },
+    {
+      "course": "短池",
+      "gender": "女",
+      "event": "50自",
+      "holder": "李亮樂",
+      "seconds": 31.6,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2024-12-28~29"
+    },
+    {
+      "course": "短池",
+      "gender": "女",
+      "event": "50仰",
+      "holder": "高語均",
+      "seconds": 38.5,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2024-12-28~29"
+    },
+    {
+      "course": "短池",
+      "gender": "女",
+      "event": "50蛙",
+      "holder": "尹亮允",
+      "seconds": 45.23,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2025-12-13~14"
+    },
+    {
+      "course": "短池",
+      "gender": "女",
+      "event": "50蝶",
+      "holder": "李亮樂",
+      "seconds": 34.81,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2024-12-28~29"
+    },
+    {
+      "course": "短池",
+      "gender": "女",
+      "event": "100自",
+      "holder": "高語均",
+      "seconds": 74.28,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2024-12-28~29"
+    },
+    {
+      "course": "短池",
+      "gender": "女",
+      "event": "100混",
+      "holder": "尹亮允",
+      "seconds": 85.76,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2025-12-13~14"
+    },
+    {
+      "course": "短池",
+      "gender": "女",
+      "event": "100仰",
+      "holder": "尹亮允",
+      "seconds": 85.04,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2025-12-13~14"
+    },
+    {
+      "course": "短池",
+      "gender": "男",
+      "event": "50自",
+      "holder": "吳中暟",
+      "seconds": 30.36,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2024-12-28~29"
+    },
+    {
+      "course": "短池",
+      "gender": "男",
+      "event": "50仰",
+      "holder": "曾子瑞",
+      "seconds": 37.7,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2025-12-13~14"
+    },
+    {
+      "course": "短池",
+      "gender": "男",
+      "event": "50蛙",
+      "holder": "潘沅駿",
+      "seconds": 35.81,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2024-12-28~29"
+    },
+    {
+      "course": "短池",
+      "gender": "男",
+      "event": "50蝶",
+      "holder": "曾子瑞",
+      "seconds": 35.72,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2025-12-13~14"
+    },
+    {
+      "course": "短池",
+      "gender": "男",
+      "event": "100自",
+      "holder": "吳中暟",
+      "seconds": 65.81,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2024-12-28~29"
+    },
+    {
+      "course": "短池",
+      "gender": "男",
+      "event": "100混",
+      "holder": "曾子瑞",
+      "seconds": 78.81,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2025-12-13~14"
+    },
+    {
+      "course": "短池",
+      "gender": "男",
+      "event": "100仰",
+      "holder": "曾子瑞",
+      "seconds": 78.08,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2025-12-13~14"
+    },
+    {
+      "course": "短池",
+      "gender": "男",
+      "event": "100蛙",
+      "holder": "潘沅駿",
+      "seconds": 78.88,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2024-12-28~29"
+    },
+    {
+      "course": "短池",
+      "gender": "男",
+      "event": "100蝶",
+      "holder": "吳中暟",
+      "seconds": 81.59,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2024-12-28~29"
+    },
+    {
+      "course": "短池",
+      "gender": "男",
+      "event": "200混",
+      "holder": "潘沅駿",
+      "seconds": 162.9,
+      "record_series_name": "北大XPORTS盃冬短",
+      "publicDate": "2024-12-28~29"
+    }
+  ]
+}

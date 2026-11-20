@@ -1890,7 +1890,13 @@ body.records-compact .page-tabs .tab{padding:8px 14px;}
 body.records-compact main{padding-top:16px;padding-bottom:20px;}
 body.records-compact .page-tabs{margin-bottom:12px;}
 #recordsPage .record-hero{display:block;margin:0 0 12px;min-height:0;padding:0;}
-#recordsPage .record-hero .pool-decoration,#recordsPage .record-hero .eyebrow{display:none;}
+#recordsPage .record-hero .eyebrow{display:none;}
+#recordsPage .record-hero{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;}
+#recordsPage .record-hero .pool-decoration{
+ display:block;flex:0 0 min(100%, 250px);width:min(100%, 250px);
+ transform:scaleY(.62);transform-origin:center;margin:-39px 0;align-self:center;
+}
+#publicTeamBackupNotice{margin:0 0 10px;padding:8px 12px;border-radius:8px;background:#fff3d7;color:#654914;font-size:13px;}
 #recordsPage .record-hero .hero-motto{margin:0;font-size:19px;line-height:1.5;}
 #recordsPage .records-toolbar{display:flex;flex-direction:row;gap:12px;align-items:center;padding:0 0 12px;margin:0;}
 #recordsPage .records-toolbar>.tabs{width:auto;}
@@ -2032,7 +2038,7 @@ body.records-compact .page-tabs{margin-bottom:12px;}
 <button class="tab active" data-gender="男" onclick="switchGender('男')">隊史紀錄（男）</button>
 <button class="tab" data-gender="女" onclick="switchGender('女')">隊史紀錄（女）</button>
 </div>
-<div class="exportbar coach-only" hidden><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><div id="recordsView"></div>
+<div class="exportbar coach-only" hidden><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button id="publishTeamBackup" class="btn ghost export-btn" type="button" onclick="downloadPublishedTeamRecords()">↓ 下載公開隊史備援</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><p id="publicTeamBackupNotice" role="status" hidden></p><div id="recordsView"></div>
 
 </section>
 <section id="peopleSection" class="people-section coach-only" hidden style="margin-top:34px"><div class="hero"><div><h2>🐬 隊員資料庫</h2><p>點選隊員查看個人最佳紀錄與隊史保持項目。</p></div></div>
@@ -2076,6 +2082,7 @@ body.records-compact .page-tabs{margin-bottom:12px;}
 
   
 <script src="config.js"></script>
+<script src="./public-team-records.js"></script>
 <script>
 const EVENTS={"長池":["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","200自","200混","200仰","200蛙","200蝶","400自"],"短池":["50自","50仰","50蛙","50蝶","100自","100混","100仰","100蛙","100蝶","200自","200混"]};
 let state={page:"records",gender:"男",course:"長池",roster:[],pbs:[],records:[],performances:[],meets:[],allMeets:[],audit:[],auditMore:false,admin:false,user:null,coach:false,online:false};
@@ -2198,6 +2205,12 @@ function recordStrokeLogo(event){
  return src?`<img class="team-card-logo" src="${src}" alt="" aria-hidden="true" width="48" height="48">`:'';
 }
 function renderCompactRecords(){
+ const notice=document.getElementById('publicTeamBackupNotice');
+ notice.hidden=!publicTeamBackupDate;
+ notice.textContent=publicTeamBackupDate
+   ? '雲端暫時無法讀取，目前顯示 '+new Date(publicTeamBackupDate).toLocaleDateString('zh-TW',{timeZone:'Asia/Taipei'})+' 的隊史備援。'
+   : '';
+ document.getElementById('publishTeamBackup').disabled=!state.coach||scoreOffline||!lastLiveTeamSnapshot?.records.length;
  const rows=EVENTS[state.course].map(event=>state.records.find(r=>r.course===state.course&&r.gender===state.gender&&r.event===event)).filter(Boolean);
  const view=document.getElementById('recordsView');
  if(!rows.length){view.innerHTML='<div class="empty">目前尚無這個組別的隊史紀錄</div>';return;}
@@ -2312,12 +2325,15 @@ document.getElementById('addMeetMsg').textContent='';state.coach=false;state.ros
 async function loadCloud(){
  const generation=++cloudGeneration;
  try{
-  if(!sb){render();updateAuth();return false;}
-  const {data:rec,error:recError}=await sb.from("team_records").select("*");if(recError)throw recError;
+  if(!sb){if(!await restorePublishedTeamRecords(generation)){render();updateAuth();}return false;}
+  const {data:rec,error:recError}=await sb.from("team_records").select("*").abortSignal(AbortSignal.timeout(8000));if(recError)throw recError;
   let coach=false;
   if(state.user){const {data,error}=await sb.rpc("is_coach");if(error)throw error;coach=data===true;}
   if(generation!==cloudGeneration)return false;
   state.records=(rec||[]).map(r=>({...r,holder:r.swimmer_name,seconds:Number(r.seconds),display:fmt(r.seconds)}));
+  publicTeamBackupDate=null;
+  scoreOffline=false;
+  lastLiveTeamSnapshot=publicTeamSnapshot(state.records,new Date().toISOString());
   try{await scoreDB('put','public-records',{records:state.records,at:Date.now()});}catch(e){scoreNotice='公開隊史無法儲存到手機，請確認可用空間。';}
   if(!coach){if(state.user){await scoreDB('delete','snapshot:'+state.user.id);await scoreDB('delete','active');scoreOwner=null;}clearCoachData();render();return true;}
   const {data:admin,error:adminError}=await sb.rpc("is_admin");if(adminError)throw adminError;if(generation!==cloudGeneration)return false;state.admin=admin===true;
@@ -2326,7 +2342,7 @@ async function loadCloud(){
   if(generation!==cloudGeneration)return false;
   state.roster=results[0].data||[];state.performances=(results[1].data||[]).map(p=>({...p,seconds:Number(p.seconds),display:fmt(p.seconds)}));state.allMeets=results[2].data||[];state.meets=state.allMeets.filter(m=>m.active!==false);
   computeDerivedData(state.performances);state.coach=true;render();updateAuth();refreshOpenScoreMeets();await loadAdminAudit(false);return true;
- }catch(e){if(generation!==cloudGeneration)return false;if(typeof scoreRestore==="function"&&await scoreRestore())return false;clearCoachData();render();document.getElementById("dbStatus").textContent="⚠️ 資料讀取失敗，請重新整理";console.error(e);return false;}
+ }catch(e){if(generation!==cloudGeneration)return false;if(await scoreRestore().catch(()=>false))return false;if(await restorePublishedTeamRecords(generation))return false;if(generation!==cloudGeneration)return false;clearCoachData();render();document.getElementById("dbStatus").textContent="⚠️ 資料讀取失敗，請重新整理";console.error(e);return false;}
 }
 let currentMeetFamily=null,currentMeetYear=null,editingMeetVersion=null;
 function familyName(m){return m.series_name||String(m.name||'').replace(/^(?:\d{4}年\s*|\d{4}\s*)/,'').trim()||m.name;}
@@ -2573,6 +2589,7 @@ function teamDateBounds(r){
 }
 function teamDateHasRange(r){const {start,end}=teamDateBounds(r);return Boolean(start&&end&&start!==end);}
 function teamDate(r){
+ if(typeof r.publicDate==="string")return r.publicDate;
  const {start,end}=teamDateBounds(r);
  if(start){
   if(!end||end===start)return start;
@@ -2632,5 +2649,8 @@ async function loadAdminAudit(append=false){
 }
 
 </script>
-<script src="./offline-scores.js"></script><script>window.scoreBooted=true;scoreInstall().catch(e=>{scoreNotice="離線功能未能啟動："+e.message;scorePanel();});</script>
+<script src="./offline-scores.js"></script>
+<script>
+scoreRestorePublic=()=>restorePublishedTeamRecords(cloudGeneration);
+window.scoreBooted=true;scoreInstall().catch(e=>{scoreNotice="離線功能未能啟動："+e.message;scorePanel();});</script>
 </body></html>
