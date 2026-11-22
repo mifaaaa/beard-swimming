@@ -1784,6 +1784,18 @@ body::before{
 .pb-detail-time{font-size:30px;font-weight:850;color:#075985;font-variant-numeric:tabular-nums;}
 .pb-detail dl{display:grid;grid-template-columns:44px 1fr;gap:9px 14px;margin:14px 0;line-height:1.5;font-size:14px;}
 .pb-detail dt{color:#76837f;}.pb-detail dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap;}
+
+.pb-trend{margin:16px 0;padding-top:14px;border-top:1px solid #dce7eb;}
+.pb-trend h5{font-size:16px;margin:0 0 6px;}
+.pb-trend p{color:#51646b;font-size:13px;margin:4px 0;}
+.pb-trend-chart{display:block;width:100%;max-width:480px;height:auto;margin:10px auto;}
+.pb-trend-chart text{fill:#16445a;font-size:11px;font-variant-numeric:tabular-nums;}
+.pb-trend-list{margin:8px 0 0;padding-left:24px;font-size:13px;}
+.pb-trend-list li{padding:5px 0;}
+.pb-trend-result{display:flex;justify-content:space-between;gap:8px;align-items:baseline;}
+.pb-trend-result span{overflow-wrap:anywhere;}
+.pb-trend-result strong{white-space:nowrap;font-variant-numeric:tabular-nums;}
+
 .pb-detail-placeholder{color:#748078;text-align:center;font-size:14px;margin:0;padding:8px;}
 .pb-legend{font-size:12px;color:#748078;margin:14px 0 0;}
 @media(max-width:560px){
@@ -1890,13 +1902,7 @@ body.records-compact .page-tabs .tab{padding:8px 14px;}
 body.records-compact main{padding-top:16px;padding-bottom:20px;}
 body.records-compact .page-tabs{margin-bottom:12px;}
 #recordsPage .record-hero{display:block;margin:0 0 12px;min-height:0;padding:0;}
-#recordsPage .record-hero .eyebrow{display:none;}
-#recordsPage .record-hero{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;}
-#recordsPage .record-hero .pool-decoration{
- display:block;flex:0 0 min(100%, 250px);width:min(100%, 250px);
- transform:scaleY(.62);transform-origin:center;margin:-39px 0;align-self:center;
-}
-#publicTeamBackupNotice{margin:0 0 10px;padding:8px 12px;border-radius:8px;background:#fff3d7;color:#654914;font-size:13px;}
+#recordsPage .record-hero .pool-decoration,#recordsPage .record-hero .eyebrow{display:none;}
 #recordsPage .record-hero .hero-motto{margin:0;font-size:19px;line-height:1.5;}
 #recordsPage .records-toolbar{display:flex;flex-direction:row;gap:12px;align-items:center;padding:0 0 12px;margin:0;}
 #recordsPage .records-toolbar>.tabs{width:auto;}
@@ -2038,7 +2044,7 @@ body.records-compact .page-tabs{margin-bottom:12px;}
 <button class="tab active" data-gender="男" onclick="switchGender('男')">隊史紀錄（男）</button>
 <button class="tab" data-gender="女" onclick="switchGender('女')">隊史紀錄（女）</button>
 </div>
-<div class="exportbar coach-only" hidden><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button id="publishTeamBackup" class="btn ghost export-btn" type="button" onclick="downloadPublishedTeamRecords()">↓ 下載公開隊史備援</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><p id="publicTeamBackupNotice" role="status" hidden></p><div id="recordsView"></div>
+<div class="exportbar coach-only" hidden><button class="btn ghost export-btn" onclick="exportExcel('records')">↓ 匯出隊史 Excel</button><button class="btn ghost export-btn" onclick="exportExcel('pb')">↓ 匯出選手 PB Excel</button><span class="muted small">長池、短池一起匯出</span></div></div><div id="recordsView"></div>
 
 </section>
 <section id="peopleSection" class="people-section coach-only" hidden style="margin-top:34px"><div class="hero"><div><h2>🐬 隊員資料庫</h2><p>點選隊員查看個人最佳紀錄與隊史保持項目。</p></div></div>
@@ -2082,7 +2088,6 @@ body.records-compact .page-tabs{margin-bottom:12px;}
 
   
 <script src="config.js"></script>
-<script src="./public-team-records.js"></script>
 <script>
 const EVENTS={"長池":["50自","50仰","50蛙","50蝶","100自","100仰","100蛙","100蝶","200自","200混","200仰","200蛙","200蝶","400自"],"短池":["50自","50仰","50蛙","50蝶","100自","100混","100仰","100蛙","100蝶","200自","200混"]};
 let state={page:"records",gender:"男",course:"長池",roster:[],pbs:[],records:[],performances:[],meets:[],allMeets:[],audit:[],auditMore:false,admin:false,user:null,coach:false,online:false};
@@ -2205,12 +2210,6 @@ function recordStrokeLogo(event){
  return src?`<img class="team-card-logo" src="${src}" alt="" aria-hidden="true" width="48" height="48">`:'';
 }
 function renderCompactRecords(){
- const notice=document.getElementById('publicTeamBackupNotice');
- notice.hidden=!publicTeamBackupDate;
- notice.textContent=publicTeamBackupDate
-   ? '雲端暫時無法讀取，目前顯示 '+new Date(publicTeamBackupDate).toLocaleDateString('zh-TW',{timeZone:'Asia/Taipei'})+' 的隊史備援。'
-   : '';
- document.getElementById('publishTeamBackup').disabled=!state.coach||scoreOffline||!lastLiveTeamSnapshot?.records.length;
  const rows=EVENTS[state.course].map(event=>state.records.find(r=>r.course===state.course&&r.gender===state.gender&&r.event===event)).filter(Boolean);
  const view=document.getElementById('recordsView');
  if(!rows.length){view.innerHTML='<div class="empty">目前尚無這個組別的隊史紀錄</div>';return;}
@@ -2259,13 +2258,49 @@ function selectPersonEvent(event){
  document.querySelectorAll('#personBody [data-person-event]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.personEvent===event)));
  renderPersonPbDetail();
 }
+
+function renderPersonPbTrend(pb){
+ const performances=state.performances.filter(p=>p.swimmer_name===pb.name&&p.course===pb.course&&p.event===pb.event&&Number.isFinite(Number(p.seconds))&&Number(p.seconds)>0);
+ const entries=performances.map(p=>{
+   const meet=state.allMeets.find(m=>m.name===p.meet);
+   const date=performanceDate(p);
+   const year=editionYear(meet||{})||String(p.meet||'').match(/^(\d{4})年/)?.[1];
+   return {performance:p,date:date==='日期待補'?(inferMeetMonth(p.meet)||String(year||'')):date,seconds:Number(p.seconds)};
+ });
+ // Keep one result per meet edition, using the fastest swim if there were multiple rounds.
+ const byMeet=new Map();
+ for(const entry of entries){
+   const {performance,date,seconds}=entry;
+   if(!date)continue;
+   const key=performance.meet||date;
+   if(!byMeet.has(key)||seconds<byMeet.get(key).seconds)byMeet.set(key,entry);
+ }
+ const recent=[...byMeet.values()].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).reverse();
+ const undated=entries.some(entry=>!entry.date);
+ const title='<h5>近五場成績</h5>';
+ if(!recent.length)return `<section class="pb-trend">${title}<p>目前尚無可按日期排序的成績。</p></section>`;
+ const times=recent.map(entry=>entry.seconds);
+ const fastest=Math.min(...times);
+ const range=Math.max(...times)-fastest;
+ const points=recent.map((entry,index)=>({
+   ...entry,
+   x:recent.length===1?160:34+252*index/(recent.length-1),
+   y:range?32+82*(entry.seconds-fastest)/range:73
+ }));
+ const line=points.length>1?`<polyline points="${points.map(({x,y})=>`${x},${y}`).join(' ')}" fill="none" stroke="#08739b" stroke-width="2.5" stroke-linejoin="round"/>`:'';
+ const marks=points.map(({x,y,seconds},index)=>`<circle cx="${x}" cy="${y}" r="4" fill="#08739b"/><text x="${x}" y="${y-10}" text-anchor="middle">${esc(personTime({seconds}))}</text><text x="${x}" y="143" text-anchor="middle">${index+1}</text>`).join('');
+ const results=recent.map(({performance,date,seconds})=>`<li><div class="pb-trend-result"><span>${esc(date)} · ${esc(meetLabel(performance.meet))}</span><strong>${esc(personTime({seconds}))}</strong></div></li>`).join('');
+ return `<section class="pb-trend">${title}<p>${recent.length} 場 · 由舊到新 · 越上方越快</p><svg class="pb-trend-chart" viewBox="0 0 320 151" aria-hidden="true" focusable="false"><path d="M 18 125 H 302" stroke="#b7cbd3"/>${line}${marks}</svg><ol class="pb-trend-list">${results}</ol>${undated?'<p>日期待補的成績暫未納入趨勢。</p>':''}</section>`;
+}
+
 function renderPersonPbDetail(){
  const target=document.getElementById('personPbDetail');if(!target)return;
  const row=personPbRows(currentPerson,personCourse).find(x=>x.event===personSelectedEvent);
- if(!row){target.innerHTML='<p class="pb-detail-placeholder">點選上方成績，查看賽事、日期與備註</p>';return;}
+ if(!row){target.innerHTML='<p class="pb-detail-placeholder">點選上方成績，查看近五場趨勢與個人最佳詳情</p>';return;}
  const stroke=PERSON_STROKES.find(x=>x[1]===row.event.slice(-1));
  const label=stroke?row.event.replace(stroke[1],'m '+stroke[0]):row.event;
  target.innerHTML=`<div class="pb-detail-heading"><h4>${esc(label)}${personOwnsRecord(row)?' <span class="team-pb-badge">🏆 隊史紀錄</span>':''}</h4><strong class="pb-detail-time">${esc(row.display||fmt(row.seconds))}</strong></div><dl><dt>泳池</dt><dd>${esc(personCourse)} ${personCourse==='長池'?'50m':'25m'}</dd><dt>賽事</dt><dd>${esc(meetLabel(row.meet))}</dd><dt>日期</dt><dd>${esc(performanceDate(row))}</dd>${row.note&&!String(row.note).startsWith('v4 ')?`<dt>備註</dt><dd>${esc(row.note)}</dd>`:''}</dl>${state.coach?'<button class="btn primary small" id="personEditSelected">✏️ 修改這筆紀錄</button>':''}`;
+ target.insertAdjacentHTML('beforeend',renderPersonPbTrend(row));
  const edit=document.getElementById('personEditSelected');if(edit)edit.onclick=()=>openPbMeet(row.id);
 }
 function openPerson(name){
@@ -2283,7 +2318,7 @@ function openPerson(name){
    const team=personOwnsRecord(row);
    return `<td><button type="button" class="pb-cell" data-person-event="${esc(event)}" aria-pressed="${event===personSelectedEvent}" aria-label="${distance}m ${label} ${esc(personTime(row))}${team?'，隊史紀錄':''}，查看詳情">${team?'<span class="pb-team" aria-hidden="true">🏆</span>':''}${esc(personTime(row))}</button></td>`;
  }).join('')}</tr>`).join('');
- document.getElementById('personBody').innerHTML=`<div class="card person-profile" role="button" tabindex="0" data-edit-person="${esc(p.id||'')}" aria-label="編輯隊員基本資料"><div class="person-heading"><b>${esc(p.name)}</b><span class="muted small">✏️ 編輯資料</span></div><div class="muted">${esc(p.gender||'')} · ${esc(p.school||'')}${p.grade?` · ${esc(gradeLabel(p.grade))}`:''}</div>${p.note?`<div class="muted small" style="margin-top:8px;white-space:pre-wrap">📝 備註：${esc(p.note)}</div>`:''}</div><div class="person-summary"><span>${esc(personCourse)}・${rows.length} 項個人最佳</span><span>🏆 ${owned} 項隊史紀錄</span></div><button class="btn primary person-add" onclick="openPerformance(currentPerson)">＋ 新增選手成績／賽事</button><section class="pb-overview" aria-label="個人最佳總覽"><div class="pb-overview-heading"><div><h3>個人最佳總覽</h3><p class="pb-hint">點一格，看該項成績詳情</p></div><div class="tabs person-course-tabs" role="group" aria-label="個人紀錄泳池"><button class="tab ${personCourse==='長池'?'active':''}" aria-pressed="${personCourse==='長池'}" onclick="switchPersonCourse('長池')">長池 50m</button><button class="tab ${personCourse==='短池'?'active':''}" aria-pressed="${personCourse==='短池'}" onclick="switchPersonCourse('短池')">短池 25m</button></div></div><p class="pb-swipe-hint">左右滑動查看所有距離</p><div class="pb-matrix-scroll" tabindex="0" aria-label="成績表，可左右滑動"><table class="pb-matrix" aria-label="${esc(personCourse)}各泳式與距離的個人最佳成績"><thead><tr><th scope="col"><span class="pb-hint">公尺</span></th>${PERSON_DISTANCES.map(d=>`<th scope="col">${d}</th>`).join('')}</tr></thead><tbody>${matrix}</tbody></table></div>${rows.length?'':'<p class="pb-detail-placeholder">這位選手目前尚無'+esc(personCourse)+'成績</p>'}<p class="pb-legend">🏆 隊史紀錄　　— 尚無成績</p><div id="personPbDetail" class="pb-detail" aria-live="polite"></div></section>`;
+ document.getElementById('personBody').innerHTML=`<div class="card person-profile" role="button" tabindex="0" data-edit-person="${esc(p.id||'')}" aria-label="編輯隊員基本資料"><div class="person-heading"><b>${esc(p.name)}</b><span class="muted small">✏️ 編輯資料</span></div><div class="muted">${esc(p.gender||'')} · ${esc(p.school||'')}${p.grade?` · ${esc(gradeLabel(p.grade))}`:''}</div>${p.note?`<div class="muted small" style="margin-top:8px;white-space:pre-wrap">📝 備註：${esc(p.note)}</div>`:''}</div><div class="person-summary"><span>${esc(personCourse)}・${rows.length} 項個人最佳</span><span>🏆 ${owned} 項隊史紀錄</span></div><button class="btn primary person-add" onclick="openPerformance(currentPerson)">＋ 新增選手成績／賽事</button><section class="pb-overview" aria-label="個人最佳總覽"><div class="pb-overview-heading"><div><h3>個人最佳總覽</h3><p class="pb-hint">點一格，看該項近五場成績</p></div><div class="tabs person-course-tabs" role="group" aria-label="個人紀錄泳池"><button class="tab ${personCourse==='長池'?'active':''}" aria-pressed="${personCourse==='長池'}" onclick="switchPersonCourse('長池')">長池 50m</button><button class="tab ${personCourse==='短池'?'active':''}" aria-pressed="${personCourse==='短池'}" onclick="switchPersonCourse('短池')">短池 25m</button></div></div><p class="pb-swipe-hint">左右滑動查看所有距離</p><div class="pb-matrix-scroll" tabindex="0" aria-label="成績表，可左右滑動"><table class="pb-matrix" aria-label="${esc(personCourse)}各泳式與距離的個人最佳成績"><thead><tr><th scope="col"><span class="pb-hint">公尺</span></th>${PERSON_DISTANCES.map(d=>`<th scope="col">${d}</th>`).join('')}</tr></thead><tbody>${matrix}</tbody></table></div>${rows.length?'':'<p class="pb-detail-placeholder">這位選手目前尚無'+esc(personCourse)+'成績</p>'}<p class="pb-legend">🏆 隊史紀錄　　— 尚無成績</p><div id="personPbDetail" class="pb-detail" aria-live="polite"></div></section>`;
  const profile=document.querySelector('[data-edit-person]');
  if(profile){profile.onclick=()=>{if(profile.dataset.editPerson)openEditSwimmer(profile.dataset.editPerson);};profile.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();profile.click();}};}
  document.querySelectorAll('#personBody [data-person-event]').forEach(b=>b.onclick=()=>selectPersonEvent(b.dataset.personEvent));
@@ -2325,15 +2360,12 @@ document.getElementById('addMeetMsg').textContent='';state.coach=false;state.ros
 async function loadCloud(){
  const generation=++cloudGeneration;
  try{
-  if(!sb){if(!await restorePublishedTeamRecords(generation)){render();updateAuth();}return false;}
-  const {data:rec,error:recError}=await sb.from("team_records").select("*").abortSignal(AbortSignal.timeout(8000));if(recError)throw recError;
+  if(!sb){render();updateAuth();return false;}
+  const {data:rec,error:recError}=await sb.from("team_records").select("*");if(recError)throw recError;
   let coach=false;
   if(state.user){const {data,error}=await sb.rpc("is_coach");if(error)throw error;coach=data===true;}
   if(generation!==cloudGeneration)return false;
   state.records=(rec||[]).map(r=>({...r,holder:r.swimmer_name,seconds:Number(r.seconds),display:fmt(r.seconds)}));
-  publicTeamBackupDate=null;
-  scoreOffline=false;
-  lastLiveTeamSnapshot=publicTeamSnapshot(state.records,new Date().toISOString());
   try{await scoreDB('put','public-records',{records:state.records,at:Date.now()});}catch(e){scoreNotice='公開隊史無法儲存到手機，請確認可用空間。';}
   if(!coach){if(state.user){await scoreDB('delete','snapshot:'+state.user.id);await scoreDB('delete','active');scoreOwner=null;}clearCoachData();render();return true;}
   const {data:admin,error:adminError}=await sb.rpc("is_admin");if(adminError)throw adminError;if(generation!==cloudGeneration)return false;state.admin=admin===true;
@@ -2342,7 +2374,7 @@ async function loadCloud(){
   if(generation!==cloudGeneration)return false;
   state.roster=results[0].data||[];state.performances=(results[1].data||[]).map(p=>({...p,seconds:Number(p.seconds),display:fmt(p.seconds)}));state.allMeets=results[2].data||[];state.meets=state.allMeets.filter(m=>m.active!==false);
   computeDerivedData(state.performances);state.coach=true;render();updateAuth();refreshOpenScoreMeets();await loadAdminAudit(false);return true;
- }catch(e){if(generation!==cloudGeneration)return false;if(await scoreRestore().catch(()=>false))return false;if(await restorePublishedTeamRecords(generation))return false;if(generation!==cloudGeneration)return false;clearCoachData();render();document.getElementById("dbStatus").textContent="⚠️ 資料讀取失敗，請重新整理";console.error(e);return false;}
+ }catch(e){if(generation!==cloudGeneration)return false;if(typeof scoreRestore==="function"&&await scoreRestore())return false;clearCoachData();render();document.getElementById("dbStatus").textContent="⚠️ 資料讀取失敗，請重新整理";console.error(e);return false;}
 }
 let currentMeetFamily=null,currentMeetYear=null,editingMeetVersion=null;
 function familyName(m){return m.series_name||String(m.name||'').replace(/^(?:\d{4}年\s*|\d{4}\s*)/,'').trim()||m.name;}
@@ -2589,7 +2621,6 @@ function teamDateBounds(r){
 }
 function teamDateHasRange(r){const {start,end}=teamDateBounds(r);return Boolean(start&&end&&start!==end);}
 function teamDate(r){
- if(typeof r.publicDate==="string")return r.publicDate;
  const {start,end}=teamDateBounds(r);
  if(start){
   if(!end||end===start)return start;
@@ -2649,8 +2680,5 @@ async function loadAdminAudit(append=false){
 }
 
 </script>
-<script src="./offline-scores.js"></script>
-<script>
-scoreRestorePublic=()=>restorePublishedTeamRecords(cloudGeneration);
-window.scoreBooted=true;scoreInstall().catch(e=>{scoreNotice="離線功能未能啟動："+e.message;scorePanel();});</script>
+<script src="./offline-scores.js"></script><script>window.scoreBooted=true;scoreInstall().catch(e=>{scoreNotice="離線功能未能啟動："+e.message;scorePanel();});</script>
 </body></html>
